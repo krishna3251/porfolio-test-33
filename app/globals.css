@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary-color);
+  --color-primary-dark: var(--primary-dark-color);
+  --color-secondary: var(--secondary-color);
+  --color-secondary-dark: var(--secondary-dark-color);
+  --color-tertiary: #bec6e0;
+  --color-background-void: #151218;
+  --color-on-background: #e8e0e9;
+  --color-on-surface: #e8e0e9;
+  --color-on-surface-variant: #ccc3d3;
+  --color-surface-container: #211e25;
+  --color-surface-container-high: #2c292f;
+  --color-surface-container-highest: #37333a;
+  --color-surface-container-lowest: #100d13;
+  --color-surface-dim: #151218;
+  
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-ui: var(--font-space-grotesk);
+
+  --animate-fade-in-up: fadeInUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-subtle-drift: subtleDrift 25s ease-in-out infinite alternate;
+  --animate-gradient-shift: gradientShift 6s ease infinite;
+  
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes subtleDrift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-2%, -2%) scale(1.03); }
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+}
+
+:root {
+  --primary-color: #d7baff;
+  --primary-dark-color: #411478;
+  --secondary-color: #f7b1e3;
+  --secondary-dark-color: #4f1d46;
+  --background: #121014;
+  --foreground: #e8e0e9;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Hide Scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Lenis Scroll Smoothness */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  background: rgba(21, 18, 24, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-lens {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+}
+
+/* Glow Elements */
+.glow-accent-lavender {
+  box-shadow: inset 0 0 15px rgba(215, 186, 255, 0.08), 0 0 30px rgba(215, 186, 255, 0.05);
+}
+.glow-accent-pink {
+  box-shadow: inset 0 0 15px rgba(247, 177, 227, 0.08), 0 0 30px rgba(247, 177, 227, 0.05);
+}
+
+/* Particle System Styling */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--primary-color);
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+/* Image masking */
+.img-mask {
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%);
+}
+
+/* Terminal Typing Cursor */
+.typing-effect::after {
+  content: '█';
+  animation: cursorBlink 1s step-start infinite;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+@keyframes cursorBlink {
+  50% { opacity: 0; }
+}
+
+/* GSAP Easing Helper */
+.reveal-anim {
+  opacity: 0;
+}
+
+/* Next-Gen Gallery Additions */
+:root {
+  --primary-color-rgb: 215, 186, 255;
+  --secondary-color-rgb: 247, 177, 227;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Cybernetic Glowing Borders */
+.cyber-border-glow {
+  position: relative;
+}
+.cyber-border-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 50%, rgba(var(--primary-color-rgb), 0.25) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .cyber-border-glow::before {
+  background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.6), rgba(var(--secondary-color-rgb), 0.3) 50%, rgba(var(--primary-color-rgb), 0.9) 100%);
+}
+
+/* Holographic Foil overlay */
+.holo-foil {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(var(--primary-color-rgb), 0.15) 40%,
+    rgba(var(--secondary-color-rgb), 0.15) 60%,
+    rgba(255, 255, 255, 0.05) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 250% 250%;
+  mix-blend-mode: color-dodge;
+  transition: background-position 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .holo-foil {
+  background-position: 100% 100%;
+}
+
+/* Grid Matrix Pattern */
+.bg-grid-cyber {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+}
+
+/* Custom hide scrollbar for general divs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Ambient glow orb */
+.aurora-blur {
+  filter: blur(120px);
+  mix-blend-mode: screen;
+}
+
