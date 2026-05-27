@@ -116,13 +116,34 @@ export default function AudioSyncBackground() {
 
       // Poll Web Audio API analyser
       let intensity = 0;
+      let bass = 0;
       if (typeof window !== "undefined" && window.portfolioAnalyser) {
         window.portfolioAnalyser.getByteFrequencyData(frequencyData);
+        
         let sum = 0;
         for (let i = 0; i < frequencyData.length; i++) {
           sum += frequencyData[i];
         }
         intensity = sum / frequencyData.length; // 0 to 255
+
+        // Bass frequencies (bins 0-3)
+        let bassSum = 0;
+        for (let i = 0; i < 4; i++) {
+          bassSum += frequencyData[i];
+        }
+        bass = bassSum / 4; // 0 to 255
+      }
+
+      // Update root variables for global music synchronization
+      if (typeof document !== "undefined") {
+        const root = document.documentElement;
+        const normInt = intensity / 255;
+        const normBass = bass / 255;
+        
+        root.style.setProperty("--music-intensity", normInt.toFixed(3));
+        root.style.setProperty("--music-bass", normBass.toFixed(3));
+        root.style.setProperty("--music-scale", (1.0 + normBass * 0.02).toFixed(3));
+        root.style.setProperty("--music-glow", (normBass * 18).toFixed(1) + "px");
       }
 
       time += 0.025;

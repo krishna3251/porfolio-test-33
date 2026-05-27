@@ -29,94 +29,77 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 w-[92%] max-w-6xl rounded-full border border-white/10 bg-surface-container/20 backdrop-blur-3xl shadow-2xl z-[100] flex justify-between items-center px-5 py-2.5 transition-all duration-300">
+      <nav className="fixed top-0 left-0 w-full border-b border-foreground/5 bg-background/80 backdrop-blur-md z-[100] flex justify-between items-center px-6 md:px-12 py-6 transition-all duration-300">
         {/* Left Side: Brand Logo */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-12">
           <Link
             href="/"
-            className="font-display text-xl font-bold tracking-tighter text-on-surface hover:text-primary transition-colors duration-300"
+            className="serif-display text-2xl font-bold tracking-tighter text-foreground hover:text-primary transition-colors duration-300"
           >
-            KRISHNA
+            Krishna<span className="text-primary italic">.</span>
           </Link>
+
+          {/* Persistent Navigation Links */}
+          <ul className="hidden md:flex items-center gap-8 relative">
+            {links.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href} className="relative">
+                  <Link
+                    href={link.href}
+                    className={`relative mono-metadata text-[10px] transition-colors duration-300 ${
+                      isActive ? "text-primary" : "text-muted hover:text-foreground"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeNavUnderline"
+                        className="absolute -bottom-1 left-0 w-full h-px bg-primary"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    {link.name}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
-        {/* Center: Persistent Navigation Links */}
-        <ul className="hidden md:flex items-center gap-1.5 relative">
-          {links.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <li key={link.href} className="relative">
-                <Link
-                  href={link.href}
-                  className={`relative font-ui text-[12px] uppercase tracking-widest px-4 py-2 rounded-full block transition-colors duration-300 ${
-                    isActive ? "text-primary" : "text-on-surface-variant/75 hover:text-on-surface"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="activeNavBackground"
-                      className="absolute inset-0 bg-white/5 rounded-full border border-primary/20 shadow-[0_0_15px_rgba(215,186,255,0.08)] -z-10"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  {link.name}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
         {/* Right Side: Media, Theme Settings, and Profile Avatar */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-6">
           
-          {/* Audio Equalizer Player */}
-          <AudioPlayer />
-          
-          {/* Palette Accent Switcher */}
-          <ThemeSwitcher />
+          <div className="hidden sm:flex items-center gap-6 border-r border-foreground/5 pr-6">
+            {/* Audio Equalizer Player */}
+            <AudioPlayer />
+            
+            {/* Palette Accent Switcher */}
+            <ThemeSwitcher />
+          </div>
 
           <button
             onClick={() => setHireOpen(true)}
-            className="hidden lg:flex items-center gap-2 font-ui text-[10px] uppercase tracking-widest text-primary border border-primary/30 px-5 py-2.5 rounded-full hover:bg-primary/10 hover:shadow-[0_0_28px_rgba(215,186,255,0.18)] transition-all duration-300 active:scale-95 cursor-pointer"
+            className="mono-metadata text-[10px] text-foreground border border-foreground/10 px-6 py-2 hover:bg-foreground hover:text-background transition-all duration-300 cursor-pointer"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_12px_var(--primary-color)]" />
-            Hire Me
+            Commission
           </button>
           
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20 select-none hidden md:block">
-            <img
-              alt="Krishna Portfolio Avatar"
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEQuC9ynZupEDzmjA9PlblcMfOgnJA9FXHzZgUybvkViqtAs4cm-csnXTQxCZeNlA3YrVCOwp6e14kCtZqRybzkC7rMnPf-lKqPeFiqCR_DInTsIp2_NpS5_HXXSyhEI710lYmpARF2mnhGHbBi3tt7_tQ6dEPi1km4nUlEmdApRM7SBi-lcPkU5AGpya90KnhBqyWYcKffK0hIi8I4ZjaXlDGjvo7ypar4tePTcc15_KOx6yokBxJRARRS78xCImA2abUP1LJXVbI"
-            />
-          </div>
-
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-on-surface-variant hover:text-primary transition-colors p-2"
+            className="md:hidden text-muted hover:text-foreground transition-colors"
             aria-label="Toggle menu"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
               {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 8h16M4 16h16" />
               )}
             </svg>
           </button>
