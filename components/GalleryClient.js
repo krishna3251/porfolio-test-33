@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 
 const categories = [
@@ -160,23 +161,42 @@ function EditorialCard({ item, index, onClick }) {
       className="group relative w-full flex flex-col gap-6 cursor-zoom-in select-none music-beat-scale"
     >
       {/* Dynamic Sound Reactive Ambient Glow behind card */}
-      <div className="absolute inset-0 bg-primary/5 blur-[45px] rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none music-bloom-glow" />
+      <div className="absolute inset-0 bg-primary/5 blur-[45px] rounded-[8px] opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none music-bloom-glow" />
 
       {/* Image Container with 3D Parallax */}
       <motion.div 
         style={{ rotateX, rotateY, x: tx, y: ty, transformStyle: "preserve-3d" }}
-        className="relative aspect-video overflow-hidden rounded-3xl paper-sheet border border-foreground/5 transition-all duration-500 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] group-hover:border-primary/20"
+        className="relative aspect-video overflow-hidden rounded-[8px] paper-sheet border border-foreground/5 transition-all duration-500 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.4)] group-hover:border-primary/20"
       >
-        <motion.img
-          alt={item.title}
-          className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-1000 ease-out group-hover:scale-105"
-          src={item.image}
-          loading="lazy"
+        <motion.div
+          className="absolute inset-0"
+          animate={{ scale: isHovered ? 1.045 : 1.01 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Image
+            alt={item.title}
+            className="object-cover grayscale-[0.18] transition-all duration-1000 ease-out group-hover:grayscale-0"
+            src={item.image}
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+          />
+        </motion.div>
+        {item.featured && (
+          <div className="absolute left-4 top-4 z-10 border border-primary/25 bg-background/65 px-3 py-1.5 backdrop-blur-md">
+            <span className="mono-metadata text-[7px] text-primary tracking-[0.22em]">
+              Featured Drop
+            </span>
+          </div>
+        )}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{ opacity: isHovered ? 0.2 : 0.08 }}
+          transition={{ duration: 0.6 }}
         />
         {/* Futuristic Cyber Overlay Grid */}
         <div className="absolute inset-0 bg-grid-cyber opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 border-[1rem] border-surface pointer-events-none transition-all duration-500 group-hover:border-[0.5rem] rounded-[22px]"></div>
+        <div className="absolute inset-0 border-[1rem] border-surface pointer-events-none transition-all duration-500 group-hover:border-[0.5rem] rounded-[8px]"></div>
 
         {/* Live scanner indicator */}
         <div className="absolute top-4 right-4 z-10 w-2 h-2 rounded-full bg-primary/40 animate-ping opacity-0 group-hover:opacity-100" />
@@ -208,11 +228,31 @@ export default function GalleryClient({ initialItems }) {
     (item) => activeCategory === "All Work" || item.category === activeCategory
   );
 
+  const activeCount = filteredGridItems.length;
+  const featuredCount = filteredGridItems.filter((item) => item.featured).length;
+
   return (
     <div className="w-full relative">
+      <div className="mb-12 grid grid-cols-2 gap-3 border-y border-foreground/5 py-4 md:grid-cols-4">
+        {["Valorant", "Genshin Impact", "Wuthering Waves", "Honkai Star Rail"].map((category) => {
+          const count = initialItems.filter((item) => item.category === category).length;
+          return (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className="group flex items-center justify-between rounded-[8px] border border-foreground/5 bg-surface/35 px-4 py-3 text-left transition duration-300 hover:border-primary/25 hover:bg-primary/5"
+            >
+              <span className="mono-metadata text-[8px] text-muted transition group-hover:text-foreground">
+                {category}
+              </span>
+              <span className="font-mono text-xs text-primary tabular-nums">{count}</span>
+            </button>
+          );
+        })}
+      </div>
       
       {/* CATEGORY NAVIGATION */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-12 mb-20 pb-6 border-b border-foreground/5 justify-start lg:justify-center items-center">
+      <div className="sticky top-24 z-20 mb-20 flex overflow-x-auto hide-scrollbar gap-12 border-b border-foreground/5 bg-background/80 pb-6 pt-4 backdrop-blur-md justify-start lg:justify-center items-center">
         {categories.map((category) => (
           <button
             key={category}
@@ -235,6 +275,14 @@ export default function GalleryClient({ initialItems }) {
         ))}
       </div>
 
+      <div className="mb-12 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <p className="mono-metadata text-[9px] text-muted">
+          Showing <span className="text-foreground">{activeCount}</span> works
+          {featuredCount > 0 ? <span>{` // ${featuredCount} featured`}</span> : null}
+        </p>
+        <div className="h-px flex-1 bg-gradient-to-r from-primary/40 via-foreground/5 to-transparent md:ml-8" />
+      </div>
+
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24 relative z-10">
         <AnimatePresence mode="popLayout">
@@ -244,6 +292,7 @@ export default function GalleryClient({ initialItems }) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
               key={item.id}
             >
               <EditorialCard
@@ -270,7 +319,7 @@ export default function GalleryClient({ initialItems }) {
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 15, scale: 0.98 }}
-              className="relative w-full max-w-6xl rounded-3xl border border-primary/20 bg-surface/90 overflow-hidden shadow-[0_45px_150px_rgba(0,0,0,0.8)]"
+              className="relative w-full max-w-6xl rounded-[8px] border border-primary/20 bg-surface/90 overflow-hidden shadow-[0_45px_150px_rgba(0,0,0,0.8)]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Dynamic top gradient line */}
@@ -279,10 +328,13 @@ export default function GalleryClient({ initialItems }) {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
                 {/* Visualizer screen */}
                 <div className="lg:col-span-8 aspect-video overflow-hidden relative bg-black flex items-center justify-center">
-                  <img
+                  <Image
                     alt={lightboxItem.title}
-                    className="h-full w-full object-cover"
+                    className="object-cover"
                     src={lightboxItem.image}
+                    fill
+                    sizes="(min-width: 1024px) 70vw, 100vw"
+                    priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute inset-0 bg-grid-cyber opacity-[0.04] pointer-events-none" />

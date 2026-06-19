@@ -21,15 +21,26 @@ const getTitleFromFilename = (filename) => {
   if (lowercase === "forza op.png") return "Forza OP";
   if (lowercase === "forza hsr.png") return "Forza HSR";
   if (lowercase === "niole.png") return "Niole";
+  if (lowercase === "genshin zhonlgi.png") return "Genshin Zhongli";
+  if (lowercase === "gesnhin 1.png") return "Genshin Impact 1";
+  if (lowercase === "hse 1.png") return "HSR 1";
+  if (lowercase === "wuwa vuberpunk.png") return "Wuwa Cyberpunk Variant";
   const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
   return nameWithoutExt.split(/[\s_-]+/).map(word => {
-    if (word === "hsr" || word === "op" || word === "nte") return word.toUpperCase();
+    if (["hsr", "op", "nte"].includes(word.toLowerCase())) return word.toUpperCase();
     return word.charAt(0).toUpperCase() + word.slice(1);
   }).join(" ");
 };
 
 const getSubtitleFromFilename = (filename) => {
   const lowercase = filename.toLowerCase();
+  if (lowercase.includes("skirk")) return "Teyvat Abyssal Duel Study";
+  if (lowercase.includes("furina")) return "Fontaine Stage Composition";
+  if (lowercase.includes("miko")) return "Electro Shrine Editorial";
+  if (lowercase.includes("sage")) return "Radiant Sentinel Lockdown";
+  if (lowercase.includes("chamber")) return "Precision Marksman Setup";
+  if (lowercase.includes("cyberpunk") || lowercase.includes("vuberpunk")) return "Neon Resonator Cityscape";
+  if (lowercase.includes("ale") || lowercase.includes("aly")) return "Astral Character Showcase";
   if (lowercase.includes("gensh")) return "Teyvat Archon Chronicles";
   if (lowercase.includes("wuwa") || lowercase.includes("wywa")) return "Rover Resonator Core";
   if (lowercase.includes("hsr") || lowercase.includes("hse")) return "Astral Express Star Rail";
@@ -47,7 +58,16 @@ export default function ThumbnailsPage() {
     console.error("Failed to read images directory", err);
   }
 
-  const imageFiles = files.filter(file => /\.(png|jpe?g|webp)$/i.test(file));
+  const featuredPrefixes = ["valorant", "wuwa", "genshin", "hsr"];
+  const imageFiles = files
+    .filter(file => /\.(png|jpe?g|webp)$/i.test(file))
+    .sort((a, b) => {
+      const aFeatured = featuredPrefixes.some(prefix => a.toLowerCase().startsWith(prefix));
+      const bFeatured = featuredPrefixes.some(prefix => b.toLowerCase().startsWith(prefix));
+      if (aFeatured !== bFeatured) return aFeatured ? -1 : 1;
+      return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+    });
+
   const items = imageFiles.map((filename, index) => ({
     id: index + 1,
     title: getTitleFromFilename(filename),
@@ -55,7 +75,10 @@ export default function ThumbnailsPage() {
     image: `/images/${filename}`,
     info: getSubtitleFromFilename(filename),
     filename,
+    featured: featuredPrefixes.some(prefix => filename.toLowerCase().startsWith(prefix)),
   }));
+
+  const featuredCount = items.filter(item => item.featured).length;
 
   return (
     <main className="flex-grow pt-40 pb-32 px-6 md:px-12 lg:px-16 max-w-7xl mx-auto w-full relative">
@@ -69,15 +92,15 @@ export default function ThumbnailsPage() {
             Visual <span className="italic">Manifesto.</span>
           </h1>
           <p className="font-sans text-lg text-muted max-w-lg leading-relaxed">
-            A curated interactive exhibition of high-impact thumbnail designs, blending detailed character compositions, atmospheric depth, and luxury digital art aesthetics.
+            A curated interactive exhibition of high-impact thumbnail designs, now led by Valorant, Wuthering Waves, Genshin Impact, and Honkai Star Rail showcases.
           </p>
         </div>
 
-        <div className="flex flex-col gap-4 text-right items-end">
+        <div className="flex flex-col gap-4 text-right items-end rounded-[8px] border border-foreground/10 bg-surface/45 px-6 py-5 backdrop-blur-md">
           <span className="mono-metadata text-muted">Exhibiting</span>
           <span className="serif-display text-5xl tabular-nums">{items.length}</span>
           <span className="mono-metadata text-muted text-[9px] max-w-[140px]">
-            LATEST COMPILATION OF NEXT-GEN ART ASSETS.
+            {featuredCount} FEATURED GAME ASSETS ONLINE.
           </span>
         </div>
       </header>

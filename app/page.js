@@ -81,7 +81,7 @@ export default function Home() {
                 variants={itemVariants}
                 className="mono-metadata [writing-mode:vertical-lr] rotate-180 text-muted uppercase tracking-[0.25em]"
               >
-                Vol. 2026 — Ed. 01
+                Vol. 2026 / Ed. 01
               </motion.span>
             </div>
 
