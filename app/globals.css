@@ -8,10 +8,10 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   
-  --font-display: var(--font-playfair);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-ui: var(--font-space-grotesk);
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  --font-ui: "Space Grotesk", "Geist", ui-sans-serif, system-ui, sans-serif;
 
   --animate-fade-in-up: fadeInUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   
@@ -55,7 +55,7 @@ body {
 /* Editorial Posture */
 .serif-display {
   font-family: var(--font-playfair);
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .mono-metadata {
