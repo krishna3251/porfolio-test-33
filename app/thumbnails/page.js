@@ -34,6 +34,7 @@ const getTitleFromFilename = (filename) => {
 
 const getSubtitleFromFilename = (filename) => {
   const lowercase = filename.toLowerCase();
+  if (lowercase.includes("lucy")) return "Lucy Resonator Character Study";
   if (lowercase.includes("skirk")) return "Teyvat Abyssal Duel Study";
   if (lowercase.includes("furina")) return "Fontaine Stage Composition";
   if (lowercase.includes("miko")) return "Electro Shrine Editorial";
@@ -49,6 +50,13 @@ const getSubtitleFromFilename = (filename) => {
   return "Creative Visual Design";
 };
 
+const featuredCategories = [
+  "Valorant",
+  "Wuthering Waves",
+  "Genshin Impact",
+  "Honkai Star Rail",
+];
+
 export default function ThumbnailsPage() {
   const imagesDir = path.join(process.cwd(), "public", "images");
   let files = [];
@@ -58,25 +66,30 @@ export default function ThumbnailsPage() {
     console.error("Failed to read images directory", err);
   }
 
-  const featuredPrefixes = ["valorant", "wuwa", "genshin", "hsr"];
   const imageFiles = files
     .filter(file => /\.(png|jpe?g|webp)$/i.test(file))
     .sort((a, b) => {
-      const aFeatured = featuredPrefixes.some(prefix => a.toLowerCase().startsWith(prefix));
-      const bFeatured = featuredPrefixes.some(prefix => b.toLowerCase().startsWith(prefix));
-      if (aFeatured !== bFeatured) return aFeatured ? -1 : 1;
+      const aRank = featuredCategories.indexOf(getCategoryFromFilename(a));
+      const bRank = featuredCategories.indexOf(getCategoryFromFilename(b));
+      const normalizedARank = aRank === -1 ? featuredCategories.length : aRank;
+      const normalizedBRank = bRank === -1 ? featuredCategories.length : bRank;
+      if (normalizedARank !== normalizedBRank) return normalizedARank - normalizedBRank;
       return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
     });
 
-  const items = imageFiles.map((filename, index) => ({
-    id: index + 1,
-    title: getTitleFromFilename(filename),
-    category: getCategoryFromFilename(filename),
-    image: `/images/${filename}`,
-    info: getSubtitleFromFilename(filename),
-    filename,
-    featured: featuredPrefixes.some(prefix => filename.toLowerCase().startsWith(prefix)),
-  }));
+  const items = imageFiles.map((filename, index) => {
+    const category = getCategoryFromFilename(filename);
+
+    return {
+      id: index + 1,
+      title: getTitleFromFilename(filename),
+      category,
+      image: `/images/${filename}`,
+      info: getSubtitleFromFilename(filename),
+      filename,
+      featured: featuredCategories.includes(category),
+    };
+  });
 
   const featuredCount = items.filter(item => item.featured).length;
 
