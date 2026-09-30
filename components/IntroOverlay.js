@@ -106,7 +106,7 @@ export default function IntroOverlay() {
       mouse.y += (mouse.ty - mouse.y) * 0.08;
 
       // Draw cyber 3D perspective lines radiating from center
-      ctx.strokeStyle = "rgba(215, 186, 255, 0.015)";
+      ctx.strokeStyle = "rgba(59, 130, 246, 0.015)";
       ctx.lineWidth = 1;
       const horizontalLines = 15;
       for (let i = 0; i < horizontalLines; i++) {
@@ -144,7 +144,7 @@ export default function IntroOverlay() {
         // Draw node
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(215, 186, 255, ${alpha + 0.1})`;
+        ctx.fillStyle = `rgba(59, 130, 246, ${alpha + 0.1})`;
         ctx.fill();
 
         // Connect nodes near each other
@@ -158,7 +158,7 @@ export default function IntroOverlay() {
             ctx.beginPath();
             ctx.moveTo(node.x, node.y);
             ctx.lineTo(target.x, target.y);
-            ctx.strokeStyle = `rgba(247, 177, 227, ${linkAlpha})`;
+            ctx.strokeStyle = `rgba(255, 59, 77, ${linkAlpha})`;
             ctx.stroke();
           }
         }
@@ -167,7 +167,7 @@ export default function IntroOverlay() {
       // Draw radar circle tracking cursor
       ctx.beginPath();
       ctx.arc(mouse.x, mouse.y, 45, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(215, 186, 255, 0.03)";
+      ctx.strokeStyle = "rgba(59, 130, 246, 0.03)";
       ctx.stroke();
 
       animId = requestAnimationFrame(drawGridMesh);
@@ -283,7 +283,7 @@ export default function IntroOverlay() {
 
           {/* Dynamic Light Accent Blooms */}
           <div className="absolute w-[50vw] h-[50vw] rounded-full bg-primary/10 blur-[130px] pointer-events-none top-1/3 left-1/3 animate-pulse" style={{ animationDuration: "6s" }} />
-          <div className="absolute w-[45vw] h-[45vw] rounded-full bg-[#f7b1e3]/8 blur-[120px] pointer-events-none bottom-1/3 right-1/3 animate-pulse" style={{ animationDuration: "8s" }} />
+          <div className="absolute w-[45vw] h-[45vw] rounded-full bg-[#ff3b4d]/8 blur-[120px] pointer-events-none bottom-1/3 right-1/3 animate-pulse" style={{ animationDuration: "8s" }} />
 
           {/* Top Diagnostics Dashboard Panel */}
           <div className="w-full max-w-7xl flex justify-between items-center text-muted font-mono text-[8px] tracking-[0.25em] relative z-10 border-b border-foreground/5 pb-5">
@@ -293,7 +293,7 @@ export default function IntroOverlay() {
                 SYS_ONLINE // K_PORTFOLIO_NODE
               </span>
               <span className="hidden sm:inline text-foreground/30">|</span>
-              <span className="hidden sm:inline">ADDR: 49.37.158.62</span>
+              <span className="hidden sm:inline">STREAM: PORTFOLIO AUDIO</span>
             </div>
             <div className="flex gap-4">
               <span>LAT: {systemStats.ping}</span>
@@ -356,7 +356,7 @@ export default function IntroOverlay() {
               </h1>
 
               {/* Advanced Simulated Terminal Screen */}
-              <div className="w-full bg-[#100e14]/90 border border-foreground/10 p-5 rounded-2xl text-left font-mono text-[9px] text-muted space-y-2 mb-8 min-h-[145px] shadow-2xl backdrop-blur-md relative overflow-hidden">
+              <div className="w-full bg-[#0d1220]/90 border border-foreground/10 p-5 rounded-2xl text-left font-mono text-[9px] text-muted space-y-2 mb-8 min-h-[145px] shadow-2xl backdrop-blur-md relative overflow-hidden">
                 <div className="absolute top-2 right-4 text-[7px] text-primary/40 uppercase tracking-widest animate-pulse flex items-center gap-1.5">
                   <span className="w-1 h-1 rounded-full bg-primary" />
                   telemetry feed
@@ -379,7 +379,7 @@ export default function IntroOverlay() {
               <div className="w-full flex flex-col gap-3">
                 <div className="w-full h-[3px] bg-foreground/5 rounded-full overflow-hidden relative">
                   <motion.div 
-                    className="h-full bg-gradient-to-r from-primary via-[#f7b1e3] to-primary shadow-[0_0_15px_var(--accent)]" 
+                    className="h-full bg-gradient-to-r from-primary via-[#ff3b4d] to-primary shadow-[0_0_15px_var(--accent)]" 
                     style={{ width: `${progress}%` }}
                   />
                 </div>
