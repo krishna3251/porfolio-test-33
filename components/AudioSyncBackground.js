@@ -8,19 +8,21 @@ export default function AudioSyncBackground(){
   useEffect(()=>{
     const canvas=canvasRef.current;
     if(!canvas)return;
-    const ctx=canvas.getContext("2d");
+    if(window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
+    if(window.location.pathname.startsWith("/thumbnails/view")) return;
+    const ctx=canvas.getContext("2d",{alpha:true});
     if(!ctx)return;
 
     let raf;
     let width=window.innerWidth;
     let height=window.innerHeight;
-    let dpr=Math.min(window.devicePixelRatio||1,2);
+    let dpr=Math.min(window.devicePixelRatio||1,1.5);
     let time=0;
     const ORANGE="255,100,38";
     const INK="245,241,232";
     const frequencyData=new Uint8Array(32);
 
-    const particles=Array.from({length:64},(_,i)=>({
+    const particles=Array.from({length:44},(_,i)=>({
       x:Math.random()*width,
       y:Math.random()*height,
       vx:(Math.random()-.5)*.18,
@@ -33,7 +35,7 @@ export default function AudioSyncBackground(){
 
     const resize=()=>{
       width=window.innerWidth;height=window.innerHeight;
-      dpr=Math.min(window.devicePixelRatio||1,2);
+      dpr=Math.min(window.devicePixelRatio||1,1.5);
       canvas.width=width*dpr;canvas.height=height*dpr;
       canvas.style.width=width+"px";canvas.style.height=height+"px";
       ctx.setTransform(dpr,0,0,dpr,0,0);
