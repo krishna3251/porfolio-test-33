@@ -1,4 +1,5 @@
 "use client";
+import AudioPlayer from "@/components/AudioPlayer"; import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -14,7 +15,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0c]/90 backdrop-blur-md border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#09090b]/90 border-b border-white/20">
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 h-[72px] flex items-center justify-between">
         <Link href="/" className="serif-display text-2xl font-semibold tracking-tight">
           Krishna<span className="text-primary">.</span>
@@ -26,7 +27,7 @@ export default function Navbar() {
             </button>
           ))}
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3"><div className="hidden lg:block"><AudioPlayer/></div><ThemeSwitcher/>
           <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" className="hidden sm:block text-[12px] uppercase tracking-[.16em] hover:text-primary transition-colors">GitHub ↗</a>
           <button onClick={()=>setOpen(!open)} className="md:hidden text-xs uppercase tracking-[.16em]">{open ? "Close" : "Menu"}</button>
         </div>
