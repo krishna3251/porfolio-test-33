@@ -1,14 +1,13 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 const categoryOrder = ["GENSHIN","HSR","WUWA","VALORANT","PUBG","NTE","FORZA","OTHER"];
 
 export default function WorkArchive({ groups = [] }) {
   const [active, setActive] = useState("ALL");
-  const [selectedIndex, setSelectedIndex] = useState(null);
-
   const items = useMemo(() => groups.flatMap((g) => g.thumbnails || []), [groups]);
 
   const categories = useMemo(() => {
@@ -23,26 +22,6 @@ export default function WorkArchive({ groups = [] }) {
     () => (active === "ALL" ? items : items.filter((item) => item.label === active)),
     [active, items]
   );
-
-  const selected = selectedIndex === null ? null : filtered[selectedIndex];
-
-  useEffect(() => {
-    document.body.style.overflow = selected ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [selected]);
-
-  useEffect(() => {
-    if (!selected) return;
-
-    const onKey = (event) => {
-      if (event.key === "Escape") setSelectedIndex(null);
-      if (event.key === "ArrowRight") setSelectedIndex((current) => current === null ? null : (current + 1) % filtered.length);
-      if (event.key === "ArrowLeft") setSelectedIndex((current) => current === null ? null : (current - 1 + filtered.length) % filtered.length);
-    };
-
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [selected, filtered.length]);
 
   return (
     <div>
@@ -68,107 +47,37 @@ export default function WorkArchive({ groups = [] }) {
 
       <div className="archive-grid">
         {filtered.map((item, index) => (
-          <motion.button
+          <motion.div
             key={item.id}
-            type="button"
-            onClick={() => setSelectedIndex(index)}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -40px" }}
             transition={{ duration: 0.5, delay: (index % 4) * 0.04, ease: [0.16, 1, 0.3, 1] }}
             whileHover={{ y: -8 }}
-            className="archive-card text-left group"
+            className="archive-card"
           >
-            <div className="archive-image">
-              <img src={item.src} alt={item.title} loading="lazy" />
-              <div className="archive-shade" />
-              <span className="archive-badge">{item.label}</span>
-              <span className="archive-number">{String(index + 1).padStart(2, "0")}</span>
-              <span className="archive-open">OPEN ↗</span>
-            </div>
-            <div className="archive-info">
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.subtitle}</p>
+            <Link
+              href={`/thumbnails/view?file=${encodeURIComponent(item.filename)}&category=${encodeURIComponent(active)}`}
+              className="block text-left group"
+            >
+              <div className="archive-image">
+                <img src={item.src} alt={item.title} loading="lazy" />
+                <div className="archive-shade" />
+                <span className="archive-badge">{item.label}</span>
+                <span className="archive-number">{String(index + 1).padStart(2, "0")}</span>
+                <span className="archive-open">VIEW ↗</span>
               </div>
-              <span className="archive-arrow">↗</span>
-            </div>
-          </motion.button>
+              <div className="archive-info">
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.subtitle}</p>
+                </div>
+                <span className="archive-arrow">↗</span>
+              </div>
+            </Link>
+          </motion.div>
         ))}
       </div>
-
-      <AnimatePresence>
-        {selected && (
-          <motion.div
-            className="archive-viewer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedIndex(null)}
-          >
-            <motion.div
-              className="archive-viewer-shell"
-              initial={{ opacity: 0, scale: 0.985 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.995 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(event) => event.stopPropagation()}
-            >
-              <header className="archive-viewer-top">
-                <div>
-                  <span className="archive-viewer-index">
-                    {String(selectedIndex + 1).padStart(2, "0")} / {String(filtered.length).padStart(2, "0")}
-                  </span>
-                  <span className="archive-viewer-type">{selected.label}</span>
-                </div>
-                <button className="archive-viewer-close" onClick={() => setSelectedIndex(null)}>
-                  CLOSE <span>×</span>
-                </button>
-              </header>
-
-              <div className="archive-viewer-stage">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
-                    key={selected.id || selected.src}
-                    src={selected.src}
-                    alt={selected.title}
-                          initial={{ opacity: 0, scale: 0.94 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.025 }}
-                    transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-                    draggable="false"
-                  />
-                </AnimatePresence>
-                <span className="archive-viewer-hint">ESC TO CLOSE · ← → TO BROWSE</span>
-              </div>
-
-              <footer className="archive-viewer-bottom">
-                <div className="archive-viewer-copy">
-                  <h2>{selected.title}</h2>
-                  <p>{selected.subtitle}</p>
-                </div>
-
-                <div className="archive-viewer-controls">
-                  <button
-                    type="button"
-                    aria-label="Previous artwork"
-                    onClick={() => setSelectedIndex((selectedIndex - 1 + filtered.length) % filtered.length)}
-                  >
-                    ←
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Next artwork"
-                    onClick={() => setSelectedIndex((selectedIndex + 1) % filtered.length)}
-                  >
-                    →
-                  </button>
-                </div>
-              </footer>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
