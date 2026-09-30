@@ -160,7 +160,7 @@ export default function AudioPlayer() {
   }, [initAnalyser, volume, isMuted]);
 
   return (
-    <div className="flex items-center gap-3 bg-surface/70 border border-foreground/10 backdrop-blur-md rounded-full px-3 py-1.5 shadow-sm transition-all duration-300 hover:border-primary/30">
+    <div className="flex items-center gap-3 glass-audio flex items-center gap-3 px-3 py-1.5 transition-all duration-300 hover:border-hot/30">
       <audio ref={audioRef} src="/song.mp3" loop crossOrigin="anonymous" preload="metadata" />
 
       {/* Rotating Vinyl / Artwork Micro Badge */}
