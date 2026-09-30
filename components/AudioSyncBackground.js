@@ -16,8 +16,8 @@ export default function AudioSyncBackground(){
     let height=window.innerHeight;
     let dpr=Math.min(window.devicePixelRatio||1,2);
     let time=0;
-    const BLUE="59,130,246";
-    const RED="255,59,77";
+    const ORANGE="255,100,38";
+    const INK="17,19,24";
     const frequencyData=new Uint8Array(32);
 
     const particles=Array.from({length:64},(_,i)=>({
@@ -27,7 +27,7 @@ export default function AudioSyncBackground(){
       vy:(Math.random()-.5)*.12,
       size:.7+Math.random()*1.6,
       phase:Math.random()*Math.PI*2,
-      color:i%2===0?BLUE:RED,
+      color:i%2===0?ORANGE:INK,
       alpha:.10+Math.random()*.25,
     }));
 
@@ -52,10 +52,10 @@ export default function AudioSyncBackground(){
       const amp=8+bass*.13;
       const base=height*.54+Math.sin(time*.22)*height*.035;
       const grad=ctx.createLinearGradient(0,0,width,0);
-      grad.addColorStop(0,"rgba("+BLUE+",0)");
-      grad.addColorStop(.28,"rgba("+BLUE+","+(.10+intensity*.0014)+")");
-      grad.addColorStop(.64,"rgba("+RED+","+(.08+intensity*.0011)+")");
-      grad.addColorStop(1,"rgba("+RED+",0)");
+      grad.addColorStop(0,"rgba("+ORANGE+",0)");
+      grad.addColorStop(.28,"rgba("+ORANGE+","+(.08+intensity*.0011)+")");
+      grad.addColorStop(.64,"rgba("+INK+","+(.055+intensity*.0007)+")");
+      grad.addColorStop(1,"rgba("+INK+",0)");
       ctx.beginPath();
       for(let x=0;x<=width;x+=12){
         const y=base+Math.sin(x*.012+time*.55)*amp+Math.sin(x*.027-time*.28)*amp*.28;
@@ -69,7 +69,7 @@ export default function AudioSyncBackground(){
         const y=base+Math.sin(x*.012+time*.55+Math.PI*.12)*amp*.68+20;
         if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
-      ctx.strokeStyle="rgba("+BLUE+","+(.035+intensity*.0007)+")";
+      ctx.strokeStyle="rgba("+ORANGE+","+(.025+intensity*.00045)+")";
       ctx.stroke();
     };
 
@@ -95,8 +95,8 @@ export default function AudioSyncBackground(){
       ctx.save();
       ctx.globalCompositeOperation="lighter";
       const drift=40+Math.sin(time*.32)*24;
-      drawField(width*.18+drift,height*.2,Math.max(width,height)*.34,BLUE,.035+normInt*.10);
-      drawField(width*.82-drift,height*.72,Math.max(width,height)*.36,RED,.028+normInt*.075);
+      drawField(width*.18+drift,height*.2,Math.max(width,height)*.34,ORANGE,.032+normInt*.09);
+      drawField(width*.82-drift,height*.72,Math.max(width,height)*.36,INK,.018+normInt*.055);
       drawRibbon(intensity,bass);
 
       particles.forEach((p)=>{
