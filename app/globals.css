@@ -190,3 +190,16 @@ html.lenis, html.lenis body {
 }
 
 
+
+/* BRUTALIST V2 OVERRIDES */
+:root{--bg:#09090b;--surface:#101014;--fg:#f4f2ee;--muted:#8d8a95;--border:rgba(244,242,238,.22);--accent:#d7baff;--music-intensity:0;--music-bass:0;--music-scale:1;--music-glow:0px}
+body{background:#09090b!important}
+.rounded-full,.rounded-3xl,.rounded-2xl,.rounded-xl,.rounded-lg{border-radius:0!important}
+.shadow-2xl,.shadow-xl,.shadow-lg{box-shadow:none!important}
+.backdrop-blur-xl,.backdrop-blur-2xl,.backdrop-blur-md{backdrop-filter:none!important}
+.bg-surface\/50,.bg-surface\/70,.bg-surface\/40{background:rgba(16,16,20,.92)!important}
+.border-foreground\/5,.border-foreground\/10,.border-foreground\/15{border-color:rgba(244,242,238,.18)!important}
+.mono-metadata{font-family:var(--font-geist-mono);letter-spacing:.15em}
+.brutal-section-title{font-family:var(--font-geist-mono);font-weight:900;text-transform:uppercase;letter-spacing:-.08em;line-height:.8}
+.brutal-hover{transition:background-color .2s,color .2s,transform .2s}
+.brutal-hover:hover{background:var(--fg);color:#09090b}
