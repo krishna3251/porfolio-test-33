@@ -216,3 +216,27 @@ body.site-body{background:#f5f2eb!important;color:#111318}
 @media(max-width:900px){.project-card{grid-template-columns:44px 1fr 36px;gap:14px;padding:20px}.project-copy{grid-column:2 / -1}.project-main h2{font-size:clamp(2.5rem,11vw,4rem)}}
 @media(max-width:640px){.hero-title{font-size:clamp(3.5rem,19vw,7rem)}.hero-rule{height:4px;width:94vw}.glass-nav{height:60px}.page-display{font-size:clamp(3rem,15vw,5.5rem)}}
 @media(prefers-reduced-motion:reduce){.hero-orbit-orange,.hero-orbit-ink,.animate-drift-a,.animate-drift-b{animation:none}}
+
+/* FINAL WHITE + ORANGE OVERRIDES */
+.glass-panel{
+  background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.48));
+  border:1px solid rgba(17,19,24,.11);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 20px 65px rgba(35,28,19,.07);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+}
+.glass-card{
+  background:linear-gradient(155deg,rgba(255,255,255,.82),rgba(255,255,255,.52));
+  border-color:rgba(17,19,24,.11);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 22px 58px rgba(35,28,19,.08);
+}
+.glass-card:after{background:linear-gradient(115deg,transparent 25%,rgba(255,100,38,.16) 45%,transparent 57%)}
+.glass-card:hover{border-color:rgba(255,100,38,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,1),0 24px 65px rgba(255,100,38,.1)}
+.archive-feature{background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.62));border-color:rgba(17,19,24,.12);box-shadow:0 28px 85px rgba(35,28,19,.1)}
+.archive-feature:after{background:linear-gradient(90deg,transparent,rgba(255,100,38,.12),transparent)}
+.archive-media{background:#121317}
+.glass-audio{
+  background:rgba(255,255,255,.7);
+  border:1px solid rgba(17,19,24,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 10px 30px rgba(35,28,19,.06);
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+}
