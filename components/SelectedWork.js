@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -57,7 +58,15 @@ export default function SelectedWork(){
           <span>{item.type}</span>
         </div>
         <div className="portfolio-case-image">
-          <img src={item.image} alt={item.title} loading={i===0?"eager":"lazy"}/>
+          <Image
+            src={item.image}
+            alt={item.title}
+            fill
+            priority={i===0}
+            quality={74}
+            sizes="(max-width: 800px) 100vw, 62vw"
+            className="object-cover"
+          />
         </div>
         <div className="portfolio-case-copy">
           <h3>{item.title}</h3>
