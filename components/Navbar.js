@@ -15,7 +15,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#09090b]/90 border-b border-white/20">
+    <header className="fixed top-0 left-0 right-0 z-[100] bg-[#070a12]/72 backdrop-blur-xl border-b border-white/20">
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 h-[72px] flex items-center justify-between">
         <Link href="/" className="serif-display text-2xl font-semibold tracking-tight">
           Krishna<span className="text-primary">.</span>
@@ -28,12 +28,12 @@ export default function Navbar() {
           ))}
         </nav>
         <div className="flex items-center gap-3"><div className="hidden lg:block"><AudioPlayer/></div><ThemeSwitcher/>
-          <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" className="hidden sm:block text-[12px] uppercase tracking-[.16em] hover:text-primary transition-colors">GitHub ↗</a>
+          <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" className="hidden sm:block text-[12px] uppercase tracking-[.16em] hover:text-hot transition-colors">GitHub ↗</a>
           <button onClick={()=>setOpen(!open)} className="md:hidden text-xs uppercase tracking-[.16em]">{open ? "Close" : "Menu"}</button>
         </div>
       </div>
       {open && (
-        <div className="md:hidden border-t border-white/10 bg-[#0d0d0c] px-5 py-6 flex flex-col gap-5">
+        <div className="md:hidden border-t border-white/10 bg-[#070a12]/96 px-5 py-6 flex flex-col gap-5">
           {links.map(([label,id]) => <button key={id} onClick={()=>go(id)} className="text-left text-sm uppercase tracking-[.16em]">{label}</button>)}
         </div>
       )}
