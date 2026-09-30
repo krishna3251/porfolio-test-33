@@ -17,6 +17,14 @@ export const metadata={
   description:"Krishna's portfolio: software, AI systems, gaming visuals and sound.",
 };
 
+export const viewport={
+  width:"device-width",
+  initialScale:1,
+  viewportFit:"cover",
+  themeColor:"#08090b",
+  colorScheme:"dark",
+};
+
 export default function RootLayout({children}){
   return <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${spaceGrotesk.variable} h-full antialiased`}>
     <body className="min-h-screen relative overflow-x-hidden site-body">
