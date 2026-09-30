@@ -17,7 +17,7 @@ export default function AudioSyncBackground(){
     let dpr=Math.min(window.devicePixelRatio||1,2);
     let time=0;
     const ORANGE="255,100,38";
-    const INK="17,19,24";
+    const INK="245,241,232";
     const frequencyData=new Uint8Array(32);
 
     const particles=Array.from({length:64},(_,i)=>({
