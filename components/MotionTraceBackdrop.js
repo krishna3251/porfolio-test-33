@@ -9,15 +9,17 @@ export default function MotionTraceBackdrop(){
   useEffect(()=>{
     const canvas=canvasRef.current;
     if(!canvas)return;
-    const ctx=canvas.getContext("2d");
+    if(window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
+    if(window.location.pathname.startsWith("/thumbnails/view")) return;
+    const ctx=canvas.getContext("2d",{alpha:true});
     if(!ctx)return;
 
     let raf;
     let width=innerWidth,height=innerHeight;
-    let dpr=Math.min(devicePixelRatio||1,2);
+    let dpr=Math.min(devicePixelRatio||1,1.5);
     let time=0;
 
-    const traces=Array.from({length:20},(_,i)=>({
+    const traces=Array.from({length:16},(_,i)=>({
       x:Math.random()*width,
       y:Math.random()*height,
       length:120+Math.random()*260,
@@ -28,7 +30,7 @@ export default function MotionTraceBackdrop(){
     }));
 
     const resize=()=>{
-      width=innerWidth;height=innerHeight;dpr=Math.min(devicePixelRatio||1,2);
+      width=innerWidth;height=innerHeight;dpr=Math.min(devicePixelRatio||1,1.5);
       canvas.width=width*dpr;canvas.height=height*dpr;
       canvas.style.width=width+"px";canvas.style.height=height+"px";
       ctx.setTransform(dpr,0,0,dpr,0,0);
