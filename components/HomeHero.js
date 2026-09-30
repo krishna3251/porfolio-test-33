@@ -20,7 +20,7 @@ export default function HomeHero(){
    <div className="portfolio-hero-meta"><span>Based in India</span><span>IST / {time}</span><span>Code + Visuals + Sound</span></div>
   </motion.div>
   <motion.div className="portfolio-hero-image" style={{x:useTransform(sx,[-600,600],[8,-8]),y:useTransform(sy,[-600,600],[5,-5])}}>
-   <div className="portfolio-hero-photo"><Image src="/hero_krishna_vertical.jpg" alt="Krishna" fill priority sizes="(max-width: 800px) 100vw, 480px" quality={78} className="object-cover" /><div className="portfolio-hero-photo-label">DEVELOPER / VISUAL DESIGNER</div></div>
+   <div className="portfolio-hero-photo"><Image src="/hero_krishna_vertical.jpg" alt="Krishna" fill priority sizes="(max-width: 800px) 100vw, 480px" quality={75} className="object-cover" /><div className="portfolio-hero-photo-label">DEVELOPER / VISUAL DESIGNER</div></div>
   </motion.div>
   <div className="portfolio-hero-scroll">Scroll to explore <span>↓</span></div>
  </section>;
