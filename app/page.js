@@ -6,12 +6,12 @@ import HowIBuild from "@/components/HowIBuild";
 import ContactFooter from "@/components/ContactFooter";
 
 export const metadata={
-  title:"KRISHNA | Creative Developer",
-  description:"Krishna's portfolio of software systems, AI applications and gaming visuals.",
+  title:"KRISHNA / Creative Developer + Visual Designer",
+  description:"Software, AI systems, gaming visuals and experiments by Krishna.",
 };
 
 export default function Home(){
-  return <div className="w-full">
+  return <div className="site-page">
     <HomeHero/>
     <main>
       <SelectedWork/>
