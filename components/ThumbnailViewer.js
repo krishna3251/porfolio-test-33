@@ -20,13 +20,13 @@ export default function ThumbnailViewer({ item, previous, next, first, last, ind
         return;
       }
 
-      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
+      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a" || event.key.toLowerCase() === "p") {
         event.preventDefault();
         router.push(previous);
         return;
       }
 
-      if (event.key === "ArrowRight" || event.key.toLowerCase() === "d" || event.key === " ") {
+      if (event.key === "ArrowRight" || event.key.toLowerCase() === "d" || event.key.toLowerCase() === "n") {
         event.preventDefault();
         router.push(next);
         return;
