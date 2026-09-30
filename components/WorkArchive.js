@@ -127,7 +127,19 @@ export default function WorkArchive({ groups = [] }) {
               </header>
 
               <div className="archive-viewer-stage">
-                <img src={selected.src} alt={selected.title} />
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.img
+                    key={selected.id || selected.src}
+                    src={selected.src}
+                    alt={selected.title}
+                    initial={{ opacity: 0, scale: 0.965, x: 22, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, scale: 1, x: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 1.02, x: -22, filter: "blur(8px)" }}
+                    transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                    draggable="false"
+                  />
+                </AnimatePresence>
+                <span className="archive-viewer-hint">ESC TO CLOSE · ← → TO BROWSE</span>
               </div>
 
               <footer className="archive-viewer-bottom">
