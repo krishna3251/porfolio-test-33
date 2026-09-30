@@ -179,7 +179,7 @@ export default function AudioPlayer() {
           alt="Track Artwork"
           fill
           sizes="24px"
-          quality={55}
+          quality={75}
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
