@@ -24,7 +24,7 @@ export default function MotionTraceBackdrop(){
       speed:.18+Math.random()*.45,
       drift:Math.random()*Math.PI*2,
       alpha:.025+Math.random()*.045,
-      hue:i%2===0?"59,130,246":"255,59,77",
+      hue:i%2===0?"255,100,38":"17,19,24",
     }));
 
     const resize=()=>{
@@ -70,7 +70,7 @@ export default function MotionTraceBackdrop(){
         for(let i=0;i<4;i++){
           const radius=46+i*34+Math.sin(time*.035+i)*7;
           const alpha=.065-i*.012;
-          ctx.strokeStyle=i%2===0?"rgba(59,130,246,"+alpha+")":"rgba(255,59,77,"+(alpha*.85)+")";
+          ctx.strokeStyle=i%2===0?"rgba(255,100,38,"+alpha+")":"rgba(17,19,24,"+(alpha*.75)+")";
           ctx.lineWidth=i===0?1.4:1;
           ctx.beginPath();
           ctx.ellipse(p.x,p.y,radius*1.45,radius*.36,-.35,0,Math.PI*2);
