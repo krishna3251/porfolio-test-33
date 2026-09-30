@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 export default function AudioPlayer() {
@@ -173,10 +174,13 @@ export default function AudioPlayer() {
         title={isPlaying ? "Pause background track" : "Play background track"}
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
-        <img
+        <Image
           src="/neverness_showcase.png"
           alt="Track Artwork"
-          className="w-full h-full object-cover"
+          fill
+          sizes="24px"
+          quality={55}
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
           <span className="w-1.5 h-1.5 rounded-full bg-primary" />
