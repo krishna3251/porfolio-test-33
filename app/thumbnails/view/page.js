@@ -25,6 +25,8 @@ export default async function ThumbnailViewPage({ searchParams }) {
 
   const previousItem = sourceItems[(selectedIndex - 1 + sourceItems.length) % sourceItems.length];
   const nextItem = sourceItems[(selectedIndex + 1) % sourceItems.length];
+  const firstItem = sourceItems[0];
+  const lastItem = sourceItems[sourceItems.length - 1];
 
   const makeUrl = (target) =>
     `/thumbnails/view?file=${encodeURIComponent(target.filename)}&category=${encodeURIComponent(requestedCategory)}`;
@@ -36,6 +38,8 @@ export default async function ThumbnailViewPage({ searchParams }) {
       total={sourceItems.length}
       previous={makeUrl(previousItem)}
       next={makeUrl(nextItem)}
+      first={makeUrl(firstItem)}
+      last={makeUrl(lastItem)}
     />
   );
 }
