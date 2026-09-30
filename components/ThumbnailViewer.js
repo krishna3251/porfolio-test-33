@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-export default function ThumbnailViewer({ item, previous, next, index, total }) {
+export default function ThumbnailViewer({ item, previous, next, first, last, index, total }) {
   const router = useRouter();
   const swipeStart = useRef(null);
 
@@ -34,19 +34,19 @@ export default function ThumbnailViewer({ item, previous, next, index, total }) 
 
       if (event.key === "Home") {
         event.preventDefault();
-        router.push(`/thumbnails/view?file=${encodeURIComponent(item.filename)}&category=ALL`);
+        router.push(first);
         return;
       }
 
       if (event.key === "End") {
         event.preventDefault();
-        router.push(next);
+        router.push(last);
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [item.filename, next, previous, router]);
+  }, [first, item.filename, next, previous, router]);
 
   const onPointerDown = (event) => {
     swipeStart.current = { x: event.clientX, y: event.clientY };
