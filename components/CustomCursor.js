@@ -3,87 +3,72 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
+const SELECTOR = "a, button, [role='button'], .cursor-pointer";
+
 export default function CustomCursor() {
   const cursorRef = useRef(null);
   const followerRef = useRef(null);
 
   useEffect(() => {
-    // Disable custom cursor on touch devices to prevent scroll lag
     if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const cursor = cursorRef.current;
     const follower = followerRef.current;
+    if (!cursor || !follower) return;
 
-    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
-    gsap.set(follower, { xPercent: -50, yPercent: -50 });
+    gsap.set([cursor, follower], { xPercent: -50, yPercent: -50 });
 
     const xTo = gsap.quickTo(cursor, "x", { duration: 0.08, ease: "power3" });
     const yTo = gsap.quickTo(cursor, "y", { duration: 0.08, ease: "power3" });
-    const fxTo = gsap.quickTo(follower, "x", { duration: 0.35, ease: "power3" });
-    const fyTo = gsap.quickTo(follower, "y", { duration: 0.35, ease: "power3" });
+    const fxTo = gsap.quickTo(follower, "x", { duration: 0.28, ease: "power3" });
+    const fyTo = gsap.quickTo(follower, "y", { duration: 0.28, ease: "power3" });
 
-    const onMouseMove = (e) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
-      fxTo(e.clientX);
-      fyTo(e.clientY);
+    const onPointerMove = (event) => {
+      xTo(event.clientX);
+      yTo(event.clientY);
+      fxTo(event.clientX);
+      fyTo(event.clientY);
     };
 
-    window.addEventListener("mousemove", onMouseMove);
-
-    // Hover states
-    const onMouseEnter = () => {
+    const setHover = (active) => {
       gsap.to(follower, {
-        scale: 1.6,
-        borderColor: "var(--primary-color)",
-        backgroundColor: "rgba(255, 255, 255, 0.02)",
-        duration: 0.3
+        scale: active ? 1.55 : 1,
+        borderColor: active ? "var(--accent-hot)" : "rgba(247,244,237,.18)",
+        backgroundColor: active ? "rgba(255,106,42,.04)" : "transparent",
+        duration: 0.22,
+        overwrite: true,
       });
       gsap.to(cursor, {
-        scale: 0.5,
-        backgroundColor: "var(--primary-color)",
-        duration: 0.3
+        scale: active ? 0.5 : 1,
+        backgroundColor: active ? "var(--accent-hot)" : "rgba(247,244,237,.9)",
+        duration: 0.22,
+        overwrite: true,
       });
     };
 
-    const onMouseLeave = () => {
-      gsap.to(follower, {
-        scale: 1,
-        borderColor: "rgba(255, 255, 255, 0.15)",
-        backgroundColor: "transparent",
-        duration: 0.3
-      });
-      gsap.to(cursor, {
-        scale: 1,
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
-        duration: 0.3
-      });
+    const onPointerOver = (event) => {
+      const target = event.target instanceof Element ? event.target.closest(SELECTOR) : null;
+      if (target) setHover(true);
     };
 
-    const updateListeners = () => {
-      const clickables = document.querySelectorAll("a, button, [role='button'], .cursor-pointer");
-      clickables.forEach((el) => {
-        el.removeEventListener("mouseenter", onMouseEnter);
-        el.removeEventListener("mouseleave", onMouseLeave);
-        el.addEventListener("mouseenter", onMouseEnter);
-        el.addEventListener("mouseleave", onMouseLeave);
-      });
+    const onPointerOut = (event) => {
+      const target = event.target instanceof Element ? event.target.closest(SELECTOR) : null;
+      if (!target) return;
+      const nextTarget = event.relatedTarget instanceof Element
+        ? event.relatedTarget.closest(SELECTOR)
+        : null;
+      if (nextTarget === target) return;
+      setHover(false);
     };
 
-    updateListeners();
-
-    // Re-bind listeners when content shifts (Framer Motion mounts/demounts)
-    const observer = new MutationObserver(updateListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("pointerover", onPointerOver, { passive: true });
+    document.addEventListener("pointerout", onPointerOut, { passive: true });
 
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      observer.disconnect();
-      const clickables = document.querySelectorAll("a, button, [role='button'], .cursor-pointer");
-      clickables.forEach((el) => {
-        el.removeEventListener("mouseenter", onMouseEnter);
-        el.removeEventListener("mouseleave", onMouseLeave);
-      });
+      window.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerover", onPointerOver);
+      document.removeEventListener("pointerout", onPointerOut);
     };
   }, []);
 
@@ -92,10 +77,12 @@ export default function CustomCursor() {
       <div
         ref={cursorRef}
         className="fixed top-0 left-0 w-2 h-2 bg-white/90 rounded-full pointer-events-none z-[300] hidden md:block mix-blend-difference"
+        aria-hidden="true"
       />
       <div
         ref={followerRef}
-        className="fixed top-0 left-0 w-7 h-7 border border-white/15 rounded-full pointer-events-none z-[300] hidden md:block transition-colors duration-200"
+        className="fixed top-0 left-0 w-7 h-7 border border-white/15 rounded-full pointer-events-none z-[300] hidden md:block"
+        aria-hidden="true"
       />
     </>
   );
