@@ -29,7 +29,7 @@ export default function WorkArchive({groups=[]}){
       <div className="lg:col-span-4">
         <div className="flex items-center gap-3 mb-3">
           <span className="w-2 h-2 rounded-full bg-hot animate-pulse"/>
-          <span className="mono-metadata text-hot text-[8px]">56 VISUALS / LIVE ARCHIVE</span>
+          <span className="mono-metadata text-hot text-[8px]">{items.length} VISUALS / LIVE ARCHIVE</span>
         </div>
         <p className="text-sm leading-relaxed text-muted max-w-md">Gaming thumbnails, character studies and digital experiments. The archive is organized by the game name in each filename, so every image has a clear home instead of becoming tiny anonymous wallpaper.</p>
       </div>
