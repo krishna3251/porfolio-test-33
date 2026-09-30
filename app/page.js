@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "KRISHNA | Developer & AI Systems Portfolio",
   description:
-    "Personal portfolio of Krishna — Python systems developer, Discord bot architect, AI application builder, and digital artist.",
+    "Krishna: software, AI systems, gaming visuals and sound.",
 };
 
 export default function Home() {
