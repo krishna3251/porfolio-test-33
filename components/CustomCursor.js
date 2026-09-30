@@ -3,85 +3,89 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
-const SELECTOR = "a, button, [role='button'], .cursor-pointer";
-
 export default function CustomCursor() {
-  const cursorRef = useRef(null);
-  const followerRef = useRef(null);
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
 
-    const cursor = cursorRef.current;
-    const follower = followerRef.current;
-    if (!cursor || !follower) return;
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
 
-    gsap.set([cursor, follower], { xPercent: -50, yPercent: -50 });
+    const xDot = gsap.quickTo(dot, "x", { duration: 0.06, ease: "power3.out" });
+    const yDot = gsap.quickTo(dot, "y", { duration: 0.06, ease: "power3.out" });
+    const xRing = gsap.quickTo(ring, "x", { duration: 0.18, ease: "power3.out" });
+    const yRing = gsap.quickTo(ring, "y", { duration: 0.18, ease: "power3.out" });
 
-    const xTo = gsap.quickTo(cursor, "x", { duration: 0.08, ease: "power3" });
-    const yTo = gsap.quickTo(cursor, "y", { duration: 0.08, ease: "power3" });
-    const fxTo = gsap.quickTo(follower, "x", { duration: 0.28, ease: "power3" });
-    const fyTo = gsap.quickTo(follower, "y", { duration: 0.28, ease: "power3" });
-
-    const onPointerMove = (event) => {
-      xTo(event.clientX);
-      yTo(event.clientY);
-      fxTo(event.clientX);
-      fyTo(event.clientY);
+    const move = (event) => {
+      xDot(event.clientX);
+      yDot(event.clientY);
+      xRing(event.clientX);
+      yRing(event.clientY);
     };
 
-    const setHover = (active) => {
-      gsap.to(follower, {
-        scale: active ? 1.55 : 1,
-        borderColor: active ? "var(--accent-hot)" : "rgba(247,244,237,.18)",
-        backgroundColor: active ? "rgba(255,106,42,.04)" : "transparent",
-        duration: 0.22,
-        overwrite: true,
-      });
-      gsap.to(cursor, {
-        scale: active ? 0.5 : 1,
-        backgroundColor: active ? "var(--accent-hot)" : "rgba(247,244,237,.9)",
-        duration: 0.22,
-        overwrite: true,
-      });
-    };
-
-    const onPointerOver = (event) => {
-      const target = event.target instanceof Element ? event.target.closest(SELECTOR) : null;
-      if (target) setHover(true);
-    };
-
-    const onPointerOut = (event) => {
-      const target = event.target instanceof Element ? event.target.closest(SELECTOR) : null;
+    const over = (event) => {
+      const target = event.target instanceof Element ? event.target.closest("a,button") : null;
       if (!target) return;
-      const nextTarget = event.relatedTarget instanceof Element
-        ? event.relatedTarget.closest(SELECTOR)
-        : null;
-      if (nextTarget === target) return;
-      setHover(false);
+
+      gsap.to(ring, {
+        scale: 1.45,
+        borderColor: "#ff6a2a",
+        duration: 0.18,
+        overwrite: true,
+      });
+
+      gsap.to(dot, {
+        scale: 0.45,
+        backgroundColor: "#ff6a2a",
+        duration: 0.18,
+        overwrite: true,
+      });
     };
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    document.addEventListener("pointerover", onPointerOver, { passive: true });
-    document.addEventListener("pointerout", onPointerOut, { passive: true });
+    const out = (event) => {
+      const from = event.target instanceof Element ? event.target.closest("a,button") : null;
+      const to = event.relatedTarget instanceof Element ? event.relatedTarget.closest("a,button") : null;
+      if (!from || from === to) return;
+
+      gsap.to(ring, {
+        scale: 1,
+        borderColor: "rgba(247,244,237,.3)",
+        duration: 0.18,
+        overwrite: true,
+      });
+
+      gsap.to(dot, {
+        scale: 1,
+        backgroundColor: "#f7f4ed",
+        duration: 0.18,
+        overwrite: true,
+      });
+    };
+
+    window.addEventListener("pointermove", move, { passive: true });
+    document.addEventListener("pointerover", over, { passive: true });
+    document.addEventListener("pointerout", out, { passive: true });
 
     return () => {
-      window.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerover", onPointerOver);
-      document.removeEventListener("pointerout", onPointerOut);
+      window.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerover", over);
+      document.removeEventListener("pointerout", out);
     };
   }, []);
 
   return (
     <>
       <div
-        ref={cursorRef}
-        className="fixed top-0 left-0 w-2 h-2 bg-white/90 rounded-full pointer-events-none z-[300] hidden md:block mix-blend-difference"
+        ref={dotRef}
+        className="cursor-dot fixed top-0 left-0 w-2 h-2 rounded-full bg-[#f7f4ed] pointer-events-none z-[99999] hidden md:block"
         aria-hidden="true"
       />
       <div
-        ref={followerRef}
-        className="fixed top-0 left-0 w-7 h-7 border border-white/15 rounded-full pointer-events-none z-[300] hidden md:block"
+        ref={ringRef}
+        className="cursor-ring fixed top-0 left-0 w-8 h-8 rounded-full border border-white/25 pointer-events-none z-[99998] hidden md:block"
         aria-hidden="true"
       />
     </>
