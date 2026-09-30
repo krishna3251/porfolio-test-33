@@ -19,7 +19,7 @@
   --fg: #f2f0eb;
   --muted: #9a9993;
   --border: rgba(242,240,235,.12);
-  --accent: #cdb7ff;
+  --accent: #3b82f6;
   --primary-color: var(--accent);
   --background: var(--bg);
   --foreground: var(--fg);
@@ -63,8 +63,8 @@ body {
 }
 
 /* BRUTALIST DESIGN SYSTEM */
-:root{--bg:#09090b;--surface:#101014;--fg:#f4f2ee;--muted:#8d8a95;--border:rgba(244,242,238,.22);--accent:#d7baff;--music-intensity:0;--music-bass:0;--music-scale:1;--music-glow:0px}
-body{background:#09090b!important}.rounded-full,.rounded-3xl,.rounded-2xl,.rounded-xl,.rounded-lg{border-radius:0!important}.shadow-2xl,.shadow-xl,.shadow-lg{box-shadow:none!important}.backdrop-blur-xl,.backdrop-blur-2xl,.backdrop-blur-md{backdrop-filter:none!important}.bg-surface\/50,.bg-surface\/70,.bg-surface\/40{background:rgba(16,16,20,.94)!important}.border-foreground\/5,.border-foreground\/10,.border-foreground\/15{border-color:rgba(244,242,238,.18)!important}.brutal-grid{background-image:linear-gradient(to right,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);background-size:72px 72px}.brutal-title{font-family:var(--font-geist-mono);font-weight:900;text-transform:uppercase;letter-spacing:-.09em;line-height:.8}
+:root{--bg:#070a12;--surface:#0d1220;--fg:#f5f7fb;--muted:#8c96aa;--border:rgba(245,247,251,.22);--accent:#3b82f6;--music-intensity:0;--music-bass:0;--music-scale:1;--music-glow:0px}
+body{background:#070a12!important}.rounded-full,.rounded-3xl,.rounded-2xl,.rounded-xl,.rounded-lg{border-radius:0!important}.shadow-2xl,.shadow-xl,.shadow-lg{box-shadow:none!important}.backdrop-blur-xl,.backdrop-blur-2xl,.backdrop-blur-md{backdrop-filter:none!important}.bg-surface\/50,.bg-surface\/70,.bg-surface\/40{background:rgba(16,16,20,.94)!important}.border-foreground\/5,.border-foreground\/10,.border-foreground\/15{border-color:rgba(245,247,251,.18)!important}.brutal-grid{background-image:linear-gradient(to right,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.04) 1px,transparent 1px);background-size:72px 72px}.brutal-title{font-family:var(--font-geist-mono);font-weight:900;text-transform:uppercase;letter-spacing:-.09em;line-height:.8}
 
 
 /* BLUE + RED GLASS / CREATIVE V2 */
