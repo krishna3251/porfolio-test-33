@@ -1538,3 +1538,137 @@ body{background:#08090b!important}
   .portfolio-process-row{padding:1.25rem 0}
   .thumbnail-viewer-title h1{max-width:52vw}
 }
+
+
+/* FINAL SOLID PORTFOLIO SYSTEM */
+:root{
+  --bg:#08090b;
+  --surface:#111318;
+  --surface-2:#17191d;
+  --fg:#f7f4ed;
+  --muted:#91938f;
+  --border:rgba(247,244,237,.12);
+  --accent:#ff6a2a;
+  --accent-hot:#ff5418;
+  --focus:#ff6a2a;
+}
+html,body{background:var(--bg)!important;color:var(--fg)}
+body{min-width:320px}
+img{max-width:100%}
+button,a{ -webkit-tap-highlight-color:transparent }
+:focus-visible{
+  outline:2px solid var(--focus)!important;
+  outline-offset:3px!important;
+}
+::selection{background:var(--accent)!important;color:#090a0b!important}
+
+/* Remove accidental translucent/glass look across the main design */
+.site-body .glass-nav,
+.site-body .glass-panel,
+.site-body .glass-card,
+.site-body .glass-photo,
+.site-body .glass-audio,
+.site-body .project-card,
+.site-body .archive-card,
+.site-body .archive-tabs{
+  background:var(--surface)!important;
+  background-image:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  box-shadow:none!important;
+  border-color:var(--border)!important;
+}
+.site-body .glass-nav{box-shadow:0 8px 30px rgba(0,0,0,.18)!important}
+.site-body .archive-card:hover,
+.site-body .project-card:hover{
+  background:var(--surface-2)!important;
+  border-color:rgba(255,106,42,.45)!important;
+}
+.site-body .archive-tabs button.active{
+  background:var(--accent-hot)!important;
+  border-color:var(--accent-hot)!important;
+  color:#fff!important;
+  box-shadow:3px 3px 0 var(--fg)!important;
+}
+.site-body .hero-button{
+  background:var(--surface)!important;
+  border-color:var(--border)!important;
+}
+.site-body .hero-button-filled{
+  background:var(--accent-hot)!important;
+  border-color:var(--accent-hot)!important;
+}
+.site-body .hero-button:hover{
+  background:var(--surface-2)!important;
+  border-color:var(--accent)!important;
+}
+.site-body .hero-button-filled:hover{
+  background:var(--accent)!important;
+  border-color:var(--accent)!important;
+}
+
+/* Cleaner motion, less GPU work */
+.site-body .portfolio-hero-grid{opacity:.25!important}
+.site-body .portfolio-hero-photo{
+  box-shadow:16px 16px 0 rgba(255,106,42,.10),0 24px 70px rgba(0,0,0,.38)!important;
+}
+.site-body .portfolio-hero-photo img{will-change:transform}
+.site-body .archive-image img,
+.site-body .portfolio-case-image img{will-change:transform}
+.site-body .archive-card,
+.site-body .project-card,
+.site-body .hero-button,
+.site-body .nav-pill,
+.site-body .nav-link,
+.site-body .nav-mobile{
+  transition-property:transform,background-color,border-color,color,opacity!important;
+}
+
+/* Cursor: stable, subtle and never interferes with clicks */
+.site-body.custom-cursor-active{cursor:none}
+@media(pointer:fine){
+  body:has(.cursor-dot){cursor:none}
+  body:has(.cursor-dot) a,
+  body:has(.cursor-dot) button{cursor:none}
+}
+.cursor-dot,.cursor-ring{contain:layout style paint}
+@media(pointer:coarse){
+  .cursor-dot,.cursor-ring{display:none!important}
+}
+
+/* Better dense navigation */
+@media(min-width:1200px){
+  .site-navbar .glass-nav{padding-left:20px!important;padding-right:20px!important}
+}
+@media(max-width:900px){
+  .portfolio-hero{grid-template-columns:1fr!important}
+  .portfolio-hero-image{width:min(100%,560px)!important;justify-self:center!important}
+  .portfolio-work-head{grid-template-columns:1fr!important}
+  .portfolio-work-head>p{margin-left:0!important}
+}
+@media(max-width:760px){
+  .portfolio-hero{padding-top:7rem!important}
+  .portfolio-hero-copy h1{font-size:clamp(4.25rem,20vw,8rem)!important}
+  .portfolio-case{grid-template-columns:1fr!important}
+  .portfolio-case-meta,.portfolio-case-image,.portfolio-case-copy{grid-column:1!important}
+  .portfolio-case-meta{flex-direction:row!important;justify-content:space-between!important}
+  .portfolio-case-image{margin-top:.4rem}
+  .portfolio-case-copy{padding-left:0!important}
+  .portfolio-skill-grid{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:520px){
+  .portfolio-work,.portfolio-about,.portfolio-skills,.portfolio-process{padding-left:1rem!important;padding-right:1rem!important}
+  .portfolio-skill-grid{grid-template-columns:1fr!important}
+  .portfolio-facts{grid-template-columns:1fr 1fr!important}
+  .portfolio-fact{padding:10px 8px 10px 0!important}
+  .portfolio-hero-actions{flex-direction:column!important;align-items:stretch!important}
+  .portfolio-hero-actions .hero-button{width:100%!important}
+  .thumbnail-viewer-title h1{max-width:50vw!important}
+}
+@media(max-height:700px) and (orientation:landscape){
+  .portfolio-hero{min-height:auto!important;padding-top:6.5rem!important;padding-bottom:3rem!important}
+  .portfolio-hero-image{width:min(34vw,340px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .portfolio-case-image img,.archive-image img,.hero-button,.project-card,.archive-card{will-change:auto!important;transition:none!important}
+}
