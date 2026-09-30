@@ -1,9 +1,4 @@
-"use client";
-const groups=[["Software","Python","JavaScript","Java","C++","SQL"],["AI + Systems","AI applications","OpenRouter","REST APIs","Discord API","Automation"],["Web","Next.js","React","Tailwind","Framer Motion","GitHub"],["Visual","Photoshop","Thumbnail design","Digital art","Composition","Art direction"]];
 export default function SkillsMarquee(){
- return <section className="portfolio-skills" id="skills">
-  <span className="portfolio-kicker">Capabilities</span>
-  <h2 className="mt-5">What I <em>work with.</em></h2>
-  <div className="portfolio-skill-grid">{groups.map(([title,...items])=><div className="portfolio-skill" key={title}><h3>{title}</h3><ul>{items.map(x=><li key={x}>{x}</li>)}</ul></div>)}</div>
- </section>;
+  const groups=[["SOFTWARE","Python","JavaScript","Java","C++","SQL"],["AI + SYSTEMS","LLM apps","OpenRouter","REST APIs","Discord API","Automation"],["WEB","Next.js","React","Tailwind","Framer Motion","GitHub"],["VISUAL","Photoshop","Thumbnail design","Digital art","Composition","Art direction"]];
+  return <section className="skills section" id="skills"><div className="skills-head"><span className="eyebrow">CAPABILITIES</span><h2>What I<br/><em>work with.</em></h2></div><div className="skill-grid">{groups.map(([title,...items])=><div className="skill-box" key={title}><span className="skill-title">{title}</span>{items.map(x=><span className="skill-item" key={x}>{x}</span>)}</div>)}</div></section>;
 }
