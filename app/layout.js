@@ -30,12 +30,7 @@ export default function RootLayout({children}){
       <AudioSyncBackground/>
       <MotionTraceBackdrop/>
       <CustomCursor/>
-      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 bg-[#090a0d]"/>
-        <div className="absolute -top-[18vw] -left-[10vw] w-[52vw] h-[52vw] rounded-full bg-[#ff6a2a]/16 blur-[100px] animate-drift-a"/>
-        <div className="absolute -bottom-[18vw] -right-[5vw] w-[42vw] h-[42vw] rounded-full bg-[#f5f1e8]/[.035] blur-[110px] animate-drift-b"/>
-        <div className="absolute inset-0 opacity-[.035] paper-grain"/>
-      </div>
+      <div className="fixed inset-0 z-0 pointer-events-none bg-[#08090b]"/>
       <Navbar/>
       <SmoothScroll>
         <div className="relative z-10 min-h-screen">
