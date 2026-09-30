@@ -1,27 +1,34 @@
 "use client";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 export default function HomeHero(){
- const [time,setTime]=useState("");
- const mx=useMotionValue(0),my=useMotionValue(0);
- const sx=useSpring(mx,{stiffness:90,damping:20}),sy=useSpring(my,{stiffness:90,damping:20});
- useEffect(()=>{const m=e=>{mx.set(e.clientX-innerWidth/2);my.set(e.clientY-innerHeight/2)};addEventListener("pointermove",m,{passive:true});return()=>removeEventListener("pointermove",m)},[mx,my]);
- useEffect(()=>{const f=()=>setTime(new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hour12:true}).format(new Date()));f();const id=setInterval(f,30000);return()=>clearInterval(id)},[]);
- return <section className="portfolio-hero" id="home">
-  <div className="portfolio-hero-grid"/>
-  <motion.div className="portfolio-hero-copy" style={{x:useTransform(sx,[-600,600],[-5,5])}}>
-   <span className="portfolio-kicker">Creative developer · India</span>
-   <h1>KRISHNA<span>.</span></h1>
-   <p className="portfolio-hero-lead">I build software, AI systems and visual experiences that are useful first, expressive second.</p>
-   <div className="portfolio-hero-actions"><Link href="/thumbnails" className="hero-button hero-button-filled">View my work ↗</Link><Link href="/projects" className="hero-button">Software projects ↗</Link></div>
-   <div className="portfolio-hero-meta"><span>Based in India</span><span>IST / {time}</span><span>Code + Visuals + Sound</span></div>
-  </motion.div>
-  <motion.div className="portfolio-hero-image" style={{x:useTransform(sx,[-600,600],[8,-8]),y:useTransform(sy,[-600,600],[5,-5])}}>
-   <div className="portfolio-hero-photo"><Image src="/hero_krishna_vertical.jpg" alt="Krishna" fill priority sizes="(max-width: 800px) 100vw, 480px" quality={75} className="object-cover" /><div className="portfolio-hero-photo-label">DEVELOPER / VISUAL DESIGNER</div></div>
-  </motion.div>
-  <div className="portfolio-hero-scroll">Scroll to explore <span>↓</span></div>
- </section>;
+  const mx=useMotionValue(0), my=useMotionValue(0);
+  const sx=useSpring(mx,{stiffness:80,damping:20}), sy=useSpring(my,{stiffness:80,damping:20});
+  const move=(event)=>{
+    mx.set((event.clientX-window.innerWidth/2)*.02);
+    my.set((event.clientY-window.innerHeight/2)*.02);
+  };
+
+  return <section className="hero" onPointerMove={move}>
+    <div className="hero-topline"><span>CREATIVE DEVELOPER / VISUAL DESIGNER</span><span>INDIA / 2026</span></div>
+    <div className="hero-main">
+      <div className="hero-copy">
+        <p className="hero-kicker">I make software &amp; visuals.</p>
+        <motion.h1 initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.16,1,.3,1]}}>KRISHNA<span>.</span></motion.h1>
+        <div className="hero-rule"/>
+        <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
+        <div className="hero-actions">
+          <Link href="/thumbnails" className="btn btn-accent">View work ↗</Link>
+          <Link href="/projects" className="btn">Software ↗</Link>
+        </div>
+      </div>
+      <motion.div className="hero-portrait" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}}>
+        <Image src="/hero_krishna_vertical.jpg" alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+        <div className="hero-portrait-tag">01 / KRISHNA</div>
+      </motion.div>
+    </div>
+    <div className="hero-bottom"><span>CODE + ART + SOUND</span><span>SCROLL ↓</span></div>
+  </section>;
 }
