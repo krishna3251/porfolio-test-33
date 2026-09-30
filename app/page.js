@@ -1,5 +1,6 @@
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import HomeHero from "@/components/HomeHero";
+import IntroSection from "@/components/IntroSection";
 import WorkArchive from "@/components/WorkArchive";
 import AboutSection from "@/components/AboutSection";
 import SkillsMarquee from "@/components/SkillsMarquee";
