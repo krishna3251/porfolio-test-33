@@ -1092,79 +1092,66 @@ html,body,.site-body{background:#070809!important;color:#f7f4ed!important;}
   .archive-viewer-copy p{font-size:9px!important;margin-top:4px!important}
 }
 
-/* ART VIEWER V5: preserve native aspect ratio, no forced stretching */
+
+/* FINAL LIGHTBOX: never crop, never stretch, no page scroll */
 .archive-viewer{
   position:fixed!important;
   inset:0!important;
   width:100vw!important;
   height:100dvh!important;
   padding:0!important;
-  display:block!important;
+  margin:0!important;
   overflow:hidden!important;
+  display:block!important;
+  z-index:99999!important;
+  background:rgba(3,4,6,.97)!important;
 }
 .archive-viewer-shell{
-  width:100%!important;
-  max-width:none!important;
-  height:100dvh!important;
-  min-height:0!important;
-  border:0!important;
-  display:grid!important;
-  grid-template-rows:48px minmax(0,1fr) 68px!important;
-  overflow:hidden!important;
-}
-.archive-viewer-stage{
+  position:absolute!important;
+  inset:0!important;
   width:100%!important;
   height:100%!important;
-  min-width:0!important;
-  min-height:0!important;
-  padding:20px 28px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  display:grid!important;
+  grid-template-rows:46px minmax(0,1fr) 58px!important;
+  overflow:hidden!important;
+  background:#080a0d!important;
+}
+.archive-viewer-top{min-height:0!important;height:46px!important;padding:0 16px!important}
+.archive-viewer-stage{
+  min-width:0!important;min-height:0!important;width:100%!important;height:100%!important;
+  padding:10px 18px!important;display:flex!important;align-items:center!important;justify-content:center!important;
   overflow:hidden!important;
 }
 .archive-viewer-stage img{
-  position:relative!important;
-  z-index:1!important;
-  display:block!important;
-  width:auto!important;
-  height:auto!important;
-  max-width:100%!important;
-  max-height:100%!important;
-  object-fit:contain!important;
-  object-position:center!important;
-  flex:0 1 auto!important;
+  position:relative!important;z-index:2!important;display:block!important;flex:none!important;
+  width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center!important;margin:0!important;
 }
 .archive-viewer-bottom{
-  width:100%!important;
-  height:68px!important;
-  min-height:0!important;
-  padding:10px 20px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
+  position:relative!important;min-height:0!important;width:100%!important;height:58px!important;
+  padding:7px 16px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;
+  background:#0d1014!important;overflow:hidden!important;
 }
-.archive-viewer-copy h2{font-size:20px!important}
-.archive-viewer-copy p{font-size:9px!important;margin-top:5px!important}
-.archive-viewer-copy:after{display:none!important}
-.archive-viewer-controls{padding-left:12px!important}
-.archive-viewer-controls button{
-  width:38px!important;
-  height:38px!important;
-  font-size:17px!important;
-}
+.archive-viewer-bottom:before{left:16px!important;right:16px!important;height:1px!important}
+.archive-viewer-copy{min-width:0!important}
+.archive-viewer-copy h2{font-size:18px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.archive-viewer-copy p{margin-top:3px!important;font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.archive-viewer-controls{padding-left:10px!important;border-left:1px solid rgba(247,244,237,.1)!important}
+.archive-viewer-controls button{width:34px!important;height:34px!important;font-size:15px!important}
 .archive-viewer-hint{display:none!important}
 @media(max-width:700px){
-  .archive-viewer-shell{
-    grid-template-rows:44px minmax(0,1fr) 64px!important;
-  }
-  .archive-viewer-stage{padding:10px!important}
-  .archive-viewer-bottom{
-    height:64px!important;
-    padding:8px 12px!important;
-  }
-  .archive-viewer-copy h2{font-size:16px!important}
-  .archive-viewer-copy p{font-size:8px!important}
-  .archive-viewer-controls{padding-left:8px!important}
-  .archive-viewer-controls button{width:34px!important;height:34px!important;font-size:15px!important}
+  .archive-viewer-shell{grid-template-rows:42px minmax(0,1fr) 52px!important}
+  .archive-viewer-top{height:42px!important;padding:0 10px!important}
+  .archive-viewer-stage{padding:7px!important}
+  .archive-viewer-bottom{height:52px!important;padding:6px 10px!important}
+  .archive-viewer-copy h2{font-size:15px!important}
+  .archive-viewer-copy p{font-size:7px!important;margin-top:2px!important}
+  .archive-viewer-controls{padding-left:7px!important}
+  .archive-viewer-controls button{width:30px!important;height:30px!important;font-size:13px!important}
+  .archive-viewer-bottom:before{left:10px!important;right:10px!important}
 }
