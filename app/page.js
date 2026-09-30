@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div className="w-full">
       <HomeHero />
-      <main className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 pb-24">
+      <main className="max-w-[1500px] mx-auto px-4 md:px-8 space-y-28 md:space-y-40 pb-20">
         <section id="work" className="scroll-mt-28 pt-24 md:pt-36">
           <WorkArchive groups={thumbnailGroups} />
         </section>
