@@ -2,231 +2,136 @@
 
 import { useEffect, useRef } from "react";
 
-export default function AudioSyncBackground() {
-  const canvasRef = useRef(null);
+export default function AudioSyncBackground(){
+  const canvasRef=useRef(null);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  useEffect(()=>{
+    const canvas=canvasRef.current;
+    if(!canvas)return;
+    const ctx=canvas.getContext("2d");
+    if(!ctx)return;
 
-    const ctx = canvas.getContext("2d");
-    let animationId;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let raf;
+    let width=window.innerWidth;
+    let height=window.innerHeight;
+    let dpr=Math.min(window.devicePixelRatio||1,2);
+    let time=0;
+    const BLUE="59,130,246";
+    const RED="255,59,77";
+    const frequencyData=new Uint8Array(32);
 
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const particles=Array.from({length:64},(_,i)=>({
+      x:Math.random()*width,
+      y:Math.random()*height,
+      vx:(Math.random()-.5)*.18,
+      vy:(Math.random()-.5)*.12,
+      size:.7+Math.random()*1.6,
+      phase:Math.random()*Math.PI*2,
+      color:i%2===0?BLUE:RED,
+      alpha:.10+Math.random()*.25,
+    }));
+
+    const resize=()=>{
+      width=window.innerWidth;height=window.innerHeight;
+      dpr=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=width*dpr;canvas.height=height*dpr;
+      canvas.style.width=width+"px";canvas.style.height=height+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
     };
-    window.addEventListener("resize", handleResize);
 
-    // Particle class
-    class SnowParticle {
-      constructor(side) {
-        this.side = side; // 0: top, 1: bottom, 2: left, 3: right
-        this.reset();
+    const drawField=(x,y,radius,color,alpha)=>{
+      const g=ctx.createRadialGradient(x,y,0,x,y,radius);
+      g.addColorStop(0,"rgba("+color+","+alpha+")");
+      g.addColorStop(.38,"rgba("+color+","+(alpha*.45)+")");
+      g.addColorStop(1,"rgba("+color+",0)");
+      ctx.fillStyle=g;
+      ctx.fillRect(0,0,width,height);
+    };
+
+    const drawRibbon=(intensity,bass)=>{
+      const amp=8+bass*.13;
+      const base=height*.54+Math.sin(time*.22)*height*.035;
+      const grad=ctx.createLinearGradient(0,0,width,0);
+      grad.addColorStop(0,"rgba("+BLUE+",0)");
+      grad.addColorStop(.28,"rgba("+BLUE+","+(.10+intensity*.0014)+")");
+      grad.addColorStop(.64,"rgba("+RED+","+(.08+intensity*.0011)+")");
+      grad.addColorStop(1,"rgba("+RED+",0)");
+      ctx.beginPath();
+      for(let x=0;x<=width;x+=12){
+        const y=base+Math.sin(x*.012+time*.55)*amp+Math.sin(x*.027-time*.28)*amp*.28;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
-
-      reset() {
-        this.opacity = Math.random() * 0.45 + 0.15;
-        this.size = Math.random() * 2 + 1;
-        this.time = Math.random() * 100;
-        
-        // Spawn coordinates concentrated near respective borders
-        if (this.side === 0) { // top border
-          this.x = Math.random() * width;
-          this.y = -Math.random() * 15;
-          this.vx = (Math.random() - 0.5) * 0.5;
-          this.vy = Math.random() * 0.5 + 0.25;
-        } else if (this.side === 1) { // bottom border
-          this.x = Math.random() * width;
-          this.y = height + Math.random() * 15;
-          this.vx = (Math.random() - 0.5) * 0.5;
-          this.vy = -(Math.random() * 0.5 + 0.25);
-        } else if (this.side === 2) { // left border
-          this.x = -Math.random() * 15;
-          this.y = Math.random() * height;
-          this.vx = Math.random() * 0.5 + 0.25;
-          this.vy = (Math.random() - 0.5) * 0.5;
-        } else { // right border
-          this.x = width + Math.random() * 15;
-          this.y = Math.random() * height;
-          this.vx = -(Math.random() * 0.5 + 0.25);
-          this.vy = (Math.random() - 0.5) * 0.5;
-        }
+      ctx.strokeStyle=grad;
+      ctx.lineWidth=1.15+bass*.008;
+      ctx.stroke();
+      ctx.beginPath();
+      for(let x=0;x<=width;x+=18){
+        const y=base+Math.sin(x*.012+time*.55+Math.PI*.12)*amp*.68+20;
+        if(x===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       }
+      ctx.strokeStyle="rgba("+BLUE+","+(.035+intensity*.0007)+")";
+      ctx.stroke();
+    };
 
-      update(intensity) {
-        // Velocities scale up with music intensity
-        const speedScale = 1 + intensity * 0.035;
-        this.x += this.vx * speedScale;
-        this.y += this.vy * speedScale;
-        
-        // Sway drift
-        this.time += 0.025;
-        this.x += Math.sin(this.time) * 0.2;
-        this.y += Math.cos(this.time) * 0.2;
+    const render=()=>{
+      time+=.012;
+      ctx.clearRect(0,0,width,height);
 
-        // Reset if drifted too far inside or out
-        if (
-          this.x < -40 || 
-          this.x > width + 40 || 
-          this.y < -40 || 
-          this.y > height + 40
-        ) {
-          this.reset();
-        }
-      }
-
-      draw(intensity) {
-        ctx.beginPath();
-        // Particle size expands slightly on beats
-        ctx.arc(this.x, this.y, this.size * (1 + intensity * 0.012), 0, Math.PI * 2);
-        const alpha = Math.min(1, this.opacity * (1 + intensity * 0.03));
-        
-        // Swatch colors alternating
-        ctx.fillStyle = this.side % 2 === 0 
-          ? `rgba(215, 186, 255, ${alpha})` // Lavender
-          : `rgba(247, 177, 227, ${alpha})`; // Pink
-        
-        if (intensity > 25) {
-          ctx.shadowColor = this.side % 2 === 0 ? "rgba(215, 186, 255, 0.6)" : "rgba(247, 177, 227, 0.6)";
-          ctx.shadowBlur = intensity * 0.15;
-        }
-        
-        ctx.fill();
-        ctx.shadowBlur = 0; // reset shadow
-      }
-    }
-
-    // Seed particles distributed on all 4 sides
-    const particles = [];
-    const particlesPerSide = 25; // 100 particles total
-    for (let side = 0; side < 4; side++) {
-      for (let i = 0; i < particlesPerSide; i++) {
-        particles.push(new SnowParticle(side));
-      }
-    }
-
-    let time = 0;
-    const frequencyData = new Uint8Array(32);
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Poll Web Audio API analyser
-      let intensity = 0;
-      let bass = 0;
-      if (typeof window !== "undefined" && window.portfolioAnalyser) {
+      let intensity=0,bass=0;
+      if(typeof window!=="undefined"&&window.portfolioAnalyser){
         window.portfolioAnalyser.getByteFrequencyData(frequencyData);
-        
-        let sum = 0;
-        for (let i = 0; i < frequencyData.length; i++) {
-          sum += frequencyData[i];
-        }
-        intensity = sum / frequencyData.length; // 0 to 255
-
-        // Bass frequencies (bins 0-3)
-        let bassSum = 0;
-        for (let i = 0; i < 4; i++) {
-          bassSum += frequencyData[i];
-        }
-        bass = bassSum / 4; // 0 to 255
+        intensity=frequencyData.reduce((a,b)=>a+b,0)/frequencyData.length;
+        bass=(frequencyData[0]+frequencyData[1]+frequencyData[2]+frequencyData[3])/4;
       }
 
-      // Update root variables for global music synchronization
-      if (typeof document !== "undefined") {
-        const root = document.documentElement;
-        const normInt = intensity / 255;
-        const normBass = bass / 255;
-        
-        root.style.setProperty("--music-intensity", normInt.toFixed(3));
-        root.style.setProperty("--music-bass", normBass.toFixed(3));
-        root.style.setProperty("--music-scale", (1.0 + normBass * 0.02).toFixed(3));
-        root.style.setProperty("--music-glow", (normBass * 18).toFixed(1) + "px");
-      }
+      const root=document.documentElement;
+      const normInt=intensity/255;
+      const normBass=bass/255;
+      root.style.setProperty("--music-intensity",normInt.toFixed(3));
+      root.style.setProperty("--music-bass",normBass.toFixed(3));
+      root.style.setProperty("--music-scale",(1+normBass*.02).toFixed(3));
+      root.style.setProperty("--music-glow",(normBass*22).toFixed(1)+"px");
 
-      time += 0.025;
+      ctx.save();
+      ctx.globalCompositeOperation="lighter";
+      const drift=40+Math.sin(time*.32)*24;
+      drawField(width*.18+drift,height*.2,Math.max(width,height)*.34,BLUE,.035+normInt*.10);
+      drawField(width*.82-drift,height*.72,Math.max(width,height)*.36,RED,.028+normInt*.075);
+      drawRibbon(intensity,bass);
 
-      // Draw sine waves running on all 4 sides of the viewport
-      drawBorderWave(0, intensity); // Top wave
-      drawBorderWave(1, intensity); // Bottom wave
-      drawBorderWave(2, intensity); // Left wave
-      drawBorderWave(3, intensity); // Right wave
-
-      // Update and draw snowfall
-      particles.forEach((p) => {
-        p.update(intensity);
-        p.draw(intensity);
+      particles.forEach((p)=>{
+        p.phase+=.008;
+        p.x+=p.vx*(1+normInt*3);
+        p.y+=p.vy*(1+normInt*2)+Math.sin(p.phase)*.05;
+        if(p.x<-20)p.x=width+20;
+        if(p.x>width+20)p.x=-20;
+        if(p.y<-20)p.y=height+20;
+        if(p.y>height+20)p.y=-20;
+        const pulse=1+Math.sin(time*1.8+p.phase)*.18+normBass*.85;
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size*pulse,0,Math.PI*2);
+        ctx.fillStyle="rgba("+p.color+","+(p.alpha*(.55+normInt*.9))+")";
+        if(normBass>.2){
+          ctx.shadowColor="rgba("+p.color+",.55)";
+          ctx.shadowBlur=6+normBass*16;
+        }
+        ctx.fill();
+        ctx.shadowBlur=0;
       });
 
-      animationId = requestAnimationFrame(render);
+      ctx.restore();
+      raf=requestAnimationFrame(render);
     };
 
-    const drawBorderWave = (side, intensity) => {
-      // Sine wave configs (amplitude scales with music beats)
-      const amp = 3 + intensity * 0.35;
-      const waveFreq = 0.012;
-      const speed = time * 1.2 + intensity * 0.02;
-
-      ctx.beginPath();
-      
-      if (side === 0) { // Top Wave
-        ctx.moveTo(0, 0);
-        for (let x = 0; x <= width; x += 10) {
-          const y = amp * Math.sin(x * waveFreq + speed);
-          ctx.lineTo(x, y + 4);
-        }
-        ctx.strokeStyle = `rgba(215, 186, 255, ${0.18 + intensity * 0.004})`;
-      } 
-      else if (side === 1) { // Bottom Wave
-        ctx.moveTo(0, height);
-        for (let x = 0; x <= width; x += 10) {
-          const y = amp * Math.sin(x * waveFreq - speed);
-          ctx.lineTo(x, height - 4 + y);
-        }
-        ctx.strokeStyle = `rgba(247, 177, 227, ${0.18 + intensity * 0.004})`;
-      } 
-      else if (side === 2) { // Left Wave
-        ctx.moveTo(0, 0);
-        for (let y = 0; y <= height; y += 10) {
-          const x = amp * Math.sin(y * waveFreq + speed);
-          ctx.lineTo(x + 4, y);
-        }
-        ctx.strokeStyle = `rgba(215, 186, 255, ${0.18 + intensity * 0.004})`;
-      } 
-      else { // Right Wave
-        ctx.moveTo(width, 0);
-        for (let y = 0; y <= height; y += 10) {
-          const x = amp * Math.sin(y * waveFreq - speed);
-          ctx.lineTo(width - 4 + x, y);
-        }
-        ctx.strokeStyle = `rgba(247, 177, 227, ${0.18 + intensity * 0.004})`;
-      }
-
-      ctx.lineWidth = 1.5 + intensity * 0.02;
-      
-      if (intensity > 20) {
-        ctx.shadowColor = side === 1 || side === 3 ? "rgba(247, 177, 227, 0.5)" : "rgba(215, 186, 255, 0.5)";
-        ctx.shadowBlur = intensity * 0.15;
-      }
-      
-      ctx.stroke();
-      ctx.shadowBlur = 0; // reset shadow
-    };
-
+    resize();
+    window.addEventListener("resize",resize);
     render();
 
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", handleResize);
+    return ()=>{
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize",resize);
     };
-  }, []);
+  },[]);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 w-full h-full pointer-events-none z-[90] bg-transparent"
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 z-0 pointer-events-none opacity-90" aria-hidden="true"/>;
 }
