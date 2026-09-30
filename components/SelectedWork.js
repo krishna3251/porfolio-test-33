@@ -63,7 +63,7 @@ export default function SelectedWork(){
             alt={item.title}
             fill
             priority={i===0}
-            quality={74}
+            quality={75}
             sizes="(max-width: 800px) 100vw, 62vw"
             className="object-cover"
           />
