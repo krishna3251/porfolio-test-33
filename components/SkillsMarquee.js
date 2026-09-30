@@ -10,7 +10,7 @@ const groups=[
 export default function SkillsMarquee(){
   return <div>
     <div className="border-b border-white/10 pb-6 mb-10">
-      <p className="mono-metadata text-primary mb-3">03 / Capabilities</p>
+      <p className="mono-metadata text-primary mb-3">04 / Capabilities</p>
       <h2 className="serif-display text-5xl md:text-7xl">What I work with</h2>
     </div>
     <div className="grid md:grid-cols-2 lg:grid-cols-4 border-t border-l border-white/10">
