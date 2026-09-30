@@ -108,9 +108,9 @@ export default function WorkArchive({ groups = [] }) {
           >
             <motion.div
               className="archive-viewer-shell"
-              initial={{ opacity: 0, scale: 0.97, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.985 }}
+              initial={{ opacity: 0, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.995 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               onClick={(event) => event.stopPropagation()}
             >
@@ -132,9 +132,9 @@ export default function WorkArchive({ groups = [] }) {
                     key={selected.id || selected.src}
                     src={selected.src}
                     alt={selected.title}
-                    initial={{ opacity: 0, scale: 0.965, x: 22, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, scale: 1, x: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, scale: 1.02, x: -22, filter: "blur(8px)" }}
+                          initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.025 }}
                     transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
                     draggable="false"
                   />
