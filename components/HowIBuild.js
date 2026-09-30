@@ -10,7 +10,7 @@ const principles=[
 export default function HowIBuild(){
   return <div>
     <div className="border-b border-white/10 pb-6 mb-10">
-      <p className="mono-metadata text-primary mb-3">04 / Process</p>
+      <p className="mono-metadata text-primary mb-3">05 / Process</p>
       <h2 className="serif-display text-5xl md:text-7xl">How I build</h2>
     </div>
     <div className="divide-y divide-white/10 border-y border-white/10">
