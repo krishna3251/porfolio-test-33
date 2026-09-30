@@ -6,7 +6,7 @@ export default function AboutSection() {
   return (
     <div className="grid lg:grid-cols-12 gap-10 lg:gap-20">
       <div className="lg:col-span-4">
-        <p className="mono-metadata text-primary mb-4">02 / About</p>
+        <p className="mono-metadata text-primary mb-4">03 / About</p>
         <h2 className="serif-display text-5xl md:text-7xl leading-[.9]">Code with<br/><i>character.</i></h2>
       </div>
       <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} className="lg:col-span-8">
