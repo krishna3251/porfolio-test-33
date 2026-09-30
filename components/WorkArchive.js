@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -29,6 +30,7 @@ export default function WorkArchive({ groups = [] }) {
         <button className={active === "ALL" ? "active" : ""} onClick={() => setActive("ALL")}>
           ALL <b>{items.length}</b>
         </button>
+
         {categories.map((category) => (
           <button
             key={category.label}
@@ -52,21 +54,34 @@ export default function WorkArchive({ groups = [] }) {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -40px" }}
-            transition={{ duration: 0.5, delay: (index % 4) * 0.04, ease: [0.16, 1, 0.3, 1] }}
+            transition={{
+              duration: 0.5,
+              delay: (index % 4) * 0.04,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             whileHover={{ y: -8 }}
             className="archive-card"
           >
             <Link
               href={`/thumbnails/view?file=${encodeURIComponent(item.filename)}&category=${encodeURIComponent(active)}`}
               className="block text-left group"
+              aria-label={`View ${item.title}`}
             >
               <div className="archive-image">
-                <img src={item.src} alt={item.title} loading="lazy" />
+                <Image
+                  src={item.src}
+                  alt={item.title}
+                  fill
+                  quality={75}
+                  sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                  className="object-cover"
+                />
                 <div className="archive-shade" />
                 <span className="archive-badge">{item.label}</span>
                 <span className="archive-number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="archive-open">VIEW ↗</span>
               </div>
+
               <div className="archive-info">
                 <div>
                   <h3>{item.title}</h3>
