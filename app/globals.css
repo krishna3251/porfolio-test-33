@@ -1465,3 +1465,76 @@ body{background:#08090b!important}
   .audio-sync-canvas,.motion-trace-canvas{display:none!important}
   .portfolio-case-image img,.archive-image img{transition:none!important}
 }
+
+/* SOLID COLOR FINISH + RESPONSIVE HARDENING */
+.site-body .glass-nav,
+.site-body .glass-panel,
+.site-body .glass-card,
+.site-body .glass-photo,
+.site-body .glass-audio,
+.site-body .project-card,
+.site-body .archive-card,
+.site-body .archive-tabs,
+.site-body .intro-tags,
+.site-body .tag-chip{
+  background:#111318!important;
+  background-image:none!important;
+}
+.site-body .portfolio-hero-photo{
+  box-shadow:18px 18px 0 rgba(255,106,42,.12),0 28px 80px rgba(0,0,0,.42)!important;
+}
+.site-body .contact-block{
+  background:#050608!important;
+  background-image:none!important;
+}
+.site-body .thumbnail-viewer-backdrop{
+  background:#050608!important;
+  background-image:none!important;
+}
+.site-body .thumbnail-viewer-canvas{
+  background:#07090c!important;
+}
+.site-body .thumbnail-viewer-glow{
+  display:none!important;
+}
+.site-body .thumbnail-viewer-nav{
+  background:#090b0e!important;
+}
+.site-body .thumbnail-viewer-footer{
+  background:#101216!important;
+}
+.site-body .thumbnail-viewer-actions a,
+.site-body .thumbnail-viewer-close{
+  background:#111318!important;
+}
+.site-body .thumbnail-viewer-actions a:hover,
+.site-body .thumbnail-viewer-close:hover{
+  background:#ff5418!important;
+}
+
+/* Keep long archives cheap to render */
+.archive-grid{content-visibility:auto;contain:layout paint style;}
+.thumbnail-viewer-page{touch-action:none;}
+.thumbnail-viewer-canvas{touch-action:pan-y;}
+@media(max-width:1100px){
+  .portfolio-hero{gap:3rem}
+  .portfolio-work-head{gap:3rem}
+}
+@media(max-width:820px){
+  .portfolio-hero{min-height:auto;padding-top:8rem;padding-bottom:5rem}
+  .portfolio-hero-copy h1{font-size:clamp(4rem,18vw,8rem)}
+  .portfolio-hero-lead{font-size:1.15rem}
+  .portfolio-case{grid-template-columns:44px minmax(0,1fr)!important}
+  .portfolio-case-image,.portfolio-case-copy{grid-column:2}
+  .portfolio-about{gap:3rem}
+  .portfolio-skill{min-height:190px}
+}
+@media(max-width:600px){
+  .portfolio-display{letter-spacing:-.08em}
+  .portfolio-work,.portfolio-about,.portfolio-skills,.portfolio-process{padding-top:5rem!important;padding-bottom:5rem!important}
+  .portfolio-case{padding:2rem 0!important}
+  .portfolio-work-head>p{font-size:14px}
+  .portfolio-skill{min-height:160px;padding:1.1rem}
+  .portfolio-process-row{padding:1.25rem 0}
+  .thumbnail-viewer-title h1{max-width:52vw}
+}
