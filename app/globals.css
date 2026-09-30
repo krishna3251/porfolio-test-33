@@ -1044,3 +1044,50 @@ html,body,.site-body{background:#070809!important;color:#f7f4ed!important;}
   .archive-viewer-copy p{font-size:10px!important}
   .archive-viewer-copy:after{margin-top:11px;width:130px}
 }
+
+/* VIEWER FINAL V4: slimmer caption bar, larger artwork area */
+.archive-viewer-shell{
+  height:min(calc(100dvh - 20px),1000px)!important;
+  grid-template-rows:56px minmax(0,1fr) 86px!important;
+}
+.archive-viewer-bottom{
+  height:86px!important;
+  min-height:0!important;
+  padding:12px 18px!important;
+  gap:18px!important;
+}
+.archive-viewer-bottom:before{
+  left:18px;right:18px;height:1px;
+}
+.archive-viewer-copy h2{
+  font-size:clamp(20px,2vw,30px)!important;
+  line-height:1!important;
+}
+.archive-viewer-copy p{
+  margin-top:6px!important;
+  font-size:10px!important;
+}
+.archive-viewer-copy:after{display:none!important}
+.archive-viewer-controls{
+  padding-left:14px!important;
+}
+.archive-viewer-controls button{
+  width:44px!important;height:44px!important;font-size:19px!important;
+}
+.archive-viewer-stage{padding:14px!important}
+@media(max-width:700px){
+  .archive-viewer-shell{
+    height:calc(100dvh - 16px)!important;
+    grid-template-rows:52px minmax(0,1fr) 72px!important;
+  }
+  .archive-viewer-stage{padding:8px!important}
+  .archive-viewer-bottom{
+    height:72px!important;
+    padding:10px 12px!important;
+  }
+  .archive-viewer-bottom:before{left:12px;right:12px}
+  .archive-viewer-controls{padding-left:8px!important}
+  .archive-viewer-controls button{width:38px!important;height:38px!important;font-size:16px!important}
+  .archive-viewer-copy h2{font-size:17px!important}
+  .archive-viewer-copy p{font-size:9px!important;margin-top:4px!important}
+}
