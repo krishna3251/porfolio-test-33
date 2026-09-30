@@ -109,7 +109,7 @@ export default function ThumbnailViewer({ item, previous, next, first, last, ind
                   alt={item.title}
                   fill
                   priority
-                  quality={80}
+                  quality={75}
                   sizes="100vw"
                   className="thumbnail-art"
                   draggable="false"
