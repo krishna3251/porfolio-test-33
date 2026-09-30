@@ -10,7 +10,7 @@ const projects=[
 export default function ProjectsSection(){
   return <div>
     <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-6 mb-2">
-      <div><p className="mono-metadata text-primary mb-3">05 / Systems</p><h2 className="serif-display text-5xl md:text-7xl">Software I’ve built</h2></div>
+      <div><p className="mono-metadata text-primary mb-3">06 / Systems</p><h2 className="serif-display text-5xl md:text-7xl">Software I’ve built</h2></div>
       <p className="text-sm text-muted max-w-sm mt-4 md:mt-0">A few projects from the engineering side of the portfolio.</p>
     </div>
     <div className="divide-y divide-white/10 border-b border-white/10">
