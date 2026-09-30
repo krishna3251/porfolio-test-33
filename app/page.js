@@ -5,58 +5,37 @@ import AboutSection from "@/components/AboutSection";
 import SkillsMarquee from "@/components/SkillsMarquee";
 import HowIBuild from "@/components/HowIBuild";
 import ProjectsSection from "@/components/ProjectsSection";
-import MusicSpotlight from "@/components/MusicSpotlight";
 import ContactFooter from "@/components/ContactFooter";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "KRISHNA | Developer & AI Systems Portfolio",
-  description:
-    "Personal portfolio of Krishna — Python systems developer, Discord bot architect, AI application builder, and digital artist.",
+  title: "KRISHNA | Developer & Visual Designer",
+  description: "Krishna's portfolio of software systems, gaming thumbnails, and digital work.",
 };
 
 export default function Home() {
   const thumbnailGroups = getChronologicalThumbnailGroups();
-
   return (
-    <div className="flex-grow flex flex-col w-full relative">
-      {/* SECTION 00: HERO */}
+    <div className="w-full">
       <HomeHero />
-
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 w-full space-y-36 pb-24">
-        {/* SECTION 01: WORK (CHRONOLOGICAL THUMBNAIL ARCHIVE) */}
-        <section id="work" className="scroll-mt-28">
+      <main className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 pb-24">
+        <section id="work" className="scroll-mt-28 pt-24 md:pt-36">
           <WorkArchive groups={thumbnailGroups} />
         </section>
-
-        {/* SECTION 02: ABOUT */}
-        <section id="about" className="scroll-mt-28">
+        <section id="about" className="scroll-mt-28 pt-28 md:pt-40">
           <AboutSection />
         </section>
-
-        {/* SECTION 03: SKILLS */}
-        <section id="skills" className="scroll-mt-28">
+        <section id="skills" className="scroll-mt-28 pt-28 md:pt-40">
           <SkillsMarquee />
         </section>
-
-        {/* SECTION 04: HOW I BUILD */}
-        <section id="build" className="scroll-mt-28">
+        <section id="build" className="scroll-mt-28 pt-28 md:pt-40">
           <HowIBuild />
         </section>
-
-        {/* SECTION 05: PROJECTS */}
-        <section id="projects" className="scroll-mt-28">
+        <section id="projects" className="scroll-mt-28 pt-28 md:pt-40">
           <ProjectsSection />
         </section>
-
-        {/* SECTION 06: MUSIC */}
-        <section id="music" className="scroll-mt-28">
-          <MusicSpotlight />
-        </section>
-      </div>
-
-      {/* SECTION 07: CONTACT & FOOTER */}
+      </main>
       <ContactFooter />
     </div>
   );
