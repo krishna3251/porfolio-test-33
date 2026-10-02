@@ -12,7 +12,7 @@ const botsData = [
     status: "Active",
     description: "An elite moderation and AI chatbot system. Lxeus learns server patterns to preemptively manage toxicity while providing intelligent conversational utility and server analysis.",
     tags: ["Auto-Mod", "AI Chat", "Analytics"],
-    image: "/images/bots/lxeus.svg",,
+    image: "/images/bots/lxeus.svg",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishna3251/lexus_dc.git" }],
     commands: [
@@ -45,7 +45,7 @@ const botsData = [
     status: "Active",
     description: "The universal server builder. Rukia deploys complete, pre-configured Discord ecosystems in seconds, handling roles, permissions, and channel hierarchies instantly.",
     tags: ["Templating", "Role Sync", "Guild Builder"],
-    image: "/images/bots/rukiya.svg",,
+    image: "/images/bots/rukiya.svg",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/rukia3287-jpg/rukiya.git" }],
     commands: [
