@@ -70,7 +70,8 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
     [previous,next].forEach((url)=>{
       const image=new Image();
       image.decoding="async";
-      image.src=new URL(url,window.location.origin).searchParams.get("file") || "";
+      const filename=new URL(url,window.location.origin).searchParams.get("file");
+      if(filename) image.src=`/images/${encodeURIComponent(filename)}`;
     });
   },[previous,next]);
 
