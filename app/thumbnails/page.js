@@ -13,7 +13,7 @@ export default function ThumbnailsPage(){
   const total=groups.reduce((n,g)=>n+g.thumbnails.length,0);
 
   return <main className="archive-page">
-    <section className="archive-hero">
+    <section className="archive-hero" data-page="thumbnails">
       <div>
         <span className="archive-eyebrow">02 / VISUAL ARCHIVE</span>
         <h1>Pictures<br/><em>that punch.</em></h1>

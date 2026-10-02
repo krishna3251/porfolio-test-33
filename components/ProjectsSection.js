@@ -10,6 +10,7 @@ const projects=[
 
 export default function ProjectsSection(){
   return <section className="project-index">
+    <div className="project-live-row"><span><i/> BUILD INDEX ONLINE</span><span>04 SYSTEMS / 2026</span><span>SCROLL ↓</span></div>
     <div className="section-marker"><span>03</span><span>PROJECT INDEX</span></div>
     <div className="project-intro">
       <div><span className="eyebrow">SOFTWARE / SELECTED</span><h1>Software<br/><em>with character.</em></h1></div>
@@ -23,6 +24,7 @@ export default function ProjectsSection(){
         <strong>↗</strong>
       </motion.a>)}
     </div>
+    <div className="project-footer-note"><span>EVERYTHING STARTS WITH A PROBLEM.</span><span>THE INTERFACE IS THE LAST 10%.</span></div>
     <div className="project-bottom"><a href="/bots">Explore bot systems ↗</a><a href="https://github.com/krishna3251?tab=repositories" target="_blank" rel="noreferrer">All repositories ↗</a></div>
   </section>;
 }

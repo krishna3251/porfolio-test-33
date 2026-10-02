@@ -15,8 +15,18 @@ export default function WorkArchive({groups=[]}){
     return order.filter(label=>counts[label]).map(label=>({label,count:counts[label]}));
   },[items]);
   const filtered=active==="ALL"?items:items.filter(item=>item.label===active);
+  const featured=filtered[0];
 
   return <div className="archive-shell">
+    <div className="archive-live-panel">
+      <div><span className="archive-live-dot"/><span>ARCHIVE ONLINE</span></div>
+      <strong>{String(filtered.length).padStart(2,"0")}</strong>
+      <small>VISUAL WORKS INDEXED</small>
+    </div>
+    {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
+      <div className="archive-feature-media"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image"/><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
+      <div className="archive-feature-copy"><span>SELECTED FRAME</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={"/thumbnails/view?file="+encodeURIComponent(featured.filename)+"&category=ALL"} data-cursor="FEATURED">OPEN FEATURE ↗</Link></div>
+    </motion.div>}
     <div className="archive-filter">
       <div className="archive-filter-track">
         <button onClick={()=>setActive("ALL")} className={active==="ALL"?"active":""}>ALL <b>{items.length}</b></button>
