@@ -1,6 +1,7 @@
 import WorkArchive from "@/components/WorkArchive";
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import TerminalBar from "@/components/TerminalBar";
+import SquigglyText from "@/components/ui/squiggly-text";
 
 export const dynamic="force-dynamic";
 
@@ -17,7 +18,7 @@ export default function ThumbnailsPage(){
     <section className="archive-hero" data-page="thumbnails">
       <div>
         <span className="archive-eyebrow">02 / VISUAL ARCHIVE</span>
-        <h1>Pictures<br/><em>that punch.</em></h1>
+        <h1>Pictures<br/><em><SquigglyText scale={2.5}>that punch.</SquigglyText></em></h1>
       </div>
       <div className="archive-hero-aside">
         <span>{String(total).padStart(2,"0")} pieces</span>
