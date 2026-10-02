@@ -29,12 +29,12 @@ export default function Navbar(){
 
   return <header className="site-header">
     <div className="site-header-inner">
-      <Link href="/" className="site-logo" aria-label="Krishna home">KRISHNA<span>.</span></Link>
+      <Link href="/" className="site-logo" aria-label="Krishna home"><span className="site-logo-prompt">&gt;</span> KRISHNA<span>.</span></Link>
       <nav className="site-nav" aria-label="Primary navigation">
         {links.map(([label,href])=><Link key={href} href={href} className={pathname===href?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
       </nav>
       <div className="site-header-right">
-        <span className="nav-status"><i/> AVAILABLE / 2026</span>
+        <span className="nav-status"><i/> [OK] AVAILABLE / 2026</span>
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
         <button type="button" className="mobile-menu-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
