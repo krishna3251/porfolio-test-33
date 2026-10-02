@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
+import WobbleImage from "@/components/WobbleImage";
 import SquigglyText from "@/components/ui/squiggly-text";
 
 const HERO_IMAGE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
