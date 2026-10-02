@@ -2475,3 +2475,100 @@ body::after{
 @media (prefers-reduced-motion:reduce){
   .service-glass-card{transition:none}
 }
+
+
+/* Song box: Uiverse input language adapted to the site's black / white / orange system. */
+.site-audio{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:90;
+}
+.site-audio .song-box{
+  position:relative;
+  width:min(430px,calc(100vw - 36px));
+  min-height:60px;
+  padding:12px 14px 12px 12px;
+  border:3px solid #08090b;
+  outline:1px solid rgba(247,244,237,.24);
+  border-radius:0;
+  background:
+    linear-gradient(135deg,rgba(255,106,42,.12),transparent 36%),
+    #f7f4ed;
+  color:#08090b;
+  box-shadow:8px 8px 0 #08090b;
+  transition:transform .3s ease,box-shadow .3s ease,background .3s ease;
+}
+.site-audio .song-box::before{
+  content:"";
+  position:absolute;
+  top:-1px;
+  left:-1px;
+  width:56px;
+  height:2px;
+  background:var(--accent);
+}
+.site-audio .song-box::after{
+  content:attr(data-text);
+  position:absolute;
+  right:10px;
+  top:-10px;
+  padding:2px 6px;
+  background:#08090b;
+  color:var(--accent);
+  font:7px var(--font-dm-mono),monospace;
+  letter-spacing:.13em;
+}
+.site-audio .song-box:hover{
+  transform:translate(-4px,-4px);
+  box-shadow:12px 12px 0 #08090b;
+}
+.site-audio .song-box button{
+  color:#08090b;
+  transition:color .2s ease,background .2s ease,transform .2s ease;
+}
+.site-audio .song-box button:hover{
+  color:var(--accent)!important;
+}
+.site-audio .song-box .text-primary{
+  color:var(--accent)!important;
+}
+.site-audio .song-box .text-muted,
+.site-audio .song-box [class*="text-muted"]{
+  color:#5f625d!important;
+}
+.site-audio .song-box .bg-primary{
+  background:var(--accent)!important;
+}
+.site-audio .song-box img{
+  border:2px solid #08090b;
+  filter:saturate(.85) contrast(1.08);
+}
+.site-audio .song-box > div{
+  min-width:0;
+}
+.site-audio .song-box .mono-metadata{
+  color:#454943;
+}
+.site-audio .song-box .w-1\.5{
+  border-radius:0;
+}
+@media(max-width:560px){
+  .site-audio{
+    right:10px;
+    bottom:10px;
+  }
+  .site-audio .song-box{
+    width:calc(100vw - 20px);
+    min-height:56px;
+    padding:9px 10px;
+    box-shadow:5px 5px 0 #08090b;
+  }
+  .site-audio .song-box:hover{
+    transform:translate(-2px,-2px);
+    box-shadow:7px 7px 0 #08090b;
+  }
+  .site-audio .song-box::after{
+    font-size:6px;
+  }
+}
