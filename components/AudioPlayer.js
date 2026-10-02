@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
+import WobbleImage from "@/components/WobbleImage";
 
 const AUDIO_CDN_BASE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public";
 const AUDIO_SRC=`${AUDIO_CDN_BASE}/song.mp3`;
@@ -212,14 +213,16 @@ export default function AudioPlayer() {
         title={isPlaying ? "Pause background track" : "Play background track"}
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
-        <Image
-          src={ARTWORK_SRC}
-          alt="Track Artwork"
-          fill
-          sizes="24px"
-          quality={75}
-          className="object-cover"
-        />
+        <WobbleImage className="absolute inset-0">
+          <Image
+            src={ARTWORK_SRC}
+            alt="Track Artwork"
+            fill
+            sizes="24px"
+            quality={75}
+            className="object-cover"
+          />
+        </WobbleImage>
         <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
           <span className="w-1.5 h-1.5 rounded-full bg-primary" />
         </div>
