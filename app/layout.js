@@ -41,7 +41,7 @@ export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",t
 
 export default function RootLayout({children}){
   return <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}>
-    <body className="site-body">
+    <body id="top" className="site-body">
       <Navbar/>
       <CustomCursor/>
       <SmoothScroll><PageTransition>{children}</PageTransition></SmoothScroll>

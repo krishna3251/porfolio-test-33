@@ -14,25 +14,25 @@ export default function HomeHero(){
   };
 
   return <section className="hero" onPointerMove={move}>
+    <div className="hero-grid" aria-hidden="true"><span/><span/><span/><span/></div>
     <div className="hero-watermark" aria-hidden="true">01</div>
+    <div className="hero-rail" aria-hidden="true"><span>KRISHNA / 2026</span><i/></div>
     <div className="hero-topline">
       <span>CREATIVE DEVELOPER / VISUAL DESIGNER</span>
       <span>INDIA / 2026</span>
     </div>
     <div className="hero-main">
       <div className="hero-copy">
+        <div className="hero-availability"><span/><b>AVAILABLE FOR SELECTED WORK</b></div>
         <p className="hero-kicker"><span className="hero-dot"/>I make software &amp; visuals.</p>
         <motion.h1 initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.16,1,.3,1]}}>KRISHNA<span>.</span></motion.h1>
         <div className="hero-rule"><span/></div>
         <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
         <div className="hero-actions">
-          <Link href="/thumbnails" className="btn btn-accent">View work <span>↗</span></Link>
-          <Link href="/projects" className="btn">Software <span>↗</span></Link>
+          <Link href="/thumbnails" className="btn btn-accent" data-cursor="VIEW WORK">View work <span>↗</span></Link>
+          <Link href="/projects" className="btn" data-cursor="SOFTWARE">Software <span>↗</span></Link>
         </div>
-        <div className="hero-mini-meta">
-          <span>BASED IN INDIA</span>
-          <span>AI / WEB / VISUAL</span>
-        </div>
+        <div className="hero-mini-meta"><span>BASED IN INDIA</span><span>AI / WEB / VISUAL</span><span>01—06</span></div>
       </div>
       <motion.div className="hero-portrait" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}}>
         <div className="hero-image-frame">
@@ -40,11 +40,9 @@ export default function HomeHero(){
         </div>
         <div className="hero-portrait-tag">01 / KRISHNA</div>
         <div className="hero-portrait-caption">SELECTED PORTRAIT / 2026</div>
+        <div className="hero-portrait-corner" aria-hidden="true">↗</div>
       </motion.div>
     </div>
-    <div className="hero-bottom">
-      <span>CODE + ART + SOUND</span>
-      <span>SCROLL <i>↓</i></span>
-    </div>
+    <div className="hero-bottom"><span>CODE + ART + SOUND</span><span>SCROLL <i>↓</i></span></div>
   </section>;
 }
