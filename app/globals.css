@@ -2648,3 +2648,25 @@ body::after{
     animation:none;
   }
 }
+
+
+/* Shared Uiverse-style image wobble */
+.wobble-image{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  transform-origin:center;
+  will-change:transform;
+}
+.wobble-image-inner{
+  position:relative;
+  transform-origin:center;
+  will-change:transform;
+}
+@media (prefers-reduced-motion:reduce){
+  .wobble-image,
+  .wobble-image-inner{
+    transition:none!important;
+  }
+}
