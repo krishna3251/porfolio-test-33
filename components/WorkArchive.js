@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useMemo,useRef,useState } from "react";
 import TerminalBar from "@/components/TerminalBar";
+import WobbleImage from "@/components/WobbleImage";
 
 const order=["GENSHIN","HSR","WUWA","VALORANT","PUBG","NTE","FORZA","OTHER"];
 
@@ -56,7 +57,9 @@ function ThumbnailCard({item,index,active,total}){
     >
       <motion.div className="thumb-media" style={{rotateX:rx,rotateY:ry,transformStyle:"preserve-3d"}}>
         <motion.div className="thumb-parallax-image" style={{y:imageY}}>
-          <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image"/>
+          <WobbleImage className="absolute inset-0">
+            <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image"/>
+          </WobbleImage>
         </motion.div>
         <div className="thumb-vignette" aria-hidden="true"/>
         <div className="thumb-color-wash" aria-hidden="true"/>
@@ -99,7 +102,7 @@ export default function WorkArchive({groups=[]}){
     </div>
 
     {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
-      <div className="archive-feature-media"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image"/><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
+      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image"/></WobbleImage><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
       <div className="archive-feature-copy"><span>SELECTED FRAME</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={"/thumbnails/view?file="+encodeURIComponent(featured.filename)+"&category=ALL"} data-cursor="FEATURED">OPEN FEATURE ↗</Link></div>
     </motion.div>}
 
