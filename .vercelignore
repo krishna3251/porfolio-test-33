@@ -1,0 +1,4 @@
+# Keep the large portfolio originals out of Vercel's deployment payload.
+# The thumbnail manifest points at the GitHub-backed jsDelivr CDN instead.
+public/images/*.png
+public/images/**/*.png

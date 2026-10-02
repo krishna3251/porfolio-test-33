@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.jsdelivr.net",
+        pathname: "/gh/krishna3251/porfolio-test-33@main/public/images/**",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
     qualities: [75],
     minimumCacheTTL: 60 * 60 * 24 * 30,

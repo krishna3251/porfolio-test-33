@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getThumbnailSrc } from "@/lib/thumbnails";
 
 export default function ThumbnailViewer({item,previous,next,first,last,index,total}){
   const router=useRouter();
@@ -71,7 +72,7 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
       const image=new Image();
       image.decoding="async";
       const filename=new URL(url,window.location.origin).searchParams.get("file");
-      if(filename) image.src=`/images/${encodeURIComponent(filename)}`;
+      if(filename) image.src=getThumbnailSrc(filename);
     });
   },[previous,next]);
 
