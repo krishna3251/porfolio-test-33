@@ -14,6 +14,8 @@ export default function AudioPlayer() {
   const [volume, setVolume] = useState(0.35);
   const [autoplay, setAutoplay] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isWobbleHover, setIsWobbleHover] = useState(false);
   const analyserInitialized = useRef(false);
 
   const initAnalyser = useCallback(() => {
@@ -36,6 +38,18 @@ export default function AudioPlayer() {
       console.log("Audio API connection status:", e);
     }
   }, []);
+
+  const handleWobbleMove = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - (rect.left + rect.width / 2)) / 20;
+    const y = (event.clientY - (rect.top + rect.height / 2)) / 20;
+    setMousePosition({ x, y });
+  };
+
+  const resetWobble = () => {
+    setIsWobbleHover(false);
+    setMousePosition({ x: 0, y: 0 });
+  };
 
   const togglePlay = () => {
     if (!audioRef.current) return;
@@ -165,7 +179,27 @@ export default function AudioPlayer() {
   }, [initAnalyser, volume, isMuted]);
 
   return (
-    <div className={`flex items-center gap-3 glass-audio song-box px-3 py-1.5 transition-all duration-300 ${isPlaying ? "song-box-playing" : ""}`}>
+    <div
+      className={`flex items-center gap-3 glass-audio song-box px-3 py-1.5 transition-all duration-300 ${isPlaying ? "song-box-playing" : ""}`}
+      onMouseMove={handleWobbleMove}
+      onMouseEnter={() => setIsWobbleHover(true)}
+      onMouseLeave={resetWobble}
+      style={{
+        transform: isWobbleHover
+          ? `translate3d(${mousePosition.x}px, ${mousePosition.y}px, 0) scale3d(1, 1, 1)`
+          : "translate3d(0px, 0px, 0) scale3d(1, 1, 1)",
+        transition: "transform 0.1s ease-out",
+      }}
+    >
+      <div
+        className="song-box-inner flex items-center gap-3 w-full"
+        style={{
+          transform: isWobbleHover
+            ? `translate3d(${-mousePosition.x}px, ${-mousePosition.y}px, 0) scale3d(1.03, 1.03, 1)`
+            : "translate3d(0px, 0px, 0) scale3d(1, 1, 1)",
+          transition: "transform 0.1s ease-out",
+        }}
+      >
       <audio ref={audioRef} src={AUDIO_SRC} loop crossOrigin="anonymous" preload="metadata" />
 
       {/* Rotating Vinyl / Artwork Micro Badge */}
@@ -208,7 +242,7 @@ export default function AudioPlayer() {
         </span>
       </div>
 
-      {/* Visualizer Waveform Bars */}
+        {/* Visualizer Waveform Bars */}
       <button
         type="button"
         onClick={togglePlay}
@@ -231,7 +265,7 @@ export default function AudioPlayer() {
         ))}
       </button>
 
-      {/* Play / Pause Toggle Button */}
+        {/* Play / Pause Toggle Button */}
       <button
         onClick={togglePlay}
         className="mono-metadata text-[8px] font-bold text-muted hover:text-primary transition-colors cursor-pointer px-1"
@@ -239,10 +273,10 @@ export default function AudioPlayer() {
         {isPlaying ? "PAUSE" : "PLAY"}
       </button>
 
-      {/* Vertical divider */}
+        {/* Vertical divider */}
       <span className="w-px h-3 bg-foreground/10" />
 
-      {/* Mute Button */}
+        {/* Mute Button */}
       <button
         onClick={toggleMute}
         className="text-muted hover:text-primary transition-colors cursor-pointer flex items-center justify-center p-0.5"
@@ -267,7 +301,8 @@ export default function AudioPlayer() {
             />
           </svg>
         )}
-      </button>
+        </button>
+      </div>
     </div>
   );
 }
