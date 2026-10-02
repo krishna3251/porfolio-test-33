@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailSrc } from "@/lib/thumbnails";
+import WobbleImage from "@/components/WobbleImage";
 
 export default function ThumbnailViewer({item,previous,next,first,last,index,total}){
   const router=useRouter();
@@ -88,25 +89,27 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
     <section className="thumbnail-viewer-stage" aria-label={item.title}>
       <div className="viewer-side-tag">VISUAL / {item.label}</div>
       <AnimatePresence mode="wait" initial={false} custom={direction}>
-        <motion.img
-          key={item.id}
-          src={item.src}
-          alt={item.title}
-          className="thumbnail-viewer-image"
-          draggable="false"
-          decoding="async"
-          fetchPriority="high"
-          custom={direction}
-          variants={{
-            enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
-            center:{opacity:1,x:0,scale:1},
-            exit:(dir)=>({opacity:0,x:dir*-42,scale:.985})
-          }}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{duration:.32,ease:[.16,1,.3,1]}}
-        />
+        <WobbleImage className="thumbnail-viewer-wobble">
+          <motion.img
+            key={item.id}
+            src={item.src}
+            alt={item.title}
+            className="thumbnail-viewer-image"
+            draggable="false"
+            decoding="async"
+            fetchPriority="high"
+            custom={direction}
+            variants={{
+              enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
+              center:{opacity:1,x:0,scale:1},
+              exit:(dir)=>({opacity:0,x:dir*-42,scale:.985})
+            }}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{duration:.32,ease:[.16,1,.3,1]}}
+          />
+        </WobbleImage>
       </AnimatePresence>
       <span className="thumbnail-viewer-help">← A / P &nbsp; PREVIOUS &nbsp;&nbsp; D / N → &nbsp; NEXT &nbsp;&nbsp; ESC &nbsp; BACK</span>
     </section>
