@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { getThumbnailSrc } from "@/lib/thumbnails";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
+import SquigglyText from "@/components/ui/squiggly-text";
 
 const work=[
   {no:"01",label:"VISUAL DESIGN",title:"Gaming thumbnails",text:"Character-led compositions, dramatic typography and art direction made to win attention in one frame.",filename:"genshin cinematic.png",href:"/thumbnails"},
@@ -17,7 +18,7 @@ export default function SelectedWork(){
     <TerminalBar command="cat ./selected-work" meta="INDEX / 03" />
     <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>03 CASE STUDIES</em></div>
     <div className="section-heading">
-      <div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em>intent.</em></h2></div>
+      <div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em><SquigglyText scale={2.5}>intent.</SquigglyText></em></h2></div>
       <p>Three different outputs, one approach: make the thing clear, useful and visually hard to ignore.</p>
     </div>
     <div className="case-list">
