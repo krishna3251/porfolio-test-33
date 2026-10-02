@@ -1054,21 +1054,24 @@ button { font: inherit; }
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  isolation: isolate;
   background: #0b0c0a;
 }
 
 .thumbnail-viewer-image {
   display: block;
-  position: static;
+  position: relative;
   z-index: 2;
+  flex: 0 1 auto;
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  max-width: min(100%, calc(100vw - 44px));
+  max-height: min(100%, calc(100dvh - 134px));
   object-fit: contain;
   object-position: center;
   user-select: none;
   -webkit-user-drag: none;
+  will-change: transform, opacity;
 }
 
 .thumbnail-viewer-help {
@@ -1438,7 +1441,14 @@ button { font: inherit; }
     padding: 0 10px;
   }
 
-  .thumbnail-viewer-stage { padding: 7px; }
+  .thumbnail-viewer-stage {
+    padding: 7px;
+  }
+
+  .thumbnail-viewer-image {
+    max-width: calc(100vw - 14px);
+    max-height: calc(100dvh - 109px);
+  }
 
   .thumbnail-viewer-help,
   .viewer-side-tag {
