@@ -4,7 +4,7 @@ import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 export const dynamic="force-dynamic";
 
 export const metadata={
-  title:"Thumbnails / KRISHNA",
+  title:"Thumbnails",
   description:"Gaming thumbnail and visual design archive by Krishna.",
 };
 
