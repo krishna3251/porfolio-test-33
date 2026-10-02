@@ -205,10 +205,12 @@ export default function AudioPlayer() {
       </div>
 
       {/* Visualizer Waveform Bars */}
-      <div
+      <button
+        type="button"
         onClick={togglePlay}
         className="flex items-end gap-[2px] h-3 w-4 cursor-pointer justify-center ml-1"
         title="Play / Pause Audio"
+        aria-label={isPlaying ? "Pause music" : "Play music"}
       >
         {[0, 1, 2, 3].map((idx) => (
           <span
@@ -223,7 +225,7 @@ export default function AudioPlayer() {
             }}
           />
         ))}
-      </div>
+      </button>
 
       {/* Play / Pause Toggle Button */}
       <button
