@@ -2,81 +2,108 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
 
 export default function CustomCursor(){
   const pathname=usePathname();
   const dotRef=useRef(null);
   const ringRef=useRef(null);
   const labelRef=useRef(null);
+  const activeRef=useRef(false);
 
   useEffect(()=>{
     if(pathname.startsWith("/thumbnails/view")) return;
-    const fine=window.matchMedia("(pointer:fine)").matches;
-    if(!fine) return;
+    if(!window.matchMedia("(pointer:fine)").matches) return;
 
-    const dot=dotRef.current;
-    const ring=ringRef.current;
-    const label=labelRef.current;
+    const dot=dotRef.current, ring=ringRef.current, label=labelRef.current;
     if(!dot||!ring||!label) return;
 
-    const body=document.body;
-    body.classList.add("custom-cursor-active");
+    const target={x:window.innerWidth/2,y:window.innerHeight/2};
+    const ringPos={x:target.x,y:target.y};
+    const labelPos={x:target.x+34,y:target.y+28};
+    let raf=0;
 
-    gsap.set([dot,ring,label],{autoAlpha:0,xPercent:-50,yPercent:-50});
-    const xDot=gsap.quickTo(dot,"x",{duration:.055,ease:"power3.out"});
-    const yDot=gsap.quickTo(dot,"y",{duration:.055,ease:"power3.out"});
-    const xRing=gsap.quickTo(ring,"x",{duration:.16,ease:"power3.out"});
-    const yRing=gsap.quickTo(ring,"y",{duration:.16,ease:"power3.out"});
-    const xLabel=gsap.quickTo(label,"x",{duration:.2,ease:"power3.out"});
-    const yLabel=gsap.quickTo(label,"y",{duration:.2,ease:"power3.out"});
+    const render=()=>{
+      ringPos.x+=(target.x-ringPos.x)*.2;
+      ringPos.y+=(target.y-ringPos.y)*.2;
+      labelPos.x+=(target.x+34-labelPos.x)*.17;
+      labelPos.y+=(target.y+28-labelPos.y)*.17;
 
+      dot.style.transform=`translate3d(${target.x}px,${target.y}px,0) translate(-50%,-50%)`;
+      ring.style.transform=`translate3d(${ringPos.x}px,${ringPos.y}px,0) translate(-50%,-50%)`;
+      label.style.transform=`translate3d(${labelPos.x}px,${labelPos.y}px,0) translate(-50%,-50%) scale(${activeRef.current?1:0.92})`;
+
+      raf=requestAnimationFrame(render);
+    };
+
+    const show=()=>{
+      if(!activeRef.current){
+        activeRef.current=true;
+        document.body.classList.add("custom-cursor-active");
+        dot.style.opacity="1";
+        ring.style.opacity="1";
+      }
+    };
+    const hide=()=>{
+      activeRef.current=false;
+      document.body.classList.remove("custom-cursor-active");
+      dot.style.opacity="0";
+      ring.style.opacity="0";
+      label.style.opacity="0";
+    };
     const move=(event)=>{
-      xDot(event.clientX);yDot(event.clientY);
-      xRing(event.clientX);yRing(event.clientY);
-      xLabel(event.clientX+34);yLabel(event.clientY+28);
-      gsap.to([dot,ring],{autoAlpha:1,duration:.14,overwrite:true});
+      target.x=event.clientX;
+      target.y=event.clientY;
+      show();
     };
-
-    const getTarget=(event)=>event.target instanceof Element?event.target.closest("a,button,[data-cursor]"):null;
-
+    const targetFor=(event)=>{
+      return event.target instanceof Element?event.target.closest("a,button,[data-cursor]"):null;
+    };
     const over=(event)=>{
-      const target=getTarget(event);
-      if(!target) return;
-      const text=target.getAttribute("data-cursor")||target.getAttribute("aria-label")||target.textContent?.trim().split("\n")[0]||"OPEN";
-      label.textContent=text.slice(0,18).toUpperCase();
-      gsap.to(ring,{scale:1.65,borderColor:"#ff6a2a",backgroundColor:"rgba(255,106,42,.06)",duration:.2,overwrite:true});
-      gsap.to(dot,{scale:.45,backgroundColor:"#ff6a2a",duration:.2,overwrite:true});
-      gsap.to(label,{autoAlpha:1,scale:1,duration:.18,overwrite:true});
+      const el=targetFor(event);
+      if(!el) return;
+      const text=(el.getAttribute("data-cursor")||el.getAttribute("aria-label")||el.textContent||"OPEN").replace(/\s+/g," ").trim().slice(0,18).toUpperCase();
+      label.textContent=text;
+      ring.classList.add("is-hover");
+      dot.classList.add("is-hover");
+      label.style.opacity="1";
     };
-
     const out=(event)=>{
-      const from=getTarget(event);
+      const from=targetFor(event);
       const to=event.relatedTarget instanceof Element?event.relatedTarget.closest("a,button,[data-cursor]"):null;
       if(!from||from===to) return;
-      gsap.to(ring,{scale:1,borderColor:"rgba(247,244,237,.25)",backgroundColor:"transparent",duration:.2,overwrite:true});
-      gsap.to(dot,{scale:1,backgroundColor:"#f7f4ed",duration:.2,overwrite:true});
-      gsap.to(label,{autoAlpha:0,scale:.9,duration:.14,overwrite:true});
+      ring.classList.remove("is-hover");
+      dot.classList.remove("is-hover");
+      label.style.opacity="0";
     };
+    const down=()=>{
+      ring.classList.add("is-pressed");
+      setTimeout(()=>ring.classList.remove("is-pressed"),160);
+    };
+    const leave=()=>hide();
 
     window.addEventListener("pointermove",move,{passive:true});
+    window.addEventListener("pointerleave",leave,{passive:true});
     document.addEventListener("pointerover",over,{passive:true});
     document.addEventListener("pointerout",out,{passive:true});
+    document.addEventListener("pointerdown",down,{passive:true});
+    raf=requestAnimationFrame(render);
 
     return()=>{
-      body.classList.remove("custom-cursor-active");
+      cancelAnimationFrame(raf);
+      document.body.classList.remove("custom-cursor-active");
       window.removeEventListener("pointermove",move);
+      window.removeEventListener("pointerleave",leave);
       document.removeEventListener("pointerover",over);
       document.removeEventListener("pointerout",out);
-      gsap.killTweensOf([dot,ring,label]);
+      document.removeEventListener("pointerdown",down);
     };
   },[pathname]);
 
   if(pathname.startsWith("/thumbnails/view")) return null;
 
   return <>
-    <div ref={dotRef} className="cursor-dot fixed top-0 left-0 w-2 h-2 rounded-full bg-[#f7f4ed] pointer-events-none z-[99999]" aria-hidden="true"/>
-    <div ref={ringRef} className="cursor-ring fixed top-0 left-0 w-9 h-9 rounded-full border border-white/25 pointer-events-none z-[99998]" aria-hidden="true"/>
-    <div ref={labelRef} className="cursor-label fixed top-0 left-0 px-2 py-1 border border-white/10 bg-[#111318]/90 text-[#f7f4ed] pointer-events-none z-[99997]" aria-hidden="true"/>
+    <div ref={dotRef} className="cursor-dot" aria-hidden="true"/>
+    <div ref={ringRef} className="cursor-ring" aria-hidden="true"/>
+    <div ref={labelRef} className="cursor-label" aria-hidden="true"/>
   </>;
 }

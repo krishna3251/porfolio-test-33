@@ -1,4 +1,5 @@
 import HomeHero from "@/components/HomeHero";
+import StudioStrip from "@/components/StudioStrip";
 import SelectedWork from "@/components/SelectedWork";
 import AboutSection from "@/components/AboutSection";
 import SkillsMarquee from "@/components/SkillsMarquee";
@@ -14,6 +15,7 @@ export default function Home(){
   return <div className="site-page">
     <HomeHero/>
     <main>
+      <StudioStrip/>
       <SelectedWork/>
       <AboutSection/>
       <SkillsMarquee/>

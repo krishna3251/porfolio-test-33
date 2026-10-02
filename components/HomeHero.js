@@ -29,8 +29,8 @@ export default function HomeHero(){
         <div className="hero-rule"><span/></div>
         <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
         <div className="hero-actions">
-          <Link href="/thumbnails" className="btn btn-accent" data-cursor="VIEW WORK">View work <span>↗</span></Link>
-          <Link href="/projects" className="btn" data-cursor="SOFTWARE">Software <span>↗</span></Link>
+          <Link href="/thumbnails" className="btn btn-accent magnetic" data-cursor="VIEW WORK">View work <span>↗</span></Link>
+          <Link href="/projects" className="btn magnetic" data-cursor="SOFTWARE">Software <span>↗</span></Link>
         </div>
         <div className="hero-mini-meta"><span>BASED IN INDIA</span><span>AI / WEB / VISUAL</span><span>01—06</span></div>
       </div>
@@ -41,8 +41,10 @@ export default function HomeHero(){
         <div className="hero-portrait-tag">01 / KRISHNA</div>
         <div className="hero-portrait-caption">SELECTED PORTRAIT / 2026</div>
         <div className="hero-portrait-corner" aria-hidden="true">↗</div>
+        <div className="hero-portrait-scan" aria-hidden="true"/>
       </motion.div>
     </div>
+    <div className="hero-scroll-badge" aria-hidden="true"><span>SCROLL / EXPLORE / </span></div>
     <div className="hero-bottom"><span>CODE + ART + SOUND</span><span>SCROLL <i>↓</i></span></div>
   </section>;
 }
