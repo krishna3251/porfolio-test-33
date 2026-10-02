@@ -1,9 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
+
 export default function AboutSection(){
   return <section className="about section" id="about">
     <div className="about-index"><span className="eyebrow">ABOUT</span><strong>03</strong></div>
     <motion.div className="about-body" initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:.7}}>
+      <div className="about-signal"><span/><span>PROFILE / CURRENT</span></div>
       <h2>I like useful things.<br/><em>I also like beautiful things.</em></h2>
       <div className="about-copy">
         <p className="about-lead">I&apos;m Krishna, a developer who moves comfortably between code and visual design.</p>

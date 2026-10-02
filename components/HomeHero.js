@@ -14,23 +14,37 @@ export default function HomeHero(){
   };
 
   return <section className="hero" onPointerMove={move}>
-    <div className="hero-topline"><span>CREATIVE DEVELOPER / VISUAL DESIGNER</span><span>INDIA / 2026</span></div>
+    <div className="hero-watermark" aria-hidden="true">01</div>
+    <div className="hero-topline">
+      <span>CREATIVE DEVELOPER / VISUAL DESIGNER</span>
+      <span>INDIA / 2026</span>
+    </div>
     <div className="hero-main">
       <div className="hero-copy">
-        <p className="hero-kicker">I make software &amp; visuals.</p>
+        <p className="hero-kicker"><span className="hero-dot"/>I make software &amp; visuals.</p>
         <motion.h1 initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.16,1,.3,1]}}>KRISHNA<span>.</span></motion.h1>
-        <div className="hero-rule"/>
+        <div className="hero-rule"><span/></div>
         <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
         <div className="hero-actions">
-          <Link href="/thumbnails" className="btn btn-accent">View work ↗</Link>
-          <Link href="/projects" className="btn">Software ↗</Link>
+          <Link href="/thumbnails" className="btn btn-accent">View work <span>↗</span></Link>
+          <Link href="/projects" className="btn">Software <span>↗</span></Link>
+        </div>
+        <div className="hero-mini-meta">
+          <span>BASED IN INDIA</span>
+          <span>AI / WEB / VISUAL</span>
         </div>
       </div>
       <motion.div className="hero-portrait" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}}>
-        <Image src={HERO_IMAGE} alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+        <div className="hero-image-frame">
+          <Image src={HERO_IMAGE} alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+        </div>
         <div className="hero-portrait-tag">01 / KRISHNA</div>
+        <div className="hero-portrait-caption">SELECTED PORTRAIT / 2026</div>
       </motion.div>
     </div>
-    <div className="hero-bottom"><span>CODE + ART + SOUND</span><span>SCROLL ↓</span></div>
+    <div className="hero-bottom">
+      <span>CODE + ART + SOUND</span>
+      <span>SCROLL <i>↓</i></span>
+    </div>
   </section>;
 }

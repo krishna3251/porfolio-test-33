@@ -4,6 +4,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import AudioPlayer from "@/components/AudioPlayer";
+import CustomCursor from "@/components/CustomCursor";
 
 const geistSans=Geist({variable:"--font-geist-sans",subsets:["latin"],display:"swap"});
 const geistMono=Geist_Mono({variable:"--font-geist-mono",subsets:["latin"],display:"swap"});
@@ -14,19 +15,13 @@ const heroImage = "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main
 
 export const metadata={
   metadataBase:new URL(siteUrl),
-  title:{
-    default:"KRISHNA / Creative Developer + Visual Designer",
-    template:"%s / KRISHNA",
-  },
+  title:{default:"KRISHNA / Creative Developer + Visual Designer",template:"%s / KRISHNA"},
   description:"Software, AI systems, gaming visuals and experiments by Krishna.",
   applicationName:"KRISHNA Portfolio",
   authors:[{name:"Krishna"}],
   creator:"Krishna",
   publisher:"Krishna",
-  robots:{
-    index:true,
-    follow:true,
-  },
+  robots:{index:true,follow:true},
   openGraph:{
     type:"website",
     siteName:"KRISHNA",
@@ -42,21 +37,14 @@ export const metadata={
   },
 };
 
-export const viewport={
-  width:"device-width",
-  initialScale:1,
-  viewportFit:"cover",
-  themeColor:"#10110f",
-  colorScheme:"dark",
-};
+export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",themeColor:"#10110f",colorScheme:"dark"};
 
 export default function RootLayout({children}){
   return <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}>
     <body className="site-body">
       <Navbar/>
-      <SmoothScroll>
-        <PageTransition>{children}</PageTransition>
-      </SmoothScroll>
+      <CustomCursor/>
+      <SmoothScroll><PageTransition>{children}</PageTransition></SmoothScroll>
       <div className="site-audio"><AudioPlayer/></div>
     </body>
   </html>;

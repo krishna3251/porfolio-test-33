@@ -12,19 +12,21 @@ const work=[
 
 export default function SelectedWork(){
   return <section className="selected-work section">
+    <div className="section-marker"><span>02</span><span>SELECTED WORK</span></div>
     <div className="section-heading">
-      <div><span className="eyebrow">SELECTED WORK</span><h2>Made with<br/><em>intent.</em></h2></div>
+      <div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em>intent.</em></h2></div>
       <p>Three different outputs, one approach: make the thing clear, useful and visually hard to ignore.</p>
     </div>
     <div className="case-list">
       {work.map((item,i)=><motion.article key={item.no} className={`case-row ${i%2?"reverse":""}`} initial={{opacity:0,y:36}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-70px"}} transition={{duration:.65,ease:[.16,1,.3,1]}}>
-        <div className="case-no">{item.no}</div>
+        <div className="case-no"><span>{item.no}</span><i>0{i+1}</i></div>
         <Link href={item.href} className="case-image-wrap">
           <Image src={getThumbnailSrc(item.filename)} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width: 840px) 100vw, 58vw" className="case-image"/>
-          <span className="case-view">VIEW ↗</span>
+          <span className="case-view">VIEW <b>↗</b></span>
+          <span className="case-corner" aria-hidden="true"/>
         </Link>
         <div className="case-copy">
-          <span className="eyebrow">{item.label}</span><h3>{item.title}</h3><p>{item.text}</p>
+          <span className="eyebrow">{item.label}</span><h3>{item.title}<sup>.</sup></h3><p>{item.text}</p>
           <Link href={item.href} className="text-link">Open project <span>↗</span></Link>
         </div>
       </motion.article>)}

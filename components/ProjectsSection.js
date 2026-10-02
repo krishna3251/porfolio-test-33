@@ -10,31 +10,19 @@ const projects=[
 
 export default function ProjectsSection(){
   return <section className="project-index">
+    <div className="section-marker"><span>03</span><span>PROJECT INDEX</span></div>
     <div className="project-intro">
-      <div><span className="eyebrow">03 / PROJECT INDEX</span><h1>Software<br/><em>with character.</em></h1></div>
-      <p>Systems, bots and experiments built around real use cases, presented as work rather than a dashboard pretending to be a spaceship.</p>
+      <div><span className="eyebrow">SOFTWARE / SELECTED</span><h1>Software<br/><em>with character.</em></h1></div>
+      <p>Systems, bots and experiments built around real use cases. Structured like work, not a dashboard pretending to be a spaceship.</p>
     </div>
     <div className="project-list">
-      {projects.map(([no,name,type,desc,url])=><motion.a
-        key={no}
-        href={url}
-        target="_blank"
-        rel="noreferrer"
-        className="project-row"
-        initial={{opacity:0,y:18}}
-        whileInView={{opacity:1,y:0}}
-        viewport={{once:true,margin:"-30px"}}
-        transition={{duration:.5,ease:[.16,1,.3,1]}}
-      >
+      {projects.map(([no,name,type,desc,url])=><motion.a key={no} href={url} target="_blank" rel="noreferrer" className="project-row" initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-30px"}} transition={{duration:.5,ease:[.16,1,.3,1]}}>
         <span className="project-no">{no}</span>
         <div className="project-name"><span>{type}</span><h2>{name}<b>.</b></h2></div>
         <p>{desc}</p>
         <strong>↗</strong>
       </motion.a>)}
     </div>
-    <div className="project-bottom">
-      <a href="/bots">Explore bot systems ↗</a>
-      <a href="https://github.com/krishna3251?tab=repositories" target="_blank" rel="noreferrer">All repositories ↗</a>
-    </div>
+    <div className="project-bottom"><a href="/bots">Explore bot systems ↗</a><a href="https://github.com/krishna3251?tab=repositories" target="_blank" rel="noreferrer">All repositories ↗</a></div>
   </section>;
 }
