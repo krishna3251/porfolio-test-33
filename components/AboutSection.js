@@ -1,8 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
+import TerminalBar from "@/components/TerminalBar";
 
 export default function AboutSection(){
   return <section className="about section" id="about">
+    <TerminalBar command="whoami --profile" meta="USER / KRISHNA" />
     <div className="about-index"><span className="eyebrow">ABOUT</span><strong>03</strong></div>
     <motion.div className="about-body" initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:.7}}>
       <div className="about-signal"><span/><span>PROFILE / CURRENT</span></div>
