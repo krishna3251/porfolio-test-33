@@ -42,7 +42,9 @@ export default function HomeHero(){
       </div>
       <motion.div className="hero-portrait" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}}>
         <div className="hero-image-frame">
-          <Image src={HERO_IMAGE} alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+          <WobbleImage className="absolute inset-0">
+            <Image src={HERO_IMAGE} alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+          </WobbleImage>
         </div>
         <div className="hero-portrait-tag">01 / KRISHNA</div>
         <div className="hero-portrait-caption">SELECTED PORTRAIT / 2026</div>
