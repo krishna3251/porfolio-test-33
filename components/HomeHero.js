@@ -17,6 +17,10 @@ export default function HomeHero(){
   return <section className="hero" onPointerMove={move}>
     <div className="hero-grid" aria-hidden="true"><span/><span/><span/><span/></div>
     <div className="hero-watermark" aria-hidden="true">01</div>
+    <pre className="hero-ascii" aria-hidden="true">{`┌──────────────┐
+│ KRISHNA.STD  │
+│ CODE + IMAGE │
+└──────────────┘`}</pre>
     <div className="hero-rail" aria-hidden="true"><span>KRISHNA / 2026</span><i/></div>
     <TerminalBar command="init portfolio --mode=creative" meta="BOOT / 01" />
     <div className="hero-topline">
