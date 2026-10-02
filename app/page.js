@@ -1,5 +1,6 @@
 import HomeHero from "@/components/HomeHero";
 import StudioStrip from "@/components/StudioStrip";
+import ServicesSection from "@/components/ServicesSection";
 import SelectedWork from "@/components/SelectedWork";
 import AboutSection from "@/components/AboutSection";
 import SkillsMarquee from "@/components/SkillsMarquee";
