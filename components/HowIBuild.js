@@ -1,4 +1,4 @@
 export default function HowIBuild(){
-  const rows=[["01","Understand","Start with the problem, the person and the actual outcome."],["02","Build","Break the idea into clear pieces and make them work."],["03","Refine","Test the real thing and remove friction."],["04","Ship","Put it in people&apos;s hands, learn, then improve."]];
+  const rows=[["01","Understand","Start with the problem, the person and the actual outcome."],["02","Build","Break the idea into clear pieces and make them work."],["03","Refine","Test the real thing and remove friction."],["04","Ship","Put it in people's hands, learn, then improve."]];
   return <section className="process section" id="process"><div className="process-heading"><span className="eyebrow">PROCESS</span><h2>How I<br/><em>build.</em></h2></div><div className="process-list">{rows.map(([no,title,text])=><div className="process-row" key={no}><span>{no}</span><h3>{title}</h3><p>{text}</p></div>)}</div></section>;
 }
