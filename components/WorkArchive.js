@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useMemo,useRef,useState } from "react";
+import TerminalBar from "@/components/TerminalBar";
 
 const order=["GENSHIN","HSR","WUWA","VALORANT","PUBG","NTE","FORZA","OTHER"];
 
@@ -90,6 +91,7 @@ export default function WorkArchive({groups=[]}){
   const featured=filtered[0];
 
   return <div className="archive-shell">
+    <TerminalBar command="gallery --recent --sort=visual" meta="ARCHIVE / ONLINE" />
     <div className="archive-live-panel">
       <div><span className="archive-live-dot"/><span>ARCHIVE ONLINE</span></div>
       <strong>{String(filtered.length).padStart(2,"0")}</strong>
