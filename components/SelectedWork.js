@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { getThumbnailSrc } from "@/lib/thumbnails";
+import TerminalBar from "@/components/TerminalBar";
 
 const work=[
   {no:"01",label:"VISUAL DESIGN",title:"Gaming thumbnails",text:"Character-led compositions, dramatic typography and art direction made to win attention in one frame.",filename:"genshin cinematic.png",href:"/thumbnails"},
@@ -12,6 +13,7 @@ const work=[
 
 export default function SelectedWork(){
   return <section className="selected-work section">
+    <TerminalBar command="cat ./selected-work" meta="INDEX / 03" />
     <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>03 CASE STUDIES</em></div>
     <div className="section-heading">
       <div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em>intent.</em></h2></div>
