@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import TerminalBar from "@/components/TerminalBar";
+import SquigglyText from "@/components/ui/squiggly-text";
 
 const services=[
   ["01","AI SYSTEMS","LLM apps, automation and useful internal tools.","/projects"],
@@ -14,7 +15,7 @@ export default function ServicesSection(){
     <TerminalBar command="ls ./capabilities" meta="MODE / OUTPUT" />
     <div className="section-marker"><span>03</span><span>SELECTED CAPABILITIES</span><em>WHAT I BUILD</em></div>
     <div className="services-head">
-      <div><span className="eyebrow">SERVICES / OUTPUT</span><h2>Different tools.<br/><em>Same obsession.</em></h2></div>
+      <div><span className="eyebrow">SERVICES / OUTPUT</span><h2>Different tools.<br/><em><SquigglyText scale={2.5}>Same obsession.</SquigglyText></em></h2></div>
       <p>Software should feel clear. Visuals should feel intentional. The interesting work happens in the overlap.</p>
     </div>
     <div className="services-list service-glass-stack">
