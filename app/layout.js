@@ -9,9 +9,36 @@ const geistSans=Geist({variable:"--font-geist-sans",subsets:["latin"],display:"s
 const geistMono=Geist_Mono({variable:"--font-geist-mono",subsets:["latin"],display:"swap"});
 const playfair=Playfair_Display({variable:"--font-playfair",subsets:["latin"],weight:["400","500","600","700"],style:["normal","italic"],display:"swap"});
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tests-krishna3251s-projects.vercel.app";
+
 export const metadata={
-  title:"KRISHNA / Creative Developer + Visual Designer",
-  description:"Krishna's portfolio of software, AI systems and visual design.",
+  metadataBase:new URL(siteUrl),
+  title:{
+    default:"KRISHNA / Creative Developer + Visual Designer",
+    template:"%s / KRISHNA",
+  },
+  description:"Software, AI systems, gaming visuals and experiments by Krishna.",
+  applicationName:"KRISHNA Portfolio",
+  authors:[{name:"Krishna"}],
+  creator:"Krishna",
+  publisher:"Krishna",
+  robots:{
+    index:true,
+    follow:true,
+  },
+  openGraph:{
+    type:"website",
+    siteName:"KRISHNA",
+    title:"KRISHNA / Creative Developer + Visual Designer",
+    description:"Software, AI systems, gaming visuals and experiments by Krishna.",
+    images:[{url:"/hero_krishna_vertical.jpg",alt:"Krishna portfolio"}],
+  },
+  twitter:{
+    card:"summary_large_image",
+    title:"KRISHNA / Creative Developer + Visual Designer",
+    description:"Software, AI systems, gaming visuals and experiments by Krishna.",
+    images:["/hero_krishna_vertical.jpg"],
+  },
 };
 
 export const viewport={
