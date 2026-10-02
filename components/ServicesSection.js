@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import TerminalBar from "@/components/TerminalBar";
 
 const services=[
   ["01","AI SYSTEMS","LLM apps, automation and useful internal tools.","/projects"],
@@ -10,6 +11,7 @@ const services=[
 
 export default function ServicesSection(){
   return <section className="services section" id="services">
+    <TerminalBar command="ls ./capabilities" meta="MODE / OUTPUT" />
     <div className="section-marker"><span>03</span><span>SELECTED CAPABILITIES</span><em>WHAT I BUILD</em></div>
     <div className="services-head">
       <div><span className="eyebrow">SERVICES / OUTPUT</span><h2>Different tools.<br/><em>Same obsession.</em></h2></div>
