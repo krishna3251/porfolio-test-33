@@ -2601,7 +2601,7 @@ body::after{
   border:0;
   filter:none;
 }
-.site-audio .song-box-playing{
+.site-audio .song-box-playing .song-box-inner{
   animation:audioFloat 2.4s ease-in-out infinite;
 }
 .site-audio .song-box-playing::before{
@@ -2641,7 +2641,7 @@ body::after{
   50%{transform:rotate(4deg) scale(1.02)}
 }
 @media (prefers-reduced-motion:reduce){
-  .site-audio .song-box-playing,
+  .site-audio .song-box-playing .song-box-inner,
   .site-audio .song-box-playing::before,
   .site-audio .song-box-playing .bg-primary,
   .site-audio .song-box-playing > button:first-of-type{
