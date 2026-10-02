@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
+import SquigglyText from "@/components/ui/squiggly-text";
 
 const HERO_IMAGE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
 
@@ -31,7 +32,7 @@ export default function HomeHero(){
       <div className="hero-copy">
         <div className="hero-availability"><span/><b>AVAILABLE FOR SELECTED WORK</b></div>
         <p className="hero-kicker"><span className="hero-dot"/>I make software &amp; visuals.</p>
-        <motion.h1 initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.16,1,.3,1]}}><span className="terminal-prefix">&gt; </span>KRISHNA<span>.</span><i className="hero-terminal-cursor" aria-hidden="true">█</i></motion.h1>
+        <motion.h1 initial={{opacity:0,y:50}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.16,1,.3,1]}}><span className="terminal-prefix">&gt; </span><SquigglyText scale={[2,3]} stepDuration={110}>KRISHNA</SquigglyText><span>.</span><i className="hero-terminal-cursor" aria-hidden="true">█</i></motion.h1>
         <div className="hero-rule"><span/></div>
         <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
         <div className="hero-actions">
