@@ -1,5 +1,6 @@
 import WorkArchive from "@/components/WorkArchive";
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
+import TerminalBar from "@/components/TerminalBar";
 
 export const dynamic="force-dynamic";
 
@@ -12,7 +13,7 @@ export default function ThumbnailsPage(){
   const groups=getChronologicalThumbnailGroups();
   const total=groups.reduce((n,g)=>n+g.thumbnails.length,0);
 
-  return <main className="archive-page">
+  return <main className="archive-page"><TerminalBar command="cd ./visual-archive" meta="PATH / ~/krishna" />
     <section className="archive-hero" data-page="thumbnails">
       <div>
         <span className="archive-eyebrow">02 / VISUAL ARCHIVE</span>
