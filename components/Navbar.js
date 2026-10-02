@@ -18,10 +18,10 @@ export default function Navbar(){
       </nav>
       <div className="site-header-right">
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer">GitHub ↗</a>
-        <button className="mobile-menu-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open}>{open?"Close":"Menu"}</button>
+        <button type="button" className="mobile-menu-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
     </div>
-    {open&&<div className="mobile-menu">
+    {open&&<div id="mobile-navigation" className="mobile-menu">
       {links.map(([label,href])=><Link key={href} href={href} onClick={()=>setOpen(false)}>{label}</Link>)}
       <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer">GitHub ↗</a>
     </div>}
