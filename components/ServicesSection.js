@@ -17,11 +17,11 @@ export default function ServicesSection(){
       <div><span className="eyebrow">SERVICES / OUTPUT</span><h2>Different tools.<br/><em>Same obsession.</em></h2></div>
       <p>Software should feel clear. Visuals should feel intentional. The interesting work happens in the overlap.</p>
     </div>
-    <div className="services-list">
-      {services.map(([no,title,text,href],i)=><Link href={href} key={no} className="service-card" data-cursor={title}>
+    <div className="services-list service-glass-stack">
+      {services.map(([no,title,text,href],i)=><Link href={href} key={no} className="service-card service-glass-card" style={{"--r": i===0 ? -7 : i===2 ? 7 : 0}} data-cursor={title}>
         <span className="service-no">{no}</span>
         <motion.div className="service-orb" initial={{scale:.7,opacity:.15}} whileInView={{scale:1,opacity:.65}} viewport={{once:true}} transition={{duration:.6,delay:i*.07}}><span/></motion.div>
-        <div className="service-main"><h3>{title}<b>.</b></h3><p>{text}</p></div>
+        <div className="service-main"><h3>{title}<b>.</b></h3><p>{text}</p><span className="service-command">./open --{title.toLowerCase().replace(/\s+/g,"-")}</span></div>
         <span className="service-arrow">↗</span>
       </Link>)}
     </div>
