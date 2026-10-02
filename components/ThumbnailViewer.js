@@ -93,6 +93,8 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
           alt={item.title}
           className="thumbnail-viewer-image"
           draggable="false"
+          decoding="async"
+          fetchPriority="high"
           custom={direction}
           variants={{
             enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
