@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import TerminalBar from "@/components/TerminalBar";
 
 const projects=[
   ["01","Lxeus","DISCORD / AI","Moderation, automation and intelligent interaction for communities.","https://github.com/krishna3251/lexus_dc.git"],
@@ -10,6 +11,7 @@ const projects=[
 
 export default function ProjectsSection(){
   return <section className="project-index">
+    <TerminalBar command="ls ./projects --long" meta="INDEX / 04" />
     <div className="project-live-row"><span><i/> BUILD INDEX ONLINE</span><span>04 SYSTEMS / 2026</span><span>SCROLL ↓</span></div>
     <div className="section-marker"><span>03</span><span>PROJECT INDEX</span></div>
     <div className="project-intro">
