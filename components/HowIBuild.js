@@ -1,9 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
+import TerminalBar from "@/components/TerminalBar";
 
 export default function HowIBuild(){
   const rows=[["01","Understand","Start with the problem, the person and the actual outcome."],["02","Build","Break the idea into clear pieces and make them work."],["03","Refine","Test the real thing and remove friction."],["04","Ship","Put it in people's hands, learn, then improve."]];
   return <section className="process section" id="process">
+    <TerminalBar command="run ./process --verbose" meta="PIPELINE / ACTIVE" />
     <div className="section-marker"><span>05</span><span>PROCESS</span><em>HOW IT WORKS</em></div>
     <div className="process-heading"><span className="eyebrow">PROCESS / HOW IT WORKS</span><h2>How I<br/><em>build.</em></h2></div>
     <div className="process-list">
