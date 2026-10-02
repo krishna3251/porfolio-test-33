@@ -2312,3 +2312,166 @@ body::after{
 @media (max-width:760px){
   .hero-ascii{display:none}
 }
+
+
+/* Uiverse-inspired glass stack, adapted to KRISHNA's editorial terminal language. */
+.service-glass-stack{
+  position:relative;
+  min-height:360px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-top:0;
+  border-bottom:0;
+  padding:70px 40px;
+  isolation:isolate;
+}
+.service-glass-stack::before{
+  content:"";
+  position:absolute;
+  width:min(720px,70vw);
+  height:180px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,106,42,.10),transparent 68%);
+  filter:blur(18px);
+  pointer-events:none;
+}
+.service-glass-card{
+  position:relative;
+  width:min(31%,340px);
+  min-height:250px;
+  margin:0 -42px;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:stretch;
+  overflow:hidden;
+  border:1px solid rgba(247,244,237,.12);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.015)),
+    linear-gradient(135deg,rgba(255,106,42,.055),transparent 55%);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 25px 25px rgba(0,0,0,.25);
+  transform:rotate(calc(var(--r) * 1deg));
+  transition:
+    .5s transform cubic-bezier(.16,1,.3,1),
+    .5s margin cubic-bezier(.16,1,.3,1),
+    .35s border-color ease,
+    .35s background ease,
+    .35s box-shadow ease;
+  z-index:calc(3 - var(--r));
+}
+.service-glass-card::before{
+  content:attr(data-text);
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:38px;
+  display:flex;
+  align-items:center;
+  padding:0 14px;
+  border-top:1px solid rgba(247,244,237,.08);
+  background:rgba(255,255,255,.035);
+  color:rgba(247,244,237,.48);
+  font:8px var(--font-dm-mono),ui-monospace,monospace;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.service-glass-stack:hover .service-glass-card{
+  transform:rotate(0deg) translateY(0);
+  margin:0 10px;
+}
+.service-glass-stack:hover .service-glass-card:hover{
+  transform:translateY(-12px) scale(1.025);
+  border-color:rgba(255,106,42,.45);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02)),
+    linear-gradient(135deg,rgba(255,106,42,.10),transparent 58%);
+  box-shadow:0 32px 60px rgba(0,0,0,.34),0 0 0 1px rgba(255,106,42,.10);
+  z-index:10;
+}
+.service-glass-card > *{
+  position:relative;
+  z-index:2;
+}
+.service-glass-card .service-no{
+  color:rgba(247,244,237,.48);
+  font-size:8px;
+}
+.service-glass-card .service-orb{
+  width:76px;
+  height:76px;
+  align-self:flex-end;
+  margin-bottom:-15px;
+  opacity:.76;
+}
+.service-glass-card .service-main{
+  max-width:100%;
+}
+.service-glass-card .service-main h3{
+  margin-top:14px;
+  font-size:clamp(1.7rem,3vw,3.2rem);
+}
+.service-glass-card .service-main p{
+  font-size:13px;
+  max-width:300px;
+  min-height:60px;
+}
+.service-command{
+  display:block;
+  margin-top:16px;
+  color:rgba(247,244,237,.40);
+  font:8px var(--font-dm-mono),ui-monospace,monospace;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.service-command::before{
+  content:"$ ";
+  color:var(--accent);
+}
+.service-glass-card .service-arrow{
+  position:absolute;
+  top:20px;
+  right:18px;
+}
+@media (max-width:900px){
+  .service-glass-stack{min-height:340px;padding:50px 20px}
+  .service-glass-card{width:32%;min-height:230px;margin:0 -28px;padding:18px}
+  .service-glass-stack:hover .service-glass-card{margin:0 5px}
+  .service-glass-card .service-orb{width:62px;height:62px}
+}
+@media (max-width:560px){
+  .service-glass-stack{
+    min-height:720px;
+    display:block;
+    padding:60px 14px 35px;
+  }
+  .service-glass-card{
+    position:absolute;
+    left:50%;
+    width:min(88vw,360px);
+    min-height:215px;
+    margin:0;
+    transform:translateX(-50%) rotate(calc(var(--r) * 1deg));
+  }
+  .service-glass-card:nth-child(1){top:52px}
+  .service-glass-card:nth-child(2){top:190px}
+  .service-glass-card:nth-child(3){top:328px}
+  .service-glass-stack:hover .service-glass-card{
+    margin:0;
+  }
+  .service-glass-stack:hover .service-glass-card:nth-child(1){transform:translateX(-50%) rotate(0deg) translateY(-5px)}
+  .service-glass-stack:hover .service-glass-card:nth-child(2){transform:translateX(-50%) rotate(0deg) translateY(0)}
+  .service-glass-stack:hover .service-glass-card:nth-child(3){transform:translateX(-50%) rotate(0deg) translateY(5px)}
+  .service-glass-card .service-orb{display:grid}
+  .service-glass-card .service-main h3{font-size:2rem}
+  .service-glass-card .service-main p{font-size:12px;min-height:48px}
+}
+@media (prefers-reduced-motion:reduce){
+  .service-glass-card{transition:none}
+}
