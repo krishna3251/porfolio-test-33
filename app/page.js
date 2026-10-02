@@ -17,6 +17,7 @@ export default function Home(){
     <HomeHero/>
     <main>
       <StudioStrip/>
+      <ServicesSection/>
       <SelectedWork/>
       <AboutSection/>
       <SkillsMarquee/>
