@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
+import SquigglyText from "@/components/ui/squiggly-text";
 
 const projects=[
   ["01","Lxeus","DISCORD / AI","Moderation, automation and intelligent interaction for communities.","https://github.com/krishna3251/lexus_dc.git"],
@@ -15,7 +16,7 @@ export default function ProjectsSection(){
     <div className="project-live-row"><span><i/> BUILD INDEX ONLINE</span><span>04 SYSTEMS / 2026</span><span>SCROLL ↓</span></div>
     <div className="section-marker"><span>03</span><span>PROJECT INDEX</span></div>
     <div className="project-intro">
-      <div><span className="eyebrow">SOFTWARE / SELECTED</span><h1>Software<br/><em>with character.</em></h1></div>
+      <div><span className="eyebrow">SOFTWARE / SELECTED</span><h1>Software<br/><em><SquigglyText scale={2.5}>with character.</SquigglyText></em></h1></div>
       <p>Systems, bots and experiments built around real use cases. Structured like work, not a dashboard pretending to be a spaceship.</p>
     </div>
     <div className="project-list">
