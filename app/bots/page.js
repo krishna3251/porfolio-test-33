@@ -12,7 +12,7 @@ const botsData = [
     status: "Active",
     description: "An elite moderation and AI chatbot system. Lxeus learns server patterns to preemptively manage toxicity while providing intelligent conversational utility and server analysis.",
     tags: ["Auto-Mod", "AI Chat", "Analytics"],
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDRp6fxUuc2NLoYdCjWJqZi_lUavsXI8JICV48j3ZtziAPVv-uHnis5KWWP7SsGSf6MFL8KdGA9ncc_tm7EwY62xKTqDLclkGeqCAnFY7epz99ntO1XP_PoQZ4ChZQnJSqiQnS1d7fsUcWjnb2xw8DBRgL7sORJxs6xhSJXGuEAxMdtF1GSvKPi4REiKwWR4-2V-dP023GOKEM1E7N45fDo89-fYX1sDBJU4o3cF8ZxqaaVaV6KQPzdFULYG0IzWyplYnDg_905bSlX",
+    image: "/images/bots/lxeus.svg",,
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishna3251/lexus_dc.git" }],
     commands: [
@@ -45,7 +45,7 @@ const botsData = [
     status: "Active",
     description: "The universal server builder. Rukia deploys complete, pre-configured Discord ecosystems in seconds, handling roles, permissions, and channel hierarchies instantly.",
     tags: ["Templating", "Role Sync", "Guild Builder"],
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAYXOGJvQ44bCq4OfDD8Qn4lmjqe9xqFuA0_UAvZaXUQFjiLukRyeF6M-BK0iPOnsI9FzA5i7oQEcnWwRhkVfc8TdNvTEqrJRVkHTZI7lzROLIYZHUGHGXoVMrtRjnHDC3ggamV0AAGvQF6sylcTvHgXmYlDKx3WeHRZMNf0OoD5FKRUe4n2sSTSWjcS_FfSfJtkpe2MCVgS-TnQ9ki3EfJRdd6vwm43zPZ3ZccjRBsDxo94vr4IHwAAuFjXXcwnsZia7Zlga3ECBrR",
+    image: "/images/bots/rukiya.svg",,
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/rukia3287-jpg/rukiya.git" }],
     commands: [
@@ -69,7 +69,7 @@ const botsData = [
     status: "Active",
     description: "A high-performance guild template compiler. Damu reads structured JSON layouts to output fully compiled permission maps and channel configurations.",
     tags: ["Compiler Core", "JSON Templates"],
-    image: "/neverness_showcase.png",
+    image: "/images/bots/damu.svg",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishnverma32/damu-server-builder" }],
     commands: [
