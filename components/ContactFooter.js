@@ -1,6 +1,9 @@
+import TerminalBar from "@/components/TerminalBar";
+
 export default function ContactFooter(){
   return <footer className="contact">
     <div className="contact-grid-glow" aria-hidden="true"/>
+    <TerminalBar command="printf build" status="READY" meta="CHANNEL / OPEN" />
     <div className="contact-inner">
       <div className="section-marker light"><span>06</span><span>CONTACT</span><em>OPEN / 2026</em></div>
       <span className="eyebrow">LET&apos;S MAKE SOMETHING</span>
