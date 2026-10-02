@@ -3,6 +3,10 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 
+const AUDIO_CDN_BASE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public";
+const AUDIO_SRC=`${AUDIO_CDN_BASE}/song.mp3`;
+const ARTWORK_SRC=`${AUDIO_CDN_BASE}/neverness_showcase.png`;
+
 export default function AudioPlayer() {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -162,7 +166,7 @@ export default function AudioPlayer() {
 
   return (
     <div className="flex items-center gap-3 glass-audio px-3 py-1.5 transition-all duration-300">
-      <audio ref={audioRef} src="/song.mp3" loop crossOrigin="anonymous" preload="metadata" />
+      <audio ref={audioRef} src={AUDIO_SRC} loop crossOrigin="anonymous" preload="metadata" />
 
       {/* Rotating Vinyl / Artwork Micro Badge */}
       <button
@@ -175,7 +179,7 @@ export default function AudioPlayer() {
         aria-label={isPlaying ? "Pause music" : "Play music"}
       >
         <Image
-          src="/neverness_showcase.png"
+          src={ARTWORK_SRC}
           alt="Track Artwork"
           fill
           sizes="24px"

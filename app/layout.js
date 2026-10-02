@@ -10,6 +10,7 @@ const geistMono=Geist_Mono({variable:"--font-geist-mono",subsets:["latin"],displ
 const playfair=Playfair_Display({variable:"--font-playfair",subsets:["latin"],weight:["400","500","600","700"],style:["normal","italic"],display:"swap"});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tests-krishna3251s-projects.vercel.app";
+const heroImage = "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
 
 export const metadata={
   metadataBase:new URL(siteUrl),
@@ -31,13 +32,13 @@ export const metadata={
     siteName:"KRISHNA",
     title:"KRISHNA / Creative Developer + Visual Designer",
     description:"Software, AI systems, gaming visuals and experiments by Krishna.",
-    images:[{url:"/hero_krishna_vertical.jpg",alt:"Krishna portfolio"}],
+    images:[{url:heroImage,alt:"Krishna portfolio"}],
   },
   twitter:{
     card:"summary_large_image",
     title:"KRISHNA / Creative Developer + Visual Designer",
     description:"Software, AI systems, gaming visuals and experiments by Krishna.",
-    images:["/hero_krishna_vertical.jpg"],
+    images:[heroImage],
   },
 };
 

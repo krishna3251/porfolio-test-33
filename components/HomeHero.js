@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
+const HERO_IMAGE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
+
 export default function HomeHero(){
   const mx=useMotionValue(0), my=useMotionValue(0);
   const sx=useSpring(mx,{stiffness:80,damping:20}), sy=useSpring(my,{stiffness:80,damping:20});
@@ -25,7 +27,7 @@ export default function HomeHero(){
         </div>
       </div>
       <motion.div className="hero-portrait" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}}>
-        <Image src="/hero_krishna_vertical.jpg" alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
+        <Image src={HERO_IMAGE} alt="Krishna" fill priority sizes="(max-width: 840px) 88vw, 43vw" quality={75} className="hero-portrait-image"/>
         <div className="hero-portrait-tag">01 / KRISHNA</div>
       </motion.div>
     </div>

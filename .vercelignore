@@ -2,3 +2,7 @@
 # The thumbnail manifest points at the GitHub-backed jsDelivr CDN instead.
 public/images/*.png
 public/images/**/*.png
+public/hero_krishna_vertical.jpg
+public/neverness_showcase.png
+public/song.mp3
+song/
