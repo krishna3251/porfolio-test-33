@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
+import WobbleImage from "@/components/WobbleImage";
 
 const botsData = [
   {
@@ -224,11 +225,13 @@ function BotEntry({ bot, index }) {
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
           className="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] paper-sheet group border border-foreground/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-primary/20 transition-all duration-500"
         >
-          <img 
-            src={bot.image} 
-            alt={bot.name} 
-            className="w-full h-full object-cover grayscale-[0.25] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
-          />
+          <WobbleImage className="absolute inset-0">
+            <img 
+              src={bot.image} 
+              alt={bot.name} 
+              className="w-full h-full object-cover grayscale-[0.25] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
+            />
+          </WobbleImage>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a090d]/60 via-transparent to-transparent pointer-events-none" />
           <div className="absolute inset-0 border-[1.2rem] border-surface pointer-events-none group-hover:border-[0.8rem] transition-all duration-500 rounded-[38px]" />
           
