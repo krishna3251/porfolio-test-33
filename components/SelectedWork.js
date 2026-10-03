@@ -9,8 +9,8 @@ import SquigglyText from "@/components/ui/squiggly-text";
 
 const work=[
   {no:"01",label:"VISUAL DESIGN",title:"Gaming thumbnails",text:"Character-led compositions, dramatic typography and art direction made to win attention in one frame.",filename:"genshin cinematic.png",href:"/thumbnails"},
-  {no:"02",label:"AI / SOFTWARE",title:"Rukiya",text:"A practical automation system for communities, built around memory, decisions and reliable workflows.",filename:"/images/bots/rukiya.svg",href:"/projects"},
-  {no:"03",label:"AUTOMATION",title:"Lxeus",text:"Moderation and intelligent interaction tools for Discord, focused on useful automation instead of noise.",filename:"/images/bots/lxeus.svg",href:"/projects"}
+  {no:"02",label:"AI / SOFTWARE",title:"Rukiya",text:"A practical automation system for communities, built around memory, decisions and reliable workflows.",filename:"https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/rukiya.png",href:"/projects"},
+  {no:"03",label:"AUTOMATION",title:"Lxeus",text:"Moderation and intelligent interaction tools for Discord, focused on useful automation instead of noise.",filename:"https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/lexus.png",href:"/projects"}
 ];
 
 export default function SelectedWork(){
