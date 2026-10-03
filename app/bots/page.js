@@ -13,7 +13,7 @@ const botsData = [
     status: "Active",
     description: "An elite moderation and AI chatbot system. Lxeus learns server patterns to preemptively manage toxicity while providing intelligent conversational utility and server analysis.",
     tags: ["Auto-Mod", "AI Chat", "Analytics"],
-    image: "/images/bots/lxeus.svg",
+    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/lexus.png",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishna3251/lexus_dc.git" }],
     commands: [
@@ -46,7 +46,7 @@ const botsData = [
     status: "Active",
     description: "The universal server builder. Rukia deploys complete, pre-configured Discord ecosystems in seconds, handling roles, permissions, and channel hierarchies instantly.",
     tags: ["Templating", "Role Sync", "Guild Builder"],
-    image: "/images/bots/rukiya.svg",
+    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/rukiya.png",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/rukia3287-jpg/rukiya.git" }],
     commands: [
@@ -70,7 +70,7 @@ const botsData = [
     status: "Active",
     description: "A high-performance guild template compiler. Damu reads structured JSON layouts to output fully compiled permission maps and channel configurations.",
     tags: ["Compiler Core", "JSON Templates"],
-    image: "/images/bots/damu.svg",
+    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/deku.png",
     color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishnverma32/damu-server-builder" }],
     commands: [
