@@ -2,15 +2,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { getThumbnailSrc } from "@/lib/thumbnails";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
 import SquigglyText from "@/components/ui/squiggly-text";
 
 const work=[
   {no:"01",label:"VISUAL DESIGN",title:"Gaming thumbnails",text:"Character-led compositions, dramatic typography and art direction made to win attention in one frame.",filename:"genshin cinematic.png",href:"/thumbnails"},
-  {no:"02",label:"AI / SOFTWARE",title:"Rukiya",text:"A practical automation system for communities, built around memory, decisions and reliable workflows.",filename:"wuwa.png",href:"/projects"},
-  {no:"03",label:"AUTOMATION",title:"Lxeus",text:"Moderation and intelligent interaction tools for Discord, focused on useful automation instead of noise.",filename:"valorant.png",href:"/projects"}
+  {no:"02",label:"AI / SOFTWARE",title:"Rukiya",text:"A practical automation system for communities, built around memory, decisions and reliable workflows.",filename:"/images/bots/rukiya.svg",href:"/projects"},
+  {no:"03",label:"AUTOMATION",title:"Lxeus",text:"Moderation and intelligent interaction tools for Discord, focused on useful automation instead of noise.",filename:"/images/bots/lxeus.svg",href:"/projects"}
 ];
 
 export default function SelectedWork(){
