@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import WobbleImage from "@/components/WobbleImage";
+import { StatusChip } from "@/components/PortfolioUI";
 
 const botsData = [
   {
@@ -250,7 +251,10 @@ function BotEntry({ bot, index }) {
             <h2 className="serif-display text-5xl md:text-6xl text-foreground font-semibold">{bot.name}</h2>
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
           </div>
-          <span className="mono-metadata text-primary text-[8px] font-bold tracking-[0.2em] bg-primary/5 border border-primary/15 px-3 py-1 rounded-full">{bot.version}</span>
+          <div className="flex items-center gap-3">
+            <StatusChip>{bot.status.toUpperCase()}</StatusChip>
+            <span className="mono-metadata text-primary text-[8px] font-bold tracking-[0.2em] bg-primary/5 border border-primary/15 px-3 py-1 rounded-none">{bot.version}</span>
+          </div>
         </div>
         
         <p className="font-sans text-sm md:text-base text-muted mb-8 leading-relaxed max-w-xl">
