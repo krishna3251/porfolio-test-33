@@ -26,7 +26,7 @@ export default function SelectedWork(){
         <div className="case-no"><span>{item.no}</span><i>0{i+1}</i></div>
         <Link href={item.href} className="case-image-wrap" data-cursor="VIEW">
           <WobbleImage className="absolute inset-0">
-            <Image src={item.filename.startsWith("/") ? item.filename : getThumbnailSrc(item.filename)} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width: 840px) 100vw, 58vw" className="case-image"/>
+            <Image src={item.filename.startsWith("http") ? item.filename : getThumbnailSrc(item.filename)} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width: 840px) 100vw, 58vw" className="case-image"/>
           </WobbleImage>
           <span className="case-view">VIEW <b>↗</b></span>
           <span className="case-corner" aria-hidden="true"/>
