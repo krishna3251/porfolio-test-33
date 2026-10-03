@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
 import SquigglyText from "@/components/ui/squiggly-text";
+import { CommandButton } from "@/components/PortfolioUI";
 
 const HERO_IMAGE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
 
@@ -37,8 +38,8 @@ export default function HomeHero(){
         <div className="hero-rule"><span/></div>
         <p className="hero-intro">Building AI systems, web experiences and gaming visuals with a designer&apos;s eye and a developer&apos;s patience.</p>
         <div className="hero-actions">
-          <Link href="/thumbnails" className="btn btn-accent magnetic" data-cursor="VIEW WORK">View work <span>↗</span></Link>
-          <Link href="/projects" className="btn magnetic" data-cursor="SOFTWARE">Software <span>↗</span></Link>
+          <CommandButton href="/thumbnails" label="view-work" cursor="VIEW WORK" accent />
+          <CommandButton href="/projects" label="software" cursor="SOFTWARE" />
         </div>
         <div className="hero-mini-meta"><span>BASED IN INDIA</span><span>AI / WEB / VISUAL</span><span>01—06</span></div>
       </div>
