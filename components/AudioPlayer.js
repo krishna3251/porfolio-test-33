@@ -141,7 +141,9 @@ export default function AudioPlayer() {
         audio
           .play()
           .then(() => setIsPlaying(true))
-          .catch(() => {});
+          .catch(() => {
+            setStatusMessage("Audio could not start. Check browser audio permission or press Play again.");
+          });
       }
     };
     window.addEventListener("play-portfolio-audio", handleEventPlay);
@@ -165,7 +167,9 @@ export default function AudioPlayer() {
             setIsPlaying(true);
             removeInteractionListeners();
           })
-          .catch(() => {});
+          .catch(() => {
+            setStatusMessage("Audio could not start. Check browser audio permission or press Play again.");
+          });
       } else {
         removeInteractionListeners();
       }
