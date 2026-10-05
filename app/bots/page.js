@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import WobbleImage from "@/components/WobbleImage";
 import { StatusChip } from "@/components/PortfolioUI";
+import r34Image from "@/lib/r34-image";
 
 const botsData = [
   {
@@ -59,6 +60,40 @@ const botsData = [
           "> Creating channels: 28 text nodes, 14 voice nodes",
           "> Generating and syncing 15 modular roles...",
           "SUCCESS :: Guild deployment complete."
+        ]
+      }
+    ]
+  },
+  {
+    id: "r34",
+    name: "R34",
+    tagline: "Character-Personality Discord AI Bot",
+    version: "v.1.0.0",
+    status: "Active",
+    description: "A personality-driven Discord AI bot built around character chat, playful interaction and configurable responses. The current persona uses Yae Miko-inspired wit and confidence.",
+    tags: ["AI Chat", "Personality", "Discord"],
+    image: r34Image,
+    color: "primary",
+    links: [{ label: "Repository", url: "https://github.com/krishna3251/rule-34-bot" }],
+    commands: [
+      {
+        trigger: "r34 chat --persona 'Yae Miko'",
+        output: [
+          "AI_CORE :: Loading configured character profile...",
+          "> Persona: Yae Miko-inspired",
+          "> Tone: playful / teasing / confident",
+          "> Memory layer: ready",
+          "SUCCESS :: Character response engine online."
+        ]
+      },
+      {
+        trigger: "r34 status --system",
+        output: [
+          "SYS_CORE :: Checking bot services...",
+          "> Discord gateway: connected",
+          "> AI provider: ready",
+          "> Persona engine: active",
+          "STATUS :: All R34 systems operational."
         ]
       }
     ]
