@@ -2930,3 +2930,72 @@ body::after{
     transition:none;
   }
 }
+
+
+/* 20-point audit: contain accidental viewport overflow on every breakpoint. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@supports (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+body,
+.site-page,
+main,
+section,
+header,
+footer,
+article,
+.case-row,
+.project-row,
+.project-index-item,
+.contact-row {
+  min-width: 0;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.contact-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.thumbnail-viewer-image-frame {
+  position: relative;
+  width: min(100%, 1400px);
+  height: min(100%, calc(100dvh - 134px));
+}
+
+.thumbnail-viewer-image {
+  object-fit: contain;
+}
+
+@media (max-width: 760px) {
+  .contact-row {
+    min-width: 0;
+  }
+
+  .thumbnail-viewer-image-frame {
+    width: min(100%, calc(100vw - 44px));
+    height: min(100%, calc(100dvh - 134px));
+  }
+}
