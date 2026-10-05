@@ -2446,31 +2446,61 @@ body::after{
   .service-glass-card .service-orb{width:62px;height:62px}
 }
 @media (max-width:560px){
+  /* Mobile: make the desktop fan into a clean, readable vertical stack. */
   .service-glass-stack{
-    min-height:720px;
-    display:block;
-    padding:60px 14px 35px;
+    min-height:0;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+    padding:28px 14px 36px;
   }
   .service-glass-card{
-    position:absolute;
-    left:50%;
-    width:min(88vw,360px);
-    min-height:215px;
+    position:relative;
+    left:auto;
+    width:100%;
+    min-height:210px;
+    height:auto;
     margin:0;
-    transform:translateX(-50%) rotate(calc(var(--r) * 1deg));
+    padding:18px;
+    transform:none;
   }
-  .service-glass-card:nth-child(1){top:52px}
-  .service-glass-card:nth-child(2){top:190px}
-  .service-glass-card:nth-child(3){top:328px}
-  .service-glass-stack:hover .service-glass-card{
+  .service-glass-card:nth-child(1),
+  .service-glass-card:nth-child(2),
+  .service-glass-card:nth-child(3){
+    top:auto;
+  }
+  .service-glass-stack:hover .service-glass-card,
+  .service-glass-stack:hover .service-glass-card:nth-child(1),
+  .service-glass-stack:hover .service-glass-card:nth-child(2),
+  .service-glass-stack:hover .service-glass-card:nth-child(3){
     margin:0;
+    transform:none;
   }
-  .service-glass-stack:hover .service-glass-card:nth-child(1){transform:translateX(-50%) rotate(0deg) translateY(-5px)}
-  .service-glass-stack:hover .service-glass-card:nth-child(2){transform:translateX(-50%) rotate(0deg) translateY(0)}
-  .service-glass-stack:hover .service-glass-card:nth-child(3){transform:translateX(-50%) rotate(0deg) translateY(5px)}
-  .service-glass-card .service-orb{display:grid}
-  .service-glass-card .service-main h3{font-size:2rem}
-  .service-glass-card .service-main p{font-size:12px;min-height:48px}
+  .service-glass-card:active{
+    transform:translateY(-2px);
+  }
+  .service-glass-card .service-orb{
+    width:58px;
+    height:58px;
+    margin-bottom:-8px;
+  }
+  .service-glass-card .service-main h3{
+    max-width:100%;
+    font-size:clamp(1.65rem,8vw,2.1rem);
+    line-height:.92;
+    letter-spacing:-.055em;
+  }
+  .service-glass-card .service-main p{
+    max-width:100%;
+    min-height:0;
+    margin-bottom:8px;
+    font-size:12px;
+    line-height:1.45;
+  }
+  .service-command{
+    max-width:100%;
+    font-size:7px;
+  }
 }
 @media (prefers-reduced-motion:reduce){
   .service-glass-card{transition:none}
