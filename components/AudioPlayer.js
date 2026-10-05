@@ -17,6 +17,7 @@ export default function AudioPlayer() {
   const [progress, setProgress] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isWobbleHover, setIsWobbleHover] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const analyserInitialized = useRef(false);
 
   const initAnalyser = useCallback(() => {
@@ -61,11 +62,17 @@ export default function AudioPlayer() {
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+      setStatusMessage("Background track paused.");
     } else {
       audioRef.current
         .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => {});
+        .then(() => {
+          setIsPlaying(true);
+          setStatusMessage("Background track is now playing.");
+        })
+        .catch(() => {
+          setStatusMessage("Audio could not start. Check browser audio permission or press Play again.");
+        });
     }
   };
 
@@ -74,6 +81,7 @@ export default function AudioPlayer() {
     const nextMuted = !isMuted;
     audioRef.current.muted = nextMuted;
     setIsMuted(nextMuted);
+    setStatusMessage(nextMuted ? "Audio muted." : "Audio unmuted.");
     localStorage.setItem("krishna-audio-muted", String(nextMuted));
   };
 
@@ -192,6 +200,7 @@ export default function AudioPlayer() {
         transition: "transform 0.1s ease-out",
       }}
     >
+      <span className="sr-only" role="status" aria-live="polite">{statusMessage}</span>
       <div
         className="song-box-inner flex items-center gap-3 w-full"
         style={{
