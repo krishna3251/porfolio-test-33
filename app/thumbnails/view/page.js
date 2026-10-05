@@ -1,4 +1,5 @@
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
+import { notFound } from "next/navigation";
 import ThumbnailViewer from "@/components/ThumbnailViewer";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export default async function ThumbnailViewPage({ searchParams }) {
   const item = sourceItems[selectedIndex] || allItems[0];
 
   if (!item) {
-    return <main className="min-h-screen grid place-items-center bg-[#080a0d] text-white">No artwork found.</main>;
+    notFound();
   }
 
   const previousItem = sourceItems[(selectedIndex - 1 + sourceItems.length) % sourceItems.length];
