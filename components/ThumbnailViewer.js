@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -90,14 +91,9 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
       <div className="viewer-side-tag">VISUAL / {item.label}</div>
       <AnimatePresence mode="wait" initial={false} custom={direction}>
         <WobbleImage className="thumbnail-viewer-wobble">
-          <motion.img
+          <motion.div
             key={item.id}
-            src={item.src}
-            alt={item.title}
-            className="thumbnail-viewer-image"
-            draggable="false"
-            decoding="async"
-            fetchPriority="high"
+            className="thumbnail-viewer-image-frame"
             custom={direction}
             variants={{
               enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
@@ -108,7 +104,18 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
             animate="center"
             exit="exit"
             transition={{duration:.32,ease:[.16,1,.3,1]}}
-          />
+          >
+            <Image
+              src={item.src}
+              alt={item.title}
+              fill
+              sizes="100vw"
+              quality={72}
+              priority
+              draggable="false"
+              className="thumbnail-viewer-image"
+            />
+          </motion.div>
         </WobbleImage>
       </AnimatePresence>
       <span className="thumbnail-viewer-help">← A / P &nbsp; PREVIOUS &nbsp;&nbsp; D / N → &nbsp; NEXT &nbsp;&nbsp; ESC &nbsp; BACK</span>
