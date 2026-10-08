@@ -8,16 +8,17 @@ import SquigglyText from "@/components/ui/squiggly-text";
 import WorksWheel from "@/components/ui/works-wheel";
 import SparklesEffect from "@/components/ui/sparkles-effect";
 import { CommandButton } from "@/components/PortfolioUI";
+import { getThumbnailSrc } from "@/lib/thumbnails";
 
 const HERO_IMAGE="https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/hero_krishna_vertical.jpg";
 
 const heroWork=[
-  {title:"Gaming thumbnails",image:"/images/thumbnails/genshin cinematic.png",href:"/thumbnails"},
-  {title:"Skirk / Genshin",image:"/images/thumbnails/genshin skirk.png",href:"/thumbnails"},
-  {title:"Wuthering Waves",image:"/images/thumbnails/wuwa cyberpunk 1.png",href:"/thumbnails"},
+  {title:"Gaming thumbnails",image:getThumbnailSrc("genshin cinematic.png"),href:"/thumbnails"},
+  {title:"Skirk / Genshin",image:getThumbnailSrc("genshin skirk.png"),href:"/thumbnails"},
+  {title:"Wuthering Waves",image:getThumbnailSrc("wuwa cyberpunk 1.png"),href:"/thumbnails"},
   {title:"Rukiya",image:"/images/bots/rukiya.png",href:"/projects"},
   {title:"Lxeus",image:"/images/bots/lexus.png",href:"/projects"},
-  {title:"Valorant",image:"/images/thumbnails/valorant chamber velo.png",href:"/thumbnails"}
+  {title:"Valorant",image:getThumbnailSrc("valorant chamber velo.png"),href:"/thumbnails"}
 ];
 
 export default function HomeHero(){
