@@ -4,6 +4,7 @@ import { getThumbnailSrc } from "@/lib/thumbnails";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
 import WorksWheel from "@/components/ui/works-wheel";
+import SparklesEffect from "@/components/ui/sparkles-effect";
 
 const work=[
   {no:"01",label:"VISUAL DESIGN",title:"Gaming thumbnails",text:"Character-led compositions and art direction built to win attention in one frame.",filename:"genshin cinematic.png",href:"/thumbnails"},
@@ -24,7 +25,7 @@ export default function SelectedWork(){
     <TerminalBar command="cat ./selected-work" meta="INDEX / 06" />
     <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>06 WORKS</em></div>
     <div className="section-heading"><div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em><SquigglyText scale={2.5}>intent.</SquigglyText></em></h2></div><p>Visual design, AI systems and automation. Turn the wheel to move through the work.</p></div>
-    <WorksWheel items={wheelItems} label="Works '26" action="View" />
+    <div className="selected-work-visual"><SparklesEffect count={42} /><WorksWheel items={wheelItems} label="Works '26" action="View" /></div>
     <div className="selected-work-wheel-details">
       {work.map(item=><Link key={item.no} href={item.href} className="selected-work-detail"><span>{item.no}</span><div><small>{item.label}</small><strong>{item.title}</strong><p>{item.text}</p></div><b>↗</b></Link>)}
     </div>
