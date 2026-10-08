@@ -26,6 +26,7 @@ const reveal={hidden:{opacity:0,y:28},show:{opacity:1,y:0,transition:{duration:.
 
 export default function HomeHero(){
   const heroRef=React.useRef(null);
+  const spotlightRef=React.useRef(null);
   const mx=useMotionValue(0), my=useMotionValue(0);
   const sx=useSpring(mx,{stiffness:70,damping:18,mass:.6}), sy=useSpring(my,{stiffness:70,damping:18,mass:.6});
   const {scrollYProgress}=useScroll({target:heroRef,offset:["start start","end start"]});
@@ -37,9 +38,19 @@ export default function HomeHero(){
     if(event.pointerType==="touch")return;
     mx.set((event.clientX-window.innerWidth/2)*.008);
     my.set((event.clientY-window.innerHeight/2)*.008);
+    if(spotlightRef.current){
+      const rect=spotlightRef.current.getBoundingClientRect();
+      spotlightRef.current.style.setProperty("--spot-x",`${event.clientX-rect.left}px`);
+      spotlightRef.current.style.setProperty("--spot-y",`${event.clientY-rect.top}px`);
+      spotlightRef.current.style.setProperty("--spot-opacity","1");
+    }
+  };
+  const leave=()=>{
+    if(spotlightRef.current)spotlightRef.current.style.setProperty("--spot-opacity","0");
   };
 
-  return <section ref={heroRef} className="hero hero-v2 hero-cinematic" id="top" onPointerMove={move}>
+  return <section ref={node=>{heroRef.current=node;spotlightRef.current=node}} className="hero hero-v2 hero-cinematic" id="top" onPointerMove={move} onPointerLeave={leave}>
+    <div className="hero-spotlight" aria-hidden="true"/>
     <motion.div className="hero-cinematic-bg" style={{y:cinemaY,scale:cinemaScale,opacity:cinemaOpacity}} aria-hidden="true">
       <div className="hero-orbit orbit-a"/><div className="hero-orbit orbit-b"/>
       <div className="hero-glow glow-a"/><div className="hero-glow glow-b"/>
