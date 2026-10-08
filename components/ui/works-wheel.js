@@ -4,14 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 
 const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
-const lerp=(a,b,t)=>a+(b-a)*t;
-const ease=(t)=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 
 export default function WorksWheel({items=[],label="Works '26",action="View",className=""}){
   const stageRef=React.useRef(null), wheelRef=React.useRef(null), cards=React.useRef([]);
-  const target=React.useRef(0), current=React.useRef(0), drag=React.useRef(null), settle=React.useRef(null);
+  const target=React.useRef(0), current=React.useRef(0), velocity=React.useRef(0), drag=React.useRef(null);
   const [active,setActive]=React.useState(0), [stage,setStage]=React.useState({w:0,h:0}), [reduced,setReduced]=React.useState(false);
-  const labelRef=React.useRef(null), activeRef=React.useRef(null);
+  const labelRef=React.useRef(null), activeRef=React.useRef(null), progressRef=React.useRef(null);
   const count=items.length, last=Math.max(count-1,0);
 
   React.useEffect(()=>{
@@ -25,90 +23,80 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   },[]);
 
   const metrics=React.useMemo(()=>{
-    const w=stage.w||900,h=stage.h||560;
-    const mobile=w<640;
-    const cardW=Math.min(mobile?w*.58:w*.28, mobile?240:340);
-    const cardH=cardW*.62;
-    return {
-      cardW,cardH,
-      ringY:mobile?Math.min(h*.28,170):Math.min(h*.31,210),
-      ringX:mobile?Math.min(w*.32,145):Math.min(w*.32,360),
-      drumGap:cardH*.78,
-      perspective:Math.max(900,cardH*5)
-    };
+    const w=stage.w||900,h=stage.h||560,mobile=w<640;
+    const cardW=Math.min(mobile?w*.58:w*.28,mobile?240:340), cardH=cardW*.62;
+    return {cardW,cardH,ringY:mobile?Math.min(h*.28,170):Math.min(h*.31,210),ringX:mobile?Math.min(w*.32,145):Math.min(w*.32,360),drumGap:cardH*.8,perspective:Math.max(1000,cardH*5)};
   },[stage]);
 
-  const go=React.useCallback(n=>{
+  const go=React.useCallback((n,impulse=0)=>{
     target.current=clamp(n,0,last);
+    velocity.current+=impulse;
   },[last]);
 
   React.useEffect(()=>{
     if(!count)return;
     let frame;
     const draw=()=>{
-      const gap=target.current-current.current;
-      current.current+=reduced?gap:gap*.105;
-      if(Math.abs(target.current-current.current)<.0005)current.current=target.current;
-      const t=current.current;
-      const index=Math.round(t);
-      const phase=t-Math.floor(t);
-      const mode=t<=.98?0:1;
-      const local=mode?ease(Math.min(1,t-.98)):0;
+      const delta=target.current-current.current;
+      if(reduced){
+        current.current=target.current;
+        velocity.current=0;
+      }else{
+        velocity.current+=(delta*.085-velocity.current*.18);
+        current.current+=velocity.current;
+        if(Math.abs(delta)<.0008&&Math.abs(velocity.current)<.0008){current.current=target.current;velocity.current=0}
+      }
+      const t=current.current,index=Math.round(t),blend=Math.min(1,Math.abs(t)/.72),phase=t-Math.floor(t);
+      const cardsEl=cards.current;
 
-      cards.current.forEach((card,i)=>{
+      cardsEl.forEach((card,i)=>{
         if(!card)return;
-        const d=i-t;
-        const abs=Math.abs(d);
-        let x,y,z,rx,rz,scale,opacity;
+        const d=i-t,abs=Math.abs(d);
+        const angle=(i/count)*Math.PI*2-Math.PI/2;
+        const ringX=Math.cos(angle)*metrics.ringX;
+        const ringY=Math.sin(angle)*metrics.ringY;
+        const ringZ=Math.cos(angle)*metrics.ringX*.42;
+        const slot=d;
+        const drumX=slot*metrics.cardW*.09;
+        const drumY=slot*metrics.drumGap;
+        const drumZ=-Math.min(abs,4)*72;
+        const drumRx=-slot*10;
+        const drumScale=Math.max(.62,1-Math.min(abs,3)*.08);
+        const x=ringX+(drumX-ringX)*blend;
+        const y=ringY+(drumY-ringY)*blend;
+        const z=ringZ+(drumZ-ringZ)*blend;
+        const rx=drumRx*blend;
+        const scale=(i===index?1.07:.8)+(drumScale-(i===index?1.07:.8))*blend;
+        const opacity=abs<3.25?1:0;
 
-        if(!mode){
-          const angle=(i/count)*Math.PI*2-Math.PI/2;
-          x=Math.cos(angle)*metrics.ringX;
-          y=Math.sin(angle)*metrics.ringY;
-          z=Math.cos(angle)*metrics.ringX*.42;
-          rx=0;
-          rz=0;
-          scale=i===index?1.06:.78;
-          opacity=abs<2.8?1:0;
-        }else{
-          const slot=d;
-          x=lerp(0,slot*metrics.cardW*.08,local);
-          y=lerp(Math.sign(slot)*Math.min(Math.abs(slot)*metrics.ringY*.7,metrics.ringY),slot*metrics.drumGap,local);
-          z=lerp(Math.cos((i/count)*Math.PI*2)*metrics.ringX*.25,-Math.abs(slot)*80,local);
-          rx=lerp(0,-slot*12,local);
-          rz=lerp(0,slot*.8,local);
-          scale=lerp(i===index?1.06:.78,Math.max(.62,1-Math.min(abs,3)*.09),local);
-          opacity=abs<3.1?1:0;
-        }
-
-        card.style.transform=`translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) rotateX(${rx}deg) rotateZ(${rz}deg) scale(${scale})`;
+        card.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateX(${rx}deg) scale(${scale})`;
         card.style.opacity=String(opacity);
-        card.style.zIndex=String(Math.round(1000-abs*20));
-        card.style.pointerEvents=(i===index||t>i-.85&&t<i+.85)?"auto":"none";
+        card.style.zIndex=String(Math.round(1000-abs*24));
+        card.style.pointerEvents=(i===index||abs<.9)?"auto":"none";
+        card.classList.toggle("is-active",i===index);
       });
 
-      if(wheelRef.current)wheelRef.current.style.transform="translateZ(0)";
-      if(labelRef.current)labelRef.current.style.opacity=String(Math.max(0,1-Math.min(1,t)));
+      if(labelRef.current)labelRef.current.style.opacity=String(Math.max(0,1-blend));
       if(activeRef.current){
         activeRef.current.style.opacity="1";
-        activeRef.current.style.transform=`translateY(-50%) translate3d(${Math.min(32,t*10)}px,0,0)`;
+        activeRef.current.style.transform=`translateY(-50%) translate3d(${Math.min(36,t*9)}px,0,0)`;
       }
+      if(progressRef.current)progressRef.current.style.transform=`scaleX(${last?clamp(t/last,0,1):1})`;
       setActive(v=>v===index?v:index);
-
       if(!reduced)frame=requestAnimationFrame(draw);
     };
-    if(reduced)draw();else frame=requestAnimationFrame(draw);
+    draw();
     return()=>cancelAnimationFrame(frame);
   },[count,reduced,metrics,last]);
 
-  React.useEffect(()=>()=>window.clearTimeout(settle.current),[]);
-
   const onWheel=e=>{
-    const delta=clamp(e.deltaY,-120,120);
-    if((delta<0&&target.current>0)||(delta>0&&target.current<last))e.preventDefault();
-    go(target.current+delta/520);
-    window.clearTimeout(settle.current);
-    settle.current=window.setTimeout(()=>go(Math.round(target.current)),110);
+    const raw=clamp(e.deltaY,-100,100);
+    const atStart=target.current<=0&&raw<0, atEnd=target.current>=last&&raw>0;
+    if(!atStart&&!atEnd)e.preventDefault();
+    if(atStart||atEnd)return;
+    const scale=e.deltaMode===1?.055:.0024;
+    const impulse=raw*scale*.32;
+    go(target.current+raw*scale,impulse);
   };
 
   const onPointerDown=e=>{
@@ -117,13 +105,15 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   };
   const onPointerMove=e=>{
     if(!drag.current)return;
-    go(target.current+(drag.current.y-e.clientY)/280);
+    const dy=drag.current.y-e.clientY;
     drag.current.y=e.clientY;
+    go(target.current+dy/300,dy/300*.035);
   };
   const endDrag=()=>{
     if(!drag.current)return;
     drag.current=null;
-    go(Math.round(target.current));
+    const nearest=Math.round(target.current);
+    target.current=clamp(nearest,0,last);
   };
 
   if(!items.length)return null;
@@ -131,11 +121,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   return <section className={"works-wheel-section "+className} aria-label={label}>
     <div className="works-wheel-stage" ref={stageRef} tabIndex={0} role="listbox" aria-activedescendant={"works-wheel-"+active}
       style={{perspective:metrics.perspective}}
-      onWheel={onWheel}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
+      onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endDrag} onPointerCancel={endDrag}
       onKeyDown={e=>{
         if(e.key==="ArrowDown"||e.key==="PageDown"){go(Math.min(last,Math.round(target.current)+1));e.preventDefault()}
         if(e.key==="ArrowUp"||e.key==="PageUp"){go(Math.max(0,Math.round(target.current)-1));e.preventDefault()}
@@ -145,16 +131,8 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
       <div className="works-wheel-ring" ref={wheelRef}>
         {items.map((item,i)=>{
           const Card=item.href?Link:"div";
-          return <Card
-            key={item.title}
-            id={"works-wheel-"+i}
-            role="option"
-            aria-selected={i===active}
-            href={item.href}
-            ref={node=>cards.current[i]=node}
-            className={"works-wheel-card"+(i===active?" is-active":"")}
-            style={{width:metrics.cardW,height:metrics.cardH}}
-          >
+          return <Card key={item.title} id={"works-wheel-"+i} role="option" aria-selected={i===active} href={item.href}
+            ref={node=>cards.current[i]=node} className="works-wheel-card" style={{width:metrics.cardW,height:metrics.cardH}}>
             <span className="works-wheel-face">
               <img src={item.image} alt={item.title} draggable="false" loading={i<2?"eager":"lazy"}/>
               <span className="works-wheel-overlay"><small>{String(i+1).padStart(2,"0")} / SELECTED</small><strong>{item.title}</strong>{action&&item.href?<em>{action} ↗</em>:null}</span>
@@ -167,6 +145,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
     <div className="works-wheel-active" ref={activeRef}>{items[active]?.title}</div>
     <ol className="works-wheel-index">{items.map((item,i)=><li key={item.title}><button type="button" onClick={()=>go(i)} className={i===active?"active":""}><span>{String(i+1).padStart(2,"0")}</span>{item.title}</button></li>)}</ol>
     <div className="works-wheel-hint">SCROLL / DRAG / ARROW KEYS</div>
-    <div className="works-wheel-progress" aria-hidden="true"><i style={{transform:`scaleX(${last?active/last:1})`}}/></div>
+    <div className="works-wheel-progress" aria-hidden="true"><i ref={progressRef}/></div>
+    <div className="works-wheel-light" aria-hidden="true"/>
   </section>;
 }
