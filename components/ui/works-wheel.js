@@ -47,6 +47,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
         if(Math.abs(delta)<.0008&&Math.abs(velocity.current)<.0008){current.current=target.current;velocity.current=0}
       }
       const t=current.current,index=Math.round(t);
+      const blend=clamp(Math.abs(t-Math.round(t))/.72,0,1);
       const cardsEl=cards.current;
 
       cardsEl.forEach((card,i)=>{
@@ -68,7 +69,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
         card.classList.toggle("is-active",i===index);
       });
 
-      if(labelRef.current)labelRef.current.style.opacity=String(Math.max(0,1-blend));
+      if(labelRef.current)labelRef.current.style.opacity=String(Math.max(0,1-blend*.75));
       if(activeRef.current){
         activeRef.current.style.opacity="1";
         activeRef.current.style.transform=`translateY(-50%) translate3d(${Math.min(36,t*9)}px,0,0)`;
