@@ -1,8 +1,14 @@
-# Keep the large portfolio originals out of Vercel's deployment payload.
-# The thumbnail manifest points at the GitHub-backed jsDelivr CDN instead.
+# Keep the large archive originals out of Vercel, but ship assets used by the homepage hero.
 public/images/*.png
 public/images/**/*.png
-public/hero_krishna_vertical.jpg
 public/neverness_showcase.png
 public/song.mp3
 song/
+
+!public/images/genshin cinematic.png
+!public/images/genshin skirk.png
+!public/images/wuwa cyberpunk 1.png
+!public/images/valorant chamber velo.png
+!public/images/bots/rukiya.png
+!public/images/bots/lexus.png
+!public/hero_krishna_vertical.jpg
