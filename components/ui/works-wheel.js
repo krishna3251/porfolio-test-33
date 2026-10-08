@@ -46,32 +46,24 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
         current.current+=velocity.current;
         if(Math.abs(delta)<.0008&&Math.abs(velocity.current)<.0008){current.current=target.current;velocity.current=0}
       }
-      const t=current.current,index=Math.round(t),blend=Math.min(1,Math.abs(t)/.72),phase=t-Math.floor(t);
+      const t=current.current,index=Math.round(t);
       const cardsEl=cards.current;
 
       cardsEl.forEach((card,i)=>{
         if(!card)return;
         const d=i-t,abs=Math.abs(d);
-        const angle=(i/count)*Math.PI*2-Math.PI/2;
-        const ringX=Math.cos(angle)*metrics.ringX;
-        const ringY=Math.sin(angle)*metrics.ringY;
-        const ringZ=Math.cos(angle)*metrics.ringX*.42;
-        const slot=d;
-        const drumX=slot*metrics.cardW*.09;
-        const drumY=slot*metrics.drumGap;
-        const drumZ=-Math.min(abs,4)*72;
-        const drumRx=-slot*10;
-        const drumScale=Math.max(.62,1-Math.min(abs,3)*.08);
-        const x=ringX+(drumX-ringX)*blend;
-        const y=ringY+(drumY-ringY)*blend;
-        const z=ringZ+(drumZ-ringZ)*blend;
-        const rx=drumRx*blend;
-        const scale=(i===index?1.07:.8)+(drumScale-(i===index?1.07:.8))*blend;
-        const opacity=abs<3.25?1:0;
+        const visible=abs<3.2;
+        const side=Math.min(abs,3);
+        const x=d*metrics.cardW*.075;
+        const y=d*metrics.drumGap;
+        const z=-side*92;
+        const rx=-d*7.5;
+        const scale=i===index?1.06:Math.max(.68,1-side*.085);
+        const opacity=visible?Math.max(.16,1-side*.24):0;
 
         card.style.transform=`translate3d(calc(-50% + ${x}px),calc(-50% + ${y}px),${z}px) rotateX(${rx}deg) scale(${scale})`;
         card.style.opacity=String(opacity);
-        card.style.zIndex=String(Math.round(1000-abs*24));
+        card.style.zIndex=String(Math.round(1000-abs*28));
         card.style.pointerEvents=(i===index||abs<.9)?"auto":"none";
         card.classList.toggle("is-active",i===index);
       });
@@ -99,21 +91,32 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
     go(target.current+raw*scale,impulse);
   };
 
+  const suppressClick=React.useRef(false);
   const onPointerDown=e=>{
-    drag.current={y:e.clientY,id:e.pointerId};
+    drag.current={y:e.clientY,id:e.pointerId,moved:false};
+    suppressClick.current=false;
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const onPointerMove=e=>{
     if(!drag.current)return;
     const dy=drag.current.y-e.clientY;
     drag.current.y=e.clientY;
+    if(Math.abs(dy)>3)drag.current.moved=true;
     go(target.current+dy/300,dy/300*.035);
   };
   const endDrag=()=>{
     if(!drag.current)return;
+    suppressClick.current=drag.current.moved;
     drag.current=null;
     const nearest=Math.round(target.current);
     target.current=clamp(nearest,0,last);
+  };
+  const onClickCapture=e=>{
+    if(suppressClick.current){
+      e.preventDefault();
+      e.stopPropagation();
+      suppressClick.current=false;
+    }
   };
 
   if(!items.length)return null;
@@ -121,7 +124,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   return <section className={"works-wheel-section "+className} aria-label={label}>
     <div className="works-wheel-stage" ref={stageRef} tabIndex={0} role="listbox" aria-activedescendant={"works-wheel-"+active}
       style={{perspective:metrics.perspective}}
-      onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endDrag} onPointerCancel={endDrag}
+      onWheel={onWheel} onClickCapture={onClickCapture} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endDrag} onPointerCancel={endDrag}
       onKeyDown={e=>{
         if(e.key==="ArrowDown"||e.key==="PageDown"){go(Math.min(last,Math.round(target.current)+1));e.preventDefault()}
         if(e.key==="ArrowUp"||e.key==="PageUp"){go(Math.max(0,Math.round(target.current)-1));e.preventDefault()}
