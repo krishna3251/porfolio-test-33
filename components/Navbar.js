@@ -9,6 +9,17 @@ export default function Navbar(){
   const pathname=usePathname();
   const [open,setOpen]=useState(false);
   const [progress,setProgress]=useState(0);
+  const [theme,setTheme]=useState("obsidian");
+  const [themeOpen,setThemeOpen]=useState(false);
+
+  const themes=[
+    ["obsidian","Obsidian"],
+    ["dark-red","Dark Red"],
+    ["black-gold","Black Gold"],
+    ["glassmorphia","Glassmorphia"],
+    ["maximalism","Maximalism"],
+    ["minimalism","Minimalism"]
+  ];
   const viewer=pathname.startsWith("/thumbnails/view");
 
   useEffect(()=>{
@@ -23,7 +34,22 @@ export default function Navbar(){
     return()=>{window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
   },[pathname]);
 
-  useEffect(()=>{setOpen(false)},[pathname]);
+  useEffect(()=>{
+    setOpen(false);
+  },[pathname]);
+
+  useEffect(()=>{
+    const saved=window.localStorage.getItem("krishna-theme")||"obsidian";
+    setTheme(saved);
+    document.documentElement.dataset.theme=saved;
+  },[]);
+
+  const changeTheme=(next)=>{
+    setTheme(next);
+    setThemeOpen(false);
+    document.documentElement.dataset.theme=next;
+    window.localStorage.setItem("krishna-theme",next);
+  };
 
   if(viewer) return null;
 
@@ -36,6 +62,18 @@ export default function Navbar(){
       <div className="site-header-right">
         <span className="nav-status"><i/> [OK] AVAILABLE / 2026</span>
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
+        <div className="theme-switcher">
+          <button type="button" className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
+            <span className="theme-toggle-mark" aria-hidden="true">◈</span>
+            <span className="theme-toggle-label">{theme}</span>
+          </button>
+          {themeOpen&&<div id="theme-menu" className="theme-menu" role="menu">
+            <span className="theme-menu-title">VISUAL SYSTEM / THEME</span>
+            {themes.map(([id,label])=><button key={id} type="button" role="menuitem" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>
+              <i aria-hidden="true"/><span>{label}</span>{theme===id?<b>✓</b>:<b>↗</b>}
+            </button>)}
+          </div>}
+        </div>
         <button type="button" className="mobile-menu-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
     </div>
