@@ -3865,3 +3865,27 @@ pre {
 @media(max-width:640px){
   .theme-menu{position:fixed;top:74px;right:12px;width:min(240px,calc(100vw - 24px))}
 }
+
+/* Final wheel label hierarchy override */
+.hero-wheel-wrap .works-wheel-label{
+  top:22px;
+  left:24px;
+  inset:auto;
+  display:block;
+  width:auto;
+  font-size:9px;
+  line-height:1;
+  font-weight:400;
+  letter-spacing:.16em;
+  color:rgba(247,244,237,.38);
+  text-shadow:none;
+  text-transform:uppercase;
+  z-index:5;
+}
+@media(max-width:640px){
+  .hero-wheel-wrap .works-wheel-label{
+    top:18px;
+    left:18px;
+    font-size:8px;
+  }
+}
