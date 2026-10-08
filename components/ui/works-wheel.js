@@ -11,6 +11,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   const stageRef=React.useRef(null), wheelRef=React.useRef(null), cards=React.useRef([]);
   const turn=React.useRef(0), target=React.useRef(0), drag=React.useRef(null), settle=React.useRef(null);
   const [active,setActive]=React.useState(0), [stage,setStage]=React.useState({w:0,h:0});
+  const labelRef=React.useRef(null), activeRef=React.useRef(null);
   const count=items.length, last=Math.max(count-1,0);
 
   React.useEffect(()=>{
@@ -42,6 +43,8 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
         card.style.zIndex=String(Math.round(100-Math.abs(d)*2));
         const face=card.firstElementChild;if(face)face.style.transform=\`scale(\${.25+.75*m})\`;
       });
+      if(labelRef.current)labelRef.current.style.opacity=String(1-m);
+      if(activeRef.current)activeRef.current.style.opacity=String(m);
       const near=clamp(Math.round(pos),0,last);setActive(v=>v===near?v:near);frame=requestAnimationFrame(draw);
     };
     frame=requestAnimationFrame(draw);return()=>cancelAnimationFrame(frame);
