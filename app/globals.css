@@ -3296,3 +3296,55 @@ pre {
   .selected-work-row>b,
   .hero-bottom a{transition:none}
 }
+\n
+/* Hero / wheel repair pass */
+.hero-v2{padding-top:42px}
+.hero-v2 .hero-intro-block{min-height:clamp(300px,34vw,430px)}
+.hero-v2 .hero-copy{align-self:center}
+.hero-v2 .hero-one-line{max-width:620px;margin:22px 0 0;color:var(--muted);font-size:clamp(12px,1.25vw,15px);line-height:1.65}
+.hero-v2 .hero-portrait-small{align-self:end}
+.hero-wheel-instructions{max-width:430px}
+.hero-wheel-instructions>span{display:block;color:var(--accent);font:8px var(--font-dm-mono),monospace;letter-spacing:.15em}
+.hero-wheel-instructions p{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.65}
+.hero-wheel-wrap .works-wheel-section{height:min(72vh,720px);min-height:500px}
+.hero-wheel-wrap .works-wheel-stage{touch-action:none;cursor:grab}
+.hero-wheel-wrap .works-wheel-stage:active{cursor:grabbing}
+.hero-wheel-wrap .works-wheel-face{border-radius:2px;background:#111318;box-shadow:0 26px 65px -24px rgba(0,0,0,.9)}
+.hero-wheel-wrap .works-wheel-card.is-active .works-wheel-face{border-color:rgba(255,106,42,.62);box-shadow:0 30px 80px -25px rgba(255,106,42,.22),0 24px 60px -24px rgba(0,0,0,.95)}
+.works-wheel-face img{width:100%;height:100%;object-fit:cover;display:block}
+.works-wheel-overlay{position:absolute;inset:auto 10px 10px 10px;display:flex;align-items:end;justify-content:space-between;gap:10px;padding:10px 11px;background:linear-gradient(180deg,transparent,rgba(4,5,6,.9));color:#fff;opacity:0;transform:translateY(7px);transition:opacity .28s ease,transform .28s ease}
+.works-wheel-card:hover .works-wheel-overlay,.works-wheel-card.is-active .works-wheel-overlay{opacity:1;transform:none}
+.works-wheel-overlay small{position:absolute;left:11px;top:10px;color:rgba(255,255,255,.55);font:7px var(--font-dm-mono),monospace;letter-spacing:.12em}
+.works-wheel-overlay strong{margin-top:22px;font:500 12px var(--font-dm-mono),monospace;letter-spacing:-.02em}
+.works-wheel-overlay em{font:8px var(--font-dm-mono),monospace;color:var(--accent);font-style:normal;letter-spacing:.1em;white-space:nowrap}
+.hero-wheel-wrap .works-wheel-label{font-size:clamp(42px,8vw,112px);font-weight:800;color:rgba(247,244,237,.92);text-shadow:0 15px 70px rgba(0,0,0,.45)}
+.hero-wheel-wrap .works-wheel-active{left:5%;top:50%;max-width:35%;font-size:clamp(22px,3.3vw,52px);line-height:.9}
+.hero-wheel-wrap .works-wheel-index{right:22px;top:24px;max-width:240px}
+.hero-wheel-wrap .works-wheel-index button{display:flex;align-items:center;gap:9px;justify-content:flex-end;text-align:right;padding:2px 0;opacity:.62}
+.hero-wheel-wrap .works-wheel-index button span{color:#555852;font-size:7px}
+.hero-wheel-wrap .works-wheel-index button.active{color:var(--accent);opacity:1}
+.hero-wheel-wrap .works-wheel-hint{left:22px;bottom:25px}
+.works-wheel-progress{position:absolute;left:5%;right:5%;bottom:24px;height:1px;background:rgba(255,255,255,.08);pointer-events:none}
+.works-wheel-progress i{display:block;width:100%;height:100%;background:var(--accent);transform-origin:left center;transition:transform .3s ease}
+.hero-profile{padding-top:46px}
+@media(max-width:900px){
+  .hero-v2 .hero-intro-block{min-height:0}
+  .hero-v2 .hero-wheel-wrap .works-wheel-section{height:64vh;min-height:470px}
+}
+@media(max-width:640px){
+  .hero-v2{padding-top:28px}
+  .hero-v2 .hero-intro-block{min-height:0}
+  .hero-v2 .hero-one-line{font-size:11px;max-width:340px}
+  .hero-v2 .hero-work-intro{padding-bottom:16px}
+  .hero-wheel-instructions{max-width:none}
+  .hero-wheel-wrap .works-wheel-section{height:66vh;min-height:460px}
+  .hero-wheel-wrap .works-wheel-index{right:12px;top:14px;max-width:155px}
+  .hero-wheel-wrap .works-wheel-index li:nth-child(n+5){display:none}
+  .hero-wheel-wrap .works-wheel-active{left:5%;bottom:15%;top:auto;transform:translateY(0);max-width:55%;font-size:24px}
+  .hero-wheel-wrap .works-wheel-hint{left:5%;bottom:7%;font-size:7px}
+  .works-wheel-progress{left:5%;right:5%;bottom:5%}
+  .works-wheel-overlay{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .works-wheel-overlay,.works-wheel-progress i{transition:none}
+}
