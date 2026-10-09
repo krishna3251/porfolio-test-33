@@ -6,7 +6,7 @@ const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
 export default function ContactFooter(){
   const year = new Date().getFullYear();
 
-  return <footer className="contact">
+  return <footer className="contact" id="contact">
     <div className="contact-grid-glow" aria-hidden="true"/>
     <TerminalBar command="printf build" status="READY" meta="CHANNEL / OPEN" />
     <div className="contact-inner">

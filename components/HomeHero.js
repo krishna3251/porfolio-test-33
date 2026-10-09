@@ -76,6 +76,10 @@ export default function HomeHero(){
           <span className="terminal-prefix">&gt; </span><SquigglyText scale={[2,3]} stepDuration={110}>KRISHNA</SquigglyText><span>.</span><i className="hero-terminal-cursor" aria-hidden="true">█</i>
         </motion.h1>
         <motion.p className="hero-one-line" initial={{opacity:0}} animate={{opacity:1}} transition={{delay:.7,duration:.8}}>AI systems, web experiences, automation and gaming visuals, built with equal attention to function and finish.</motion.p>
+        <motion.div className="hero-primary-actions" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:.84,duration:.7,ease:[.16,1,.3,1]}}>
+          <CommandButton href="/thumbnails" label="explore-work" cursor="WORK" accent />
+          <CommandButton href="#contact" label="start-a-project" cursor="CONTACT" />
+        </motion.div>
       </motion.div>
 
       <motion.div className="hero-portrait hero-portrait-small" style={{x:useTransform(sx,[-15,15],[-3,3]),y:useTransform(sy,[-15,15],[-2,2])}} initial={{opacity:0,scale:.92,y:25}} animate={{opacity:1,scale:1,y:0}} transition={{delay:.4,duration:.9,ease:[.16,1,.3,1]}}>
