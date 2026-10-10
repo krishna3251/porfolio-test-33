@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
 
@@ -12,12 +13,30 @@ const work=[
   ["06","VISUAL DESIGN","Valorant","Agent-focused gaming visuals using strong framing, readable hierarchy and controlled energy.","/thumbnails"]
 ];
 
+const listVariants={
+  hidden:{},
+  visible:{transition:{staggerChildren:.09,delayChildren:.04}}
+};
+
+const rowVariants={
+  hidden:{opacity:0,y:22},
+  visible:{opacity:1,y:0,transition:{duration:.55,ease:[.16,1,.3,1]}}
+};
+
 export default function SelectedWork(){
   return <section className="selected-work section" id="work">
     <TerminalBar command="cat ./selected-work" meta="INDEX / 06" />
     <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>06 WORKS</em></div>
     <div className="section-heading"><div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em><SquigglyText scale={2.5}>intent.</SquigglyText></em></h2></div><p>The hero wheel is the live index. This is the clean reference list, because humans occasionally need to read things instead of spinning them around in 3D.</p></div>
-    <div className="selected-work-list">{work.map(([no,label,title,text,href])=><Link key={no} href={href} className="selected-work-row"><span className="selected-work-no">{no}</span><div><small>{label}</small><strong>{title}</strong><p>{text}</p></div><b>↗</b></Link>)}</div>
+    <motion.div
+      className="selected-work-list"
+      variants={listVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{once:true,amount:.12,margin:"0px 0px -8% 0px"}}
+    >
+      {work.map(([no,label,title,text,href])=><motion.div key={no} variants={rowVariants}><Link href={href} className="selected-work-row"><span className="selected-work-no">{no}</span><div><small>{label}</small><strong>{title}</strong><p>{text}</p></div><b>↗</b></Link></motion.div>)}
+    </motion.div>
     <Link href="/thumbnails" className="archive-link" data-cursor="ARCHIVE">Explore the full archive <span>↗</span></Link>
   </section>;
 }
