@@ -3296,7 +3296,8 @@ pre {
   .selected-work-row>b,
   .hero-bottom a{transition:none}
 }
-\n
+
+
 /* Hero / wheel repair pass */
 .hero-v2{padding-top:42px}
 .hero-v2 .hero-intro-block{min-height:clamp(300px,34vw,430px)}
@@ -3348,7 +3349,8 @@ pre {
 @media(prefers-reduced-motion:reduce){
   .works-wheel-overlay,.works-wheel-progress i{transition:none}
 }
-\n
+
+
 /* Cinematic hero pass */
 .hero-cinematic{isolation:isolate;overflow:clip}
 .hero-cinematic-bg{position:absolute;inset:-10% -8%;z-index:-3;pointer-events:none;transform-origin:50% 35%;background:radial-gradient(circle at 52% 36%,rgba(255,106,42,.08),transparent 24%),radial-gradient(circle at 75% 55%,rgba(247,244,237,.035),transparent 30%)}
@@ -4408,7 +4410,7 @@ body > * { position: relative; z-index: 1; }
   --accent-hot: #f47b26;
   --focus: #a8271b;
   --page-width: 1440px;
-  --card-radius: var(--card-radius, 12px);
+  --card-radius: 12px;
 }
 
 :root[data-theme="editorial"] {
