@@ -1,42 +1,70 @@
 "use client";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
+import useSiteMedia from "@/hooks/useSiteMedia";
 
-const work=[
-  ["01","VISUAL DESIGN","Gaming thumbnails","Character-led compositions and art direction built to win attention in one frame.","/thumbnails"],
-  ["02","VISUAL DESIGN","Skirk / Genshin","High-impact character composition with cinematic contrast and editorial thumbnail direction.","/thumbnails"],
-  ["03","VISUAL DESIGN","Wuthering Waves","Anime gaming artwork shaped around atmosphere, hierarchy and a strong focal character.","/thumbnails"],
-  ["04","AI / SOFTWARE","Rukiya","A practical automation system for communities, built around memory, decisions and reliable workflows.","/projects"],
-  ["05","AUTOMATION","Lxeus","Moderation and intelligent interaction tools for Discord, focused on useful automation instead of noise.","/projects"],
-  ["06","VISUAL DESIGN","Valorant","Agent-focused gaming visuals using strong framing, readable hierarchy and controlled energy.","/thumbnails"]
+const work = [
+  ["01","VISUAL DESIGN","Gaming thumbnails","Character-led compositions and art direction built to win attention in one frame.","/thumbnails","selectedGenshin","/images/genshin%20cinematic.png"],
+  ["02","VISUAL DESIGN","Skirk / Genshin","High-impact character composition with cinematic contrast and deliberate framing.","/thumbnails","selectedSkirk","/images/genshin%20skirk.png"],
+  ["03","VISUAL DESIGN","Wuthering Waves","Atmosphere, hierarchy and an unmistakable focal character.","/thumbnails","selectedWuwa","/images/wuwa%20cyberpunk%201.png"],
+  ["04","AI / SOFTWARE","Rukiya","A practical automation system for communities, memory and repeatable workflows.","/projects","selectedRukiya","/images/bots/rukiya.png"],
+  ["05","AUTOMATION","Lxeus","Moderation and intelligent interaction tools for Discord communities.","/projects","selectedLxeus","/images/bots/lexus.png"],
+  ["06","VISUAL DESIGN","Valorant","Agent-focused gaming visuals with strong composition and controlled energy.","/thumbnails","selectedValorant","/images/valorant%20chamber%20velo.png"]
 ];
 
-const listVariants={
-  hidden:{},
-  visible:{transition:{staggerChildren:.09,delayChildren:.04}}
-};
+const listVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.02 } } };
+const rowVariants = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.58, ease: [0.16, 1, 0.3, 1] } } };
 
-const rowVariants={
-  hidden:{opacity:0,y:22},
-  visible:{opacity:1,y:0,transition:{duration:.55,ease:[.16,1,.3,1]}}
-};
+function imageStyle(settings) {
+  return {
+    objectFit: settings?.fit === "contain" ? "contain" : "cover",
+    objectPosition: (settings?.positionX ?? 50) + "% " + (settings?.positionY ?? 50) + "%",
+    transform: "scale(" + Math.min(2.5, Math.max(0.5, Number(settings?.scale) || 1)) + ")",
+    opacity: settings?.visible === false ? 0 : (settings?.opacity ?? 1)
+  };
+}
 
-export default function SelectedWork(){
-  return <section className="selected-work section" id="work">
-    <TerminalBar command="cat ./selected-work" meta="INDEX / 06" />
-    <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>06 WORKS</em></div>
-    <div className="section-heading"><div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br/><em><SquigglyText scale={2.5}>intent.</SquigglyText></em></h2></div><p>The hero wheel is the live index. This is the clean reference list, because humans occasionally need to read things instead of spinning them around in 3D.</p></div>
-    <motion.div
-      className="selected-work-list"
-      variants={listVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{once:true,amount:.12,margin:"0px 0px -8% 0px"}}
-    >
-      {work.map(([no,label,title,text,href])=><motion.div key={no} variants={rowVariants}><Link href={href} className="selected-work-row"><span className="selected-work-no">{no}</span><div><small>{label}</small><strong>{title}</strong><p>{text}</p></div><b>↗</b></Link></motion.div>)}
-    </motion.div>
-    <Link href="/thumbnails" className="archive-link" data-cursor="ARCHIVE">Explore the full archive <span>↗</span></Link>
-  </section>;
+export default function SelectedWork() {
+  const { media } = useSiteMedia();
+  const slots = media.slots || {};
+
+  return (
+    <section className="selected-work section" id="work">
+      <TerminalBar command="cat ./selected-work" meta="INDEX / 06" />
+      <div className="section-marker"><span>02</span><span>SELECTED WORK</span><em>06 WORKS</em></div>
+      <div className="section-heading">
+        <div><span className="eyebrow">WORK / SELECTED</span><h2>Made with<br /><em><SquigglyText scale={2.5}>intent.</SquigglyText></em></h2></div>
+        <p>A visual index of the things I make: game artwork, useful software and automation. Six distinct frames, with enough room for the work to speak.</p>
+      </div>
+
+      <motion.div className="selected-work-list editorial-work-grid" variants={listVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12, margin: "0px 0px -8% 0px" }}>
+        {work.map(([no,label,title,text,href,slot,defaultImage]) => {
+          const settings = slots[slot] || {};
+          const image = settings.src || defaultImage;
+          return (
+            <motion.article key={no} variants={rowVariants} className="selected-work-card">
+              <Link href={href} className="selected-work-row" data-cursor={"OPEN " + title.toUpperCase()}>
+                <span className="selected-work-no">{no}<i>/06</i></span>
+                <div className="selected-work-image">
+                  <img src={image} alt={title} loading="lazy" style={imageStyle(settings)} />
+                  {settings.overlayOpacity > 0 && <span style={{ backgroundColor: settings.overlayColor || "#a8271b", opacity: settings.overlayOpacity }} />}
+                  <b className="selected-work-image-open">VIEW WORK ↗</b>
+                </div>
+                <div className="selected-work-copy">
+                  <small>{label} / 2026</small>
+                  <strong>{title}</strong>
+                  <p>{text}</p>
+                </div>
+                <b className="selected-work-arrow">↗</b>
+              </Link>
+            </motion.article>
+          );
+        })}
+      </motion.div>
+      <Link href="/thumbnails" className="archive-link" data-cursor="ARCHIVE">Explore the full archive <span>↗</span></Link>
+    </section>
+  );
 }
