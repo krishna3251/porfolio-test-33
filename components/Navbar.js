@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { loadSiteMedia } from "@/hooks/useSiteMedia";
 
 const links=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
 const themes=[
@@ -40,8 +41,7 @@ export default function Navbar(){
 
   useEffect(()=>{
     let alive=true;
-    fetch("/site-media.json?v=latest",{cache:"no-store"})
-      .then((response)=>response.ok?response.json():null)
+    loadSiteMedia()
       .then((config)=>{
         if(!alive||!config)return;
         const version=Number(config.version)||1;
@@ -97,6 +97,10 @@ export default function Navbar(){
       <div className="mobile-menu-meta">NAVIGATION / 2026</div>
       {links.map(([label,href])=><Link key={href} href={href} onClick={()=>setOpen(false)} data-cursor={label.toUpperCase()}>{label}<span>↗</span></Link>)}
       <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
+      <div className="mobile-menu-theme-picker">
+        <span>VISUAL THEME</span>
+        <div>{themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>{label}</button>)}</div>
+      </div>
     </div>}
   </header>;
 }

@@ -53,6 +53,7 @@ export default function HowIBuild() {
     if (!root || !cards) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const touchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
     if (reduceMotion) return;
 
     gsap.registerPlugin(ScrollTrigger);
@@ -83,16 +84,20 @@ export default function HowIBuild() {
         }
       );
 
-      gsap.to(".process-card-art", {
-        yPercent: -5,
-        ease: "none",
-        scrollTrigger: {
-          trigger: root,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 0.6,
-        },
-      });
+      // Keep parallax for precision-pointer devices only. On phones the native
+      // horizontal rail stays lightweight and avoids stacking scroll observers.
+      if (!touchDevice) {
+        gsap.to(".process-card-art", {
+          yPercent: -5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.6,
+          },
+        });
+      }
     }, root);
 
     return () => ctx.revert();
