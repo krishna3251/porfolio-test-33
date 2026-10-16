@@ -1,4 +1,6 @@
+"use client";
 import TerminalBar from "@/components/TerminalBar";
+import useSiteMedia from "@/hooks/useSiteMedia";
 
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
