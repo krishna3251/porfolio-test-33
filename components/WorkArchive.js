@@ -20,7 +20,8 @@ const accentMap={
   OTHER:"#b9b3a9"
 };
 
-function ThumbnailCard({item,index,active,total}){\n  const settings=item.mediaSettings||{};
+function ThumbnailCard({item,index,active,total}){
+  const settings=item.mediaSettings||{};
   const ref=useRef(null);
   const [hovered,setHovered]=useState(false);
   const mx=useMotionValue(0), my=useMotionValue(0);
