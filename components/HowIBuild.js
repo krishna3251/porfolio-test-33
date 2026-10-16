@@ -100,7 +100,8 @@ export default function HowIBuild() {
 
   return (
     <section ref={sectionRef} className="process section editorial-process" id="process">
-      <div className="process-topography" aria-hidden="true" />\n      {processBackground.src && processBackground.visible !== false && <div className="process-custom-background" aria-hidden="true"><img src={processBackground.src} alt="" style={{objectFit:processBackground.fit==="contain"?"contain":"cover",objectPosition:(processBackground.positionX??50)+"% "+(processBackground.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(processBackground.scale)||1))+")",opacity:processBackground.opacity??.12}} /><span style={{backgroundColor:processBackground.overlayColor||"#eeeadf",opacity:processBackground.overlayOpacity??.65}} /></div>}
+      <div className="process-topography" aria-hidden="true" />
+      {processBackground.src && processBackground.visible !== false && <div className="process-custom-background" aria-hidden="true"><img src={processBackground.src} alt="" style={{objectFit:processBackground.fit==="contain"?"contain":"cover",objectPosition:(processBackground.positionX??50)+"% "+(processBackground.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(processBackground.scale)||1))+")",opacity:processBackground.opacity??.12}} /><span style={{backgroundColor:processBackground.overlayColor||"#eeeadf",opacity:processBackground.overlayOpacity??.65}} /></div>}
       <TerminalBar command="run ./process --verbose" meta="PIPELINE / ACTIVE" />
       <div className="section-marker">
         <span>05</span><span>PROCESS</span><em>FROM ROUGH TO RIGHT</em>
