@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { useMemo,useRef,useState } from "react";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
+import useSiteMedia from "@/hooks/useSiteMedia";
 
 const order=["GENSHIN","HSR","WUWA","VALORANT","PUBG","NTE","FORZA","OTHER"];
 
@@ -19,7 +20,7 @@ const accentMap={
   OTHER:"#b9b3a9"
 };
 
-function ThumbnailCard({item,index,active,total}){
+function ThumbnailCard({item,index,active,total}){\n  const settings=item.mediaSettings||{};
   const ref=useRef(null);
   const [hovered,setHovered]=useState(false);
   const mx=useMotionValue(0), my=useMotionValue(0);
@@ -58,7 +59,7 @@ function ThumbnailCard({item,index,active,total}){
       <motion.div className="thumb-media" style={{rotateX:rx,rotateY:ry,transformStyle:"preserve-3d"}}>
         <motion.div className="thumb-parallax-image" style={{y:imageY}}>
           <WobbleImage className="absolute inset-0">
-            <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image"/>
+            <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image" style={{objectFit:settings.fit==="contain"?"contain":"cover",objectPosition:(settings.positionX??50)+"% "+(settings.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(settings.scale)||1))+")",opacity:settings.visible===false?0:(settings.opacity??1)}}/>
           </WobbleImage>
         </motion.div>
         <div className="thumb-vignette" aria-hidden="true"/>
@@ -102,7 +103,7 @@ export default function WorkArchive({groups=[]}){
     </div>
 
     {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
-      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image"/></WobbleImage><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
+      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image" style={{objectFit:featured.mediaSettings?.fit==="contain"?"contain":"cover",objectPosition:(featured.mediaSettings?.positionX??50)+"% "+(featured.mediaSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(featured.mediaSettings?.scale)||1))+")",opacity:featured.mediaSettings?.visible===false?0:(featured.mediaSettings?.opacity??1)}}/></WobbleImage><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
       <div className="archive-feature-copy"><span>SELECTED FRAME</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={"/thumbnails/view?file="+encodeURIComponent(featured.filename)+"&category=ALL"} data-cursor="FEATURED">OPEN FEATURE ↗</Link></div>
     </motion.div>}
 
