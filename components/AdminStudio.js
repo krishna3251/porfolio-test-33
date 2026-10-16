@@ -519,7 +519,7 @@ export default function AdminStudio() {
       <main className="admin-main">
         <header className="admin-topbar">
           <div><span className="admin-eyebrow">CONTROL ROOM / 01</span><h1>Visual <em>designer.</em></h1></div>
-          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
+          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{workspaceTab === "thumbnails" ? (thumbnailQueue.length ? thumbnailQueue.length + " THUMBNAILS QUEUED" : "BATCH UPLOADER") : pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
         </header>
 
         <nav className="admin-mode-nav" aria-label="Admin editor mode">
@@ -640,45 +640,84 @@ export default function AdminStudio() {
             </div>}
 
             {workspaceTab === "thumbnails" && <div className="admin-design-extra admin-thumbnail-upload-tab">
-              <span className="admin-eyebrow">NEW THUMBNAIL ENTRY</span>
-              <p className="admin-editor-help">Each upload becomes a new card in the public thumbnail archive. Choose a category to make it appear under that category filter.</p>
-              <label className="admin-copy-field">
-                <span>THUMBNAIL TITLE *</span>
-                <input value={newThumbnail.title} onChange={(event) => { setNewThumbnail((previous) => ({ ...previous, title: event.target.value })); setHasChanges(true); setError(""); setNotice(""); }} placeholder="e.g. Furina Cinematic Thumbnail" maxLength={120} required />
-              </label>
-              <label className="admin-copy-field">
-                <span>ARCHIVE CATEGORY *</span>
-                <select value={newThumbnail.category} onChange={(event) => { setNewThumbnail((previous) => ({ ...previous, category: event.target.value })); setHasChanges(true); setError(""); setNotice(""); }}>
-                  {THUMBNAIL_CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
-                </select>
-              </label>
-              <label className="admin-copy-field">
-                <span>SHORT DESCRIPTION / OPTIONAL</span>
-                <input value={newThumbnail.subtitle} onChange={(event) => { setNewThumbnail((previous) => ({ ...previous, subtitle: event.target.value })); setHasChanges(true); setError(""); setNotice(""); }} placeholder="e.g. Blue-hour character composition" maxLength={180} />
-              </label>
-              <div className="admin-preview-stage admin-new-thumbnail-preview">
-                <div className="admin-preview-grid" aria-hidden="true" />
-                {pendingFile?.previewUrl ? <img src={pendingFile.previewUrl} alt="" className="admin-preview-img" style={{ objectFit: "contain" }} /> : <div className="admin-preview-empty"><span>+</span><strong>THUMBNAIL PREVIEW</strong><small>Choose an image to preview it here.</small></div>}
-                <span className="admin-preview-index">{newThumbnail.category} / NEW WORK</span>
-                <span className="admin-preview-frame top-left" /><span className="admin-preview-frame top-right" /><span className="admin-preview-frame bottom-left" /><span className="admin-preview-frame bottom-right" />
+              <div className="admin-batch-title-row">
+                <div>
+                  <span className="admin-eyebrow">BATCH THUMBNAIL STUDIO</span>
+                  <h3>Queue, sort, publish.</h3>
+                </div>
+                <span className="admin-batch-count">{thumbnailQueue.length} / 20 QUEUED</span>
               </div>
-              <div className="admin-upload-zone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); const file = event.dataTransfer.files?.[0]; if (!file) return; if (fileRef.current) { const transfer = new DataTransfer(); transfer.items.add(file); fileRef.current.files = transfer.files; fileRef.current.dispatchEvent(new Event("change", { bubbles: true })); } }}>
-                <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/avif" onChange={handleFile} />
-                <div className="admin-upload-icon">↑</div>
-                <div><strong>{pendingFile ? pendingFile.filename : "Choose a thumbnail image"}</strong><p>PNG, JPG, WebP or AVIF · max 3.4 MB · 16:9 recommended</p></div>
-                <button type="button" onClick={() => fileRef.current?.click()}>BROWSE</button>
+              <p className="admin-editor-help">Add multiple thumbnails together. Each card has its own title, description and category. Publishing sends the whole batch in one GitHub commit and triggers one deployment.</p>
+
+              <div className="admin-batch-drop" onDragOver={(event) => { event.preventDefault(); event.currentTarget.classList.add("is-dragging"); }} onDragLeave={(event) => event.currentTarget.classList.remove("is-dragging")} onDrop={(event) => { event.preventDefault(); event.currentTarget.classList.remove("is-dragging"); handleThumbnailFiles(event.dataTransfer.files); }}>
+                <input ref={thumbnailFilesRef} type="file" accept="image/png,image/jpeg,image/webp,image/avif" multiple onChange={(event) => handleThumbnailFiles(event.target.files)} />
+                <span className="admin-batch-drop-icon">↑</span>
+                <strong>Drop multiple thumbnails here</strong>
+                <small>PNG, JPG, WebP or AVIF · max 3 MB each · up to 20 per publish</small>
+                <button type="button" onClick={() => thumbnailFilesRef.current?.click()}>SELECT IMAGES</button>
               </div>
+
+              {thumbnailQueue.length > 0 && <>
+                <div className="admin-batch-toolbar">
+                  <label className="admin-batch-select-all">
+                    <input type="checkbox" checked={selectedQueueIds.length === thumbnailQueue.length} onChange={(event) => setSelectedQueueIds(event.target.checked ? thumbnailQueue.map((item) => item.id) : [])} />
+                    <span>Select all</span>
+                  </label>
+                  <span className="admin-batch-selected">{selectedQueueIds.length} selected</span>
+                  <button type="button" onClick={autoCategorizeQueue}>AUTO-CATEGORIZE</button>
+                </div>
+                <div className="admin-batch-category-tools">
+                  <label>
+                    <span>SET CATEGORY FOR SELECTED</span>
+                    <select value={bulkCategory} onChange={(event) => setBulkCategory(event.target.value)}>
+                      {THUMBNAIL_CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+                    </select>
+                  </label>
+                  <button type="button" onClick={applyCategoryToSelection}>APPLY TO {selectedQueueIds.length || "SELECTED"}</button>
+                  <button type="button" className="admin-batch-clear" onClick={clearThumbnailQueue}>CLEAR QUEUE</button>
+                </div>
+                <div className="admin-thumbnail-batch-list">
+                  {thumbnailQueue.map((item, index) => <article className="admin-thumbnail-batch-card" key={item.id}>
+                    <div className="admin-batch-card-head">
+                      <label><input type="checkbox" checked={selectedQueueIds.includes(item.id)} onChange={() => toggleQueuedThumbnail(item.id)} aria-label={"Select " + item.file.name} /><span>{String(index + 1).padStart(2, "0")}</span></label>
+                      <small>{(item.file.size / 1024).toFixed(0)} KB</small>
+                      <button type="button" onClick={() => removeQueuedThumbnail(item.id)} aria-label={"Remove " + item.file.name}>REMOVE ×</button>
+                    </div>
+                    <div className="admin-batch-image">
+                      <img src={item.previewUrl} alt="" />
+                      <span>{item.category}</span>
+                    </div>
+                    <div className="admin-batch-filename" title={item.file.name}>{item.file.name}</div>
+                    <label className="admin-copy-field">
+                      <span>DISPLAY TITLE *</span>
+                      <input value={item.title} onChange={(event) => updateQueuedThumbnail(item.id, { title: event.target.value.slice(0, 120) })} maxLength={120} placeholder="Thumbnail title" />
+                    </label>
+                    <label className="admin-copy-field">
+                      <span>PUBLIC CATEGORY *</span>
+                      <select value={item.category} onChange={(event) => updateQueuedThumbnail(item.id, { category: event.target.value })}>
+                        {THUMBNAIL_CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+                      </select>
+                    </label>
+                    <label className="admin-copy-field">
+                      <span>DESCRIPTION / OPTIONAL</span>
+                      <input value={item.subtitle} onChange={(event) => updateQueuedThumbnail(item.id, { subtitle: event.target.value.slice(0, 180) })} maxLength={180} placeholder="Short caption" />
+                    </label>
+                  </article>)}
+                </div>
+                {batchProgress && <p className="admin-batch-progress" role="status">{batchProgress}</p>}
+              </>}
+
               <div className="admin-thumbnail-existing">
-                <div className="admin-thumbnail-existing-head"><span>YOUR UPLOADED THUMBNAILS</span><strong>{(config.thumbnails || []).length}</strong></div>
-                {(config.thumbnails || []).length === 0 ? <p className="admin-editor-help">No custom thumbnails yet. Your next upload will show up here.</p> : (config.thumbnails || []).slice().reverse().slice(0, 8).map((thumbnail) => <div className="admin-thumbnail-existing-row" key={thumbnail.filename}><span>{thumbnail.title}</span><b>{thumbnail.category}</b></div>)}
+                <div className="admin-thumbnail-existing-head"><span>ALREADY PUBLISHED</span><strong>{(config.thumbnails || []).length}</strong></div>
+                {(config.thumbnails || []).length === 0 ? <p className="admin-editor-help">Your published thumbnail uploads will appear here.</p> : (config.thumbnails || []).slice().reverse().slice(0, 8).map((thumbnail) => <div className="admin-thumbnail-existing-row" key={thumbnail.filename}><span>{thumbnail.title}</span><b>{thumbnail.category}</b></div>)}
               </div>
             </div>}
 
             <div className="admin-save-area">
-              <div className="admin-save-summary"><span className={hasChanges || pendingFile ? "admin-save-indicator is-dirty" : "admin-save-indicator"} /><div><strong>{workspaceTab === "thumbnails" ? (pendingFile ? "Thumbnail ready to publish" : "Create a thumbnail entry") : pendingFile ? "New image ready to upload" : hasChanges ? "You have unpublished changes" : "Everything is saved"}</strong><small>{workspaceTab === "thumbnails" ? "The thumbnail will be added to its selected category after deployment." : canWrite ? "Publishing saves to GitHub; Vercel then deploys the updated site." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
+              <div className="admin-save-summary"><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-save-indicator is-dirty" : "admin-save-indicator"} /><div><strong>{workspaceTab === "thumbnails" ? (thumbnailQueue.length ? thumbnailQueue.length + " thumbnails ready to publish" : "Add images to start a batch") : pendingFile ? "New image ready to upload" : hasChanges ? "You have unpublished changes" : "Everything is saved"}</strong><small>{workspaceTab === "thumbnails" ? "All thumbnails publish together in one GitHub commit. Vercel then deploys once." : canWrite ? "Publishing saves to GitHub; Vercel then deploys the updated site." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
               {error && <p className="admin-error" role="alert">{error}</p>}
               {notice && <p className="admin-notice" role="status">{notice}</p>}
-              <div className="admin-publish-actions"><button type="button" className="admin-discard-button" disabled={busy || (!hasChanges && !pendingFile)} onClick={discardDraft}>DISCARD DRAFT</button><button type="button" className="admin-save-button" disabled={busy || !canWrite || (workspaceTab === "thumbnails" ? (!pendingFile || !newThumbnail.title.trim()) : (!hasChanges && !pendingFile))} onClick={save}>{busy ? "PUBLISHING…" : workspaceTab === "thumbnails" ? "UPLOAD THUMBNAIL + PUBLISH" : pendingFile ? "UPLOAD + PUBLISH" : hasChanges ? "PUBLISH CHANGES" : "ALL CHANGES SAVED"} <span>↗</span></button></div>
+              <div className="admin-publish-actions"><button type="button" className="admin-discard-button" disabled={busy || (!hasChanges && !pendingFile && !thumbnailQueue.length)} onClick={discardDraft}>DISCARD DRAFT</button><button type="button" className="admin-save-button" disabled={busy || !canWrite || (workspaceTab === "thumbnails" ? (!thumbnailQueue.length || thumbnailQueue.some((item) => !item.title.trim())) : (!hasChanges && !pendingFile))} onClick={save}>{busy ? (workspaceTab === "thumbnails" ? "PUBLISHING BATCH…" : "PUBLISHING…") : workspaceTab === "thumbnails" ? "PUBLISH " + thumbnailQueue.length + " THUMBNAILS / ONE COMMIT" : pendingFile ? "UPLOAD + PUBLISH" : hasChanges ? "PUBLISH CHANGES" : "ALL CHANGES SAVED"} <span>↗</span></button></div>
               <div className="admin-save-foot"><span>REPO / {repo}</span><span>BRANCH / {branch}</span></div>
             </div>
           </section>
