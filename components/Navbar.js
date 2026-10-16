@@ -97,6 +97,10 @@ export default function Navbar(){
       <div className="mobile-menu-meta">NAVIGATION / 2026</div>
       {links.map(([label,href])=><Link key={href} href={href} onClick={()=>setOpen(false)} data-cursor={label.toUpperCase()}>{label}<span>↗</span></Link>)}
       <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
+      <div className="mobile-menu-theme-picker">
+        <span>VISUAL THEME</span>
+        <div>{themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>{label}</button>)}</div>
+      </div>
     </div>}
   </header>;
 }
