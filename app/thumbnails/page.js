@@ -1,4 +1,5 @@
 import WorkArchive from "@/components/WorkArchive";
+import siteMedia from "@/public/site-media.json";
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
@@ -11,7 +12,7 @@ export const metadata={
 };
 
 export default function ThumbnailsPage(){
-  const groups=getChronologicalThumbnailGroups();
+  const groups=getChronologicalThumbnailGroups(siteMedia);
   const total=groups.reduce((n,g)=>n+g.thumbnails.length,0);
 
   return <main className="archive-page"><TerminalBar command="cd ./visual-archive" meta="PATH / ~/krishna" />

@@ -5763,7 +5763,7 @@ button, a, input, select, textarea { touch-action: manipulation; }
 
 .admin-mode-nav {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin: 22px 0 18px;
   padding: 0;
@@ -5856,6 +5856,15 @@ button, a, input, select, textarea { touch-action: manipulation; }
 .admin-image-panel select, .admin-controls-panel select, .admin-source-block input, .admin-copy-field input, .admin-copy-field textarea { font-family: var(--font-dm-mono),monospace; }
 .admin-image-panel select, .admin-controls-panel select { padding-right: 32px; }
 
+.admin-new-thumbnail-preview { aspect-ratio: 16 / 9; }
+.admin-thumbnail-existing { margin-top: 20px; border-top: 1px solid rgba(242,239,231,.1); padding-top: 14px; }
+.admin-thumbnail-existing-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #939c90; font: 500 8px var(--font-dm-mono),monospace; letter-spacing: .09em; }
+.admin-thumbnail-existing-head strong { color: #f47b26; font-size: 10px; }
+.admin-thumbnail-existing-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(242,239,231,.07); color: #dce1d8; font-size: 9px; }
+.admin-thumbnail-existing-row span { min-width: 0; overflow-wrap: anywhere; }
+.admin-thumbnail-existing-row b { flex: 0 0 auto; padding: 4px 6px; background: rgba(244,123,38,.09); color: #ffc08d; font: 500 7px var(--font-dm-mono),monospace; }
+.admin-thumbnail-upload-tab .admin-editor-help { line-height: 1.7; }
+
 @media (max-width: 920px) {
   .admin-mode-nav { gap: 6px; }
   .admin-mode-nav button { min-height: 66px; padding: 11px 10px; grid-template-columns: 23px minmax(0,1fr); column-gap: 7px; }
@@ -5865,6 +5874,7 @@ button, a, input, select, textarea { touch-action: manipulation; }
 }
 @media (max-width: 640px) {
   .admin-mode-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     position: sticky;
     top: 0;
     z-index: 42;

@@ -77,7 +77,7 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
       const image=new Image();
       image.decoding="async";
       const filename=new URL(url,window.location.origin).searchParams.get("file");
-      if(filename) image.src=getThumbnailSrc(filename);
+      if (filename) image.src = filename.startsWith("thumb-upload-") ? "/uploads/" + filename : getThumbnailSrc(filename);
     });
   },[previous,next]);
 
