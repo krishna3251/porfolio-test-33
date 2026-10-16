@@ -12,6 +12,20 @@ function imageStyle(settings) {
   };
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const comma = result.indexOf(",");
+      if (comma < 0) return reject(new Error("The image could not be read."));
+      resolve(result.slice(comma + 1));
+    };
+    reader.onerror = () => reject(new Error("The browser could not read that image."));
+    reader.readAsDataURL(file);
+  });
+}
+
 function thumbnailDefault(filename) {
   return {
     label: filename,
@@ -46,12 +60,19 @@ export default function AdminStudio() {
   const [pendingFile, setPendingFile] = useState(null);
   const [sidebarFilter, setSidebarFilter] = useState("All images");
   const [assetSearch, setAssetSearch] = useState("");
+  const [workspaceTab, setWorkspaceTab] = useState("images");
+  const [hasChanges, setHasChanges] = useState(false);
+  const [savedConfig, setSavedConfig] = useState(null);
+  const searchInputRef = useRef(null);
+  const saveActionRef = useRef(null);
 
   const readMedia = async () => {
     const response = await fetch("/api/admin/media", { cache: "no-store", credentials: "same-origin" });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Could not load the media manifest.");
     setConfig(data.config);
+    setSavedConfig(data.config);
+    setHasChanges(false);
     setCanWrite(Boolean(data.canWrite));
     setRepo(data.repository || "krishna3251/porfolio-test-33");
     setBranch(data.branch || "main");
@@ -65,6 +86,11 @@ export default function AdminStudio() {
       setAuthenticated(false);
     }).finally(() => setChecking(false));
   }, []);
+
+  useEffect(() => {
+    if (!pendingFile?.previewUrl) return;
+    return () => URL.revokeObjectURL(pendingFile.previewUrl);
+  }, [pendingFile?.previewUrl]);
 
   const slotEntries = useMemo(() => {
     const slots = Object.entries(config?.slots || {}).map(([key, value]) => ({ key, kind: "slot", label: value.label || key, group: value.group || "Other", value }));
@@ -90,7 +116,6 @@ export default function AdminStudio() {
   const currentSrc = settings.src || "";
 
   const updateSettings = (patch) => {
-    setPendingFile(null);
     setConfig((previous) => {
       if (!previous) return previous;
       if (isThumbnail) {
@@ -99,6 +124,7 @@ export default function AdminStudio() {
       }
       return { ...previous, slots: { ...previous.slots, [selectedKey]: { ...previous.slots[selectedKey], ...patch } } };
     });
+    setHasChanges(true);
     setNotice("");
     setError("");
   };
@@ -119,19 +145,10 @@ export default function AdminStudio() {
       event.target.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = String(reader.result || "");
-      const comma = result.indexOf(",");
-      if (comma < 0) {
-        setError("The image could not be read.");
-        return;
-      }
-      setPendingFile({ filename: file.name, contentType: file.type, data: result.slice(comma + 1) });
-      setNotice("Image staged. Save to upload it to GitHub.");
-    };
-    reader.onerror = () => setError("The browser could not read that file.");
-    reader.readAsDataURL(file);
+    const previewUrl = URL.createObjectURL(file);
+    setPendingFile({ filename: file.name, contentType: file.type, file, previewUrl });
+    setHasChanges(true);
+    setNotice("Image ready. Preview updates immediately; publish when you're happy with the crop.");
   };
 
   const save = async () => {
@@ -144,15 +161,22 @@ export default function AdminStudio() {
     setNotice("Saving the media manifest to GitHub…");
     try {
       const target = isThumbnail ? { kind: "thumbnail", key: thumbName } : { kind: "slot", key: selectedKey };
+      const upload = pendingFile ? {
+        filename: pendingFile.filename,
+        contentType: pendingFile.contentType,
+        data: await fileToBase64(pendingFile.file)
+      } : undefined;
       const response = await fetch("/api/admin/media", {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ config, target, upload: pendingFile || undefined })
+        body: JSON.stringify({ config, target, upload })
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Save failed.");
       setConfig(data.config);
+      setSavedConfig(data.config);
+      setHasChanges(false);
       setPendingFile(null);
       setNotice(data.message || "Saved. Vercel will deploy the changes from GitHub.");
       if (fileRef.current) fileRef.current.value = "";
@@ -218,8 +242,27 @@ export default function AdminStudio() {
     setError("");
   };
 
-  const updateCopy = (key, value) => setConfig((previous) => ({ ...previous, copy: { ...previous.copy, [key]: value } }));
-  const updateDesign = (key, value) => setConfig((previous) => ({ ...previous, design: { ...previous.design, [key]: value } }));
+  const updateCopy = (key, value) => {
+    setConfig((previous) => ({ ...previous, copy: { ...previous.copy, [key]: value } }));
+    setHasChanges(true);
+    setNotice("");
+    setError("");
+  };
+  const updateDesign = (key, value) => {
+    setConfig((previous) => ({ ...previous, design: { ...previous.design, [key]: value } }));
+    setHasChanges(true);
+    setNotice("");
+    setError("");
+  };
+  const discardDraft = () => {
+    if (savedConfig) setConfig(savedConfig);
+    setHasChanges(false);
+    setPendingFile(null);
+    if (fileRef.current) fileRef.current.value = "";
+    setError("");
+    setNotice("Draft changes discarded.");
+  };
+  const resetCrop = () => updateSettings({ fit: "cover", positionX: 50, positionY: 50, scale: 1, opacity: 1, overlayOpacity: 0 });
 
   if (checking) {
     return <div className="admin-gate"><div className="admin-gate-panel"><div className="admin-mark">K<span>.</span></div><p className="admin-eyebrow">KRISHNA / PRIVATE STUDIO</p><h1>Opening your<br /><em>workspace.</em></h1><div className="admin-loading-line"><span /></div><small>CHECKING SECURE SESSION</small></div></div>;
@@ -263,16 +306,22 @@ export default function AdminStudio() {
       <main className="admin-main">
         <header className="admin-topbar">
           <div><span className="admin-eyebrow">CONTROL ROOM / 01</span><h1>Visual <em>designer.</em></h1></div>
-          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
+          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
         </header>
+
+        <nav className="admin-mode-nav" aria-label="Admin editor mode">
+          <button type="button" className={workspaceTab === "images" ? "active" : ""} aria-pressed={workspaceTab === "images"} onClick={() => setWorkspaceTab("images")}><span>01</span><strong>Images</strong><small>Replace, crop & position</small></button>
+          <button type="button" className={workspaceTab === "design" ? "active" : ""} aria-pressed={workspaceTab === "design"} onClick={() => setWorkspaceTab("design")}><span>02</span><strong>Site design</strong><small>Theme & corner style</small></button>
+          <button type="button" className={workspaceTab === "content" ? "active" : ""} aria-pressed={workspaceTab === "content"} onClick={() => setWorkspaceTab("content")}><span>03</span><strong>Text & content</strong><small>Homepage copy</small></button>
+        </nav>
 
         {!canWrite && <section className="admin-setup-alert">
           <div className="admin-setup-icon">!</div>
           <div><strong>One-time GitHub connection required</strong><p>The studio can preview your settings now. To upload pictures and commit changes, add <code>GITHUB_TOKEN</code> as an encrypted environment variable in Vercel, with Contents read/write access to this repository, then redeploy. Do not paste the token into this page.</p><a href="https://vercel.com/krishna3251s-projects/tests/settings/environment-variables" target="_blank" rel="noreferrer">OPEN VERCEL ENVIRONMENT SETTINGS ↗</a></div>
         </section>}
 
-        <div className="admin-workspace-grid">
-          <section className="admin-image-panel">
+        <div className={`admin-workspace-grid ${workspaceTab !== "images" ? "admin-workspace-grid-single" : ""}`}>
+          {workspaceTab === "images" && <section className="admin-image-panel">
             <div className="admin-panel-head"><div><span className="admin-eyebrow">ASSET SELECTOR / LIVE PREVIEW</span><h2>Media <em>library.</em></h2><p className="admin-panel-subtitle">Pick an asset, preview your changes, then publish once.</p></div><span className="admin-count">{visibleEntries.length} / {slotEntries.length} ASSETS</span></div>
             <label className="admin-field-label" htmlFor="media-target">CHOOSE ANY IMAGE IN THE SITE</label>
             <select id="media-target" value={selectedKey} onChange={(event) => { setSelectedKey(event.target.value); setPendingFile(null); setNotice(""); setError(""); if (fileRef.current) fileRef.current.value = ""; }}>
@@ -282,7 +331,7 @@ export default function AdminStudio() {
 
             <div className="admin-preview-stage">
               <div className="admin-preview-grid" aria-hidden="true" />
-              {currentSrc ? <img src={pendingFile ? "data:" + pendingFile.contentType + ";base64," + pendingFile.data : currentSrc} alt="" className="admin-preview-img" style={imageStyle(settings)} /> : <div className="admin-preview-empty"><span>+</span><strong>NO IMAGE SET</strong><small>Upload a transparent cutout or background.</small></div>}
+              {(pendingFile?.previewUrl || currentSrc) ? <img src={pendingFile?.previewUrl || currentSrc} alt="" className="admin-preview-img" style={imageStyle(settings)} /> : <div className="admin-preview-empty"><span>+</span><strong>NO IMAGE SET</strong><small>Upload a transparent cutout or background.</small></div>}
               {settings.overlayOpacity > 0 && <span className="admin-preview-overlay" style={{ backgroundColor: settings.overlayColor || "#a8271b", opacity: settings.overlayOpacity }} />}
               <span className="admin-preview-index">{selectedGroup.toUpperCase()} / PREVIEW</span>
               {settings.visible === false && <span className="admin-hidden-pill">HIDDEN ON SITE</span>}
@@ -301,10 +350,24 @@ export default function AdminStudio() {
               <input id="media-source" type="url" placeholder="/uploads/your-image.webp or https://…" value={settings.src || ""} onChange={(event) => updateSettings({ src: event.target.value })} />
               <p>Local images should begin with <code>/</code>. Uploading creates a file in the repo and updates this slot automatically.</p>
             </div>
-          </section>
+          </section>}
 
           <section className="admin-controls-panel">
-            <div className="admin-panel-head"><div><span className="admin-eyebrow">EDIT SELECTED ASSET</span><h2>Crop & <em>tune.</em></h2><p className="admin-panel-subtitle">Adjust the image without editing code.</p></div><span className="admin-current-tag">{selectedKey}</span></div>
+            <div className="admin-panel-head">
+              <div>
+                <span className="admin-eyebrow">{workspaceTab === "images" ? "EDIT SELECTED ASSET" : workspaceTab === "design" ? "GLOBAL ART DIRECTION" : "SITE CONTENT"}</span>
+                <h2>{workspaceTab === "images" ? <>Crop & <em>tune.</em></> : workspaceTab === "design" ? <>Set the <em>mood.</em></> : <>Words that <em>fit.</em></>}</h2>
+                <p className="admin-panel-subtitle">{workspaceTab === "images" ? "Adjust crop and position, with an instant preview." : workspaceTab === "design" ? "Change the visual direction of the entire site." : "Edit homepage text without touching the code."}</p>
+              </div>
+              <span className="admin-current-tag">{workspaceTab === "images" ? selectedKey : workspaceTab === "design" ? (config.design?.theme || "editorial") : "HOME / COPY"}</span>
+            </div>
+
+            {workspaceTab === "images" && <>
+              <div className="admin-quick-actions">
+                <button type="button" onClick={() => updateSettings({ positionX: 50, positionY: 50, scale: 1 })}>CENTER CROP</button>
+                <button type="button" onClick={resetCrop}>RESET IMAGE SETTINGS</button>
+              </div>
+              <div className="admin-image-controls">
             <div className="admin-control-group">
               <div className="admin-control-title"><label htmlFor="media-fit">FIT MODE</label><span>FRAME BEHAVIOR</span></div>
               <select id="media-fit" value={settings.fit || "cover"} onChange={(event) => updateSettings({ fit: event.target.value })}><option value="cover">Cover / fill frame</option><option value="contain">Contain / show whole image</option></select>
@@ -330,25 +393,43 @@ export default function AdminStudio() {
               <div className="admin-color-row"><input id="media-overlay" type="color" value={settings.overlayColor || "#a8271b"} onChange={(event) => updateSettings({ overlayColor: event.target.value })} /><input type="range" aria-label="Overlay opacity" min="0" max="1" step="0.05" value={settings.overlayOpacity || 0} onChange={(event) => updateSettings({ overlayOpacity: Number(event.target.value) })} /><output>{Math.round((settings.overlayOpacity || 0) * 100)}%</output></div>
             </div>
             <label className="admin-toggle-row"><span><strong>Show this image</strong><small>Hide without deleting the saved asset.</small></span><input type="checkbox" checked={settings.visible !== false} onChange={(event) => updateSettings({ visible: event.target.checked })} /></label>
+              </div>
+            </>}
 
-            <div className="admin-design-extra">
+            {workspaceTab === "design" && <div className="admin-design-extra admin-design-tab">
               <span className="admin-eyebrow">GLOBAL DESIGN</span>
-              <div className="admin-control-title"><label htmlFor="admin-theme">SITE COLOR DIRECTION</label></div>
-              <select id="admin-theme" value={config.design?.theme || "editorial"} onChange={(event) => updateDesign("theme", event.target.value)}><option value="editorial">Editorial / paper + ink</option><option value="darkroom">Darkroom / cinematic</option><option value="sunset">Sunset / warm contrast</option><option value="minimalism">Minimal / quiet</option><option value="custom">Custom palette</option></select>
-              {config.design?.theme === "custom" && <div className="admin-theme-colors">{[["paper","Paper"],["surface","Panels"],["ink","Ink"],["accent","Accent"],["orange","Orange"]].map(([key,label]) => <label key={key}><span>{label}</span><input type="color" value={config.design[key] || "#eeeadf"} onChange={(event) => updateDesign(key, event.target.value)} /></label>)}</div>}
-              <div className="admin-control-title admin-copy-title"><label>HERO COPY</label><span>TEXT / PUBLISH WITH SAVE</span></div>
-              <label className="admin-copy-field"><span>Eyebrow</span><input value={config.copy?.heroEyebrow || ""} onChange={(event) => updateCopy("heroEyebrow", event.target.value)} maxLength={180} /></label>
-              <label className="admin-copy-field"><span>Headline description</span><textarea value={config.copy?.heroDescription || ""} onChange={(event) => updateCopy("heroDescription", event.target.value)} rows={3} maxLength={500} /></label>
+              <div className="admin-control-title"><label htmlFor="admin-theme">SITE COLOR DIRECTION</label><span>THEME PRESETS</span></div>
+              <select id="admin-theme" value={config.design?.theme || "editorial"} onChange={(event) => updateDesign("theme", event.target.value)}>
+                <option value="editorial">Editorial / paper + ink</option>
+                <option value="darkroom">Darkroom / cinematic</option>
+                <option value="sunset">Sunset / warm</option>
+                <option value="minimalism">Minimal / quiet</option>
+                <option value="custom">Custom palette</option>
+              </select>
+              {config.design?.theme === "custom" && <div className="admin-theme-colors">{[["paper","Paper"],["surface","Panels"],["ink","Ink"],["muted","Muted text"],["accent","Accent"],["orange","Orange"],["border","Borders"]].map(([key,label]) => <label key={key}><span>{label}</span><input type="color" value={config.design[key] || "#eeeadf"} onChange={(event) => updateDesign(key, event.target.value)} /></label>)}</div>}
+              <div className="admin-radius-control">
+                <div className="admin-control-title"><label htmlFor="admin-radius">CARD CORNER RADIUS</label><output>{config.design?.radius || 12}px</output></div>
+                <input id="admin-radius" type="range" min="4" max="28" value={config.design?.radius || 12} onChange={(event) => updateDesign("radius", Number(event.target.value))} />
+                <div className="admin-radius-preview"><span style={{ borderRadius: (config.design?.radius || 12) + "px" }}>CARD PREVIEW</span><span style={{ borderRadius: (config.design?.radius || 12) + "px" }}>IMAGE FRAME</span></div>
+              </div>
+              <p className="admin-editor-help">Theme changes are saved with your site configuration and appear on the live site after deployment.</p>
+            </div>}
+
+            {workspaceTab === "content" && <div className="admin-design-extra admin-content-tab">
+              <span className="admin-eyebrow">HOMEPAGE COPY</span>
+              <p className="admin-editor-help">Keep the main lines focused so they remain readable on mobile screens.</p>
+              <label className="admin-copy-field"><span>Eyebrow / short tagline</span><input value={config.copy?.heroEyebrow || ""} onChange={(event) => updateCopy("heroEyebrow", event.target.value)} maxLength={180} /></label>
+              <label className="admin-copy-field"><span>Hero description</span><textarea value={config.copy?.heroDescription || ""} onChange={(event) => updateCopy("heroDescription", event.target.value)} rows={3} maxLength={500} /></label>
               <label className="admin-copy-field"><span>Profile lead</span><textarea value={config.copy?.profileLead || ""} onChange={(event) => updateCopy("profileLead", event.target.value)} rows={2} maxLength={180} /></label>
-              <div className="admin-control-title admin-copy-title"><label>PORTRAIT FRAME</label><span>EDGE RADIUS</span></div>
-              <input type="range" min="4" max="28" value={config.design?.radius || 12} onChange={(event) => updateDesign("radius", Number(event.target.value))} />
-            </div>
+              <label className="admin-copy-field"><span>Profile description</span><textarea value={config.copy?.profileBody || ""} onChange={(event) => updateCopy("profileBody", event.target.value)} rows={4} maxLength={500} /></label>
+              <div className="admin-copy-counter"><span>CONTENT STATUS</span><strong>{hasChanges ? "DRAFT HAS CHANGES" : "SAVED VERSION"}</strong></div>
+            </div>}
 
             <div className="admin-save-area">
-              <div className="admin-save-summary"><span className="admin-save-indicator" /><div><strong>{pendingFile ? "New image ready to upload" : "Changes stay in draft until saved"}</strong><small>{canWrite ? "A token is configured. GitHub still checks Contents write permission when you publish." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
+              <div className="admin-save-summary"><span className={hasChanges || pendingFile ? "admin-save-indicator is-dirty" : "admin-save-indicator"} /><div><strong>{pendingFile ? "New image ready to upload" : hasChanges ? "You have unpublished changes" : "Everything is saved"}</strong><small>{canWrite ? "Publishing saves to GitHub; Vercel then deploys the updated site." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
               {error && <p className="admin-error" role="alert">{error}</p>}
               {notice && <p className="admin-notice" role="status">{notice}</p>}
-              <button type="button" className="admin-save-button" disabled={busy || !canWrite} onClick={save}>{busy ? "PUBLISHING…" : pendingFile ? "UPLOAD IMAGE + SAVE" : "SAVE CHANGES TO GITHUB"} <span>↗</span></button>
+              <div className="admin-publish-actions"><button type="button" className="admin-discard-button" disabled={busy || (!hasChanges && !pendingFile)} onClick={discardDraft}>DISCARD DRAFT</button><button type="button" className="admin-save-button" disabled={busy || !canWrite || (!hasChanges && !pendingFile)} onClick={save}>{busy ? "PUBLISHING…" : pendingFile ? "UPLOAD + PUBLISH" : hasChanges ? "PUBLISH CHANGES" : "ALL CHANGES SAVED"} <span>↗</span></button></div>
               <div className="admin-save-foot"><span>REPO / {repo}</span><span>BRANCH / {branch}</span></div>
             </div>
           </section>
@@ -359,3 +440,4 @@ export default function AdminStudio() {
     </div>
   );
 }
+
