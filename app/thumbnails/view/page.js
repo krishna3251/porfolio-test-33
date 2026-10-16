@@ -1,4 +1,5 @@
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
+import siteMedia from "@/public/site-media.json";
 import { notFound } from "next/navigation";
 import ThumbnailViewer from "@/components/ThumbnailViewer";
 
@@ -9,7 +10,7 @@ export default async function ThumbnailViewPage({ searchParams }) {
   const filename = params?.file ? decodeURIComponent(params.file) : "";
   const requestedCategory = params?.category || "ALL";
 
-  const groups = getChronologicalThumbnailGroups();
+  const groups = getChronologicalThumbnailGroups(siteMedia);
   const allItems = groups.flatMap((group) => group.thumbnails || []);
   const scopedItems =
     requestedCategory === "ALL"
