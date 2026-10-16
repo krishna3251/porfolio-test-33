@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import WobbleImage from "@/components/WobbleImage";
 import { StatusChip } from "@/components/PortfolioUI";
-import r34Image from "@/lib/r34-image";\nimport useSiteMedia from "@/hooks/useSiteMedia";
+import r34Image from "@/lib/r34-image";
+import useSiteMedia from "@/hooks/useSiteMedia";
 
 const botsData = [
   {
