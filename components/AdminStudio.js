@@ -241,7 +241,7 @@ export default function AdminStudio() {
       <main className="admin-main">
         <header className="admin-topbar">
           <div><span className="admin-eyebrow">CONTROL ROOM / 01</span><h1>Visual <em>designer.</em></h1></div>
-          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "GITHUB CONNECTED" : "READ-ONLY MODE"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
+          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
         </header>
 
         {!canWrite && <section className="admin-setup-alert">
@@ -323,7 +323,7 @@ export default function AdminStudio() {
             </div>
 
             <div className="admin-save-area">
-              <div className="admin-save-summary"><span className="admin-save-indicator" /><div><strong>{pendingFile ? "New image ready to upload" : "Changes stay in draft until saved"}</strong><small>{canWrite ? "Publish writes to GitHub and triggers a Vercel deployment." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
+              <div className="admin-save-summary"><span className="admin-save-indicator" /><div><strong>{pendingFile ? "New image ready to upload" : "Changes stay in draft until saved"}</strong><small>{canWrite ? "A token is configured. GitHub still checks Contents write permission when you publish." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
               {error && <p className="admin-error" role="alert">{error}</p>}
               {notice && <p className="admin-notice" role="status">{notice}</p>}
               <button type="button" className="admin-save-button" disabled={busy || !canWrite} onClick={save}>{busy ? "PUBLISHING…" : pendingFile ? "UPLOAD IMAGE + SAVE" : "SAVE CHANGES TO GITHUB"} <span>↗</span></button>

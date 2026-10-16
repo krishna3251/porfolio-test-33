@@ -147,7 +147,7 @@ export async function POST(request) {
       if (target.kind === "slot") config.slots[target.key] = settings;
       else config.overrides[target.key] = settings;
     } catch (error) {
-      return fail("Image upload failed. Check the GitHub token's Contents write permission. " + String(error.message || "").slice(0, 260), 502);
+      return fail(String(error.message || "Image upload failed.").slice(0, 750), 502);
     }
   }
 
@@ -161,6 +161,6 @@ export async function POST(request) {
       message: upload ? "Image and settings saved to GitHub. The site will update after Vercel finishes deploying." : "Settings saved to GitHub. The site will update after Vercel finishes deploying.",
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    return fail("Could not save the media manifest. " + String(error.message || "").slice(0, 300), 502);
+    return fail("Could not save the media manifest. " + String(error.message || "").slice(0, 750), 502);
   }
 }

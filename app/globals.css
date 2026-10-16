@@ -5309,3 +5309,134 @@ body:has(.admin-shell) .site-audio, body:has(.admin-shell) .custom-cursor { disp
   .admin-upload-zone > div:nth-of-type(2) { flex: 1 1 150px; }
   .admin-save-foot { gap: 6px; flex-wrap: wrap; }
 }
+
+
+/* Mobile/tablet card repair: legacy glass-stack widths were leaking into the new grid. */
+.services-list.service-glass-stack.editorial-service-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: clamp(12px, 1.7vw, 24px) !important;
+  width: 100%;
+  min-width: 0;
+  padding: clamp(20px, 3vw, 38px) 0 !important;
+}
+.services-list.service-glass-stack .editorial-service-card {
+  display: flex !important;
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: clamp(12px, 1.35vw, 19px) !important;
+  grid-column: auto !important;
+  transform: none !important;
+  justify-self: stretch;
+  box-sizing: border-box;
+}
+.services-list.service-glass-stack .editorial-service-card:hover {
+  transform: translateY(-4px) !important;
+}
+.services-list.service-glass-stack .service-card-media {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  flex: 0 0 auto;
+  margin-bottom: 17px;
+  overflow: hidden;
+}
+.services-list.service-glass-stack .service-card-media img {
+  width: 100%;
+  height: 100%;
+}
+.services-list.service-glass-stack .editorial-service-card .service-main {
+  width: 100%;
+  min-width: 0;
+}
+.services-list.service-glass-stack .editorial-service-card .service-main h3 {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(22px, 2.2vw, 31px);
+  line-height: .96;
+  letter-spacing: -.025em;
+}
+.services-list.service-glass-stack .editorial-service-card .service-main p {
+  min-height: 0;
+  margin: 8px 0 14px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.services-list.service-glass-stack .editorial-service-card .service-command {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  margin-top: auto;
+  padding-top: 5px;
+}
+.services-list.service-glass-stack .editorial-service-card::before { content: none; }
+@media (max-width: 900px) {
+  .services-list.service-glass-stack.editorial-service-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 14px !important;
+    padding: 22px 0 30px !important;
+  }
+  .services-list.service-glass-stack .editorial-service-card {
+    display: grid !important;
+    grid-template-columns: minmax(108px, .7fr) minmax(0, 1.3fr) !important;
+    grid-template-rows: auto 1fr;
+    column-gap: 18px;
+    align-items: stretch;
+    padding: 13px !important;
+  }
+  .services-list.service-glass-stack .service-card-media {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    aspect-ratio: 4 / 5;
+    height: auto;
+    min-height: 130px;
+    margin: 0;
+  }
+  .services-list.service-glass-stack .editorial-service-card > .service-no {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    top: auto;
+    left: auto;
+    justify-self: start;
+    margin: 1px 0 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .services-list.service-glass-stack .editorial-service-card .service-main {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 0 26px 0 0;
+  }
+  .services-list.service-glass-stack .editorial-service-card .service-main h3 {
+    font-size: clamp(24px, 5.2vw, 36px);
+  }
+  .services-list.service-glass-stack .editorial-service-card .service-main p {
+    margin: 10px 0 12px;
+    font-size: 11px;
+  }
+  .services-list.service-glass-stack .editorial-service-card .service-arrow {
+    top: auto;
+    right: 14px;
+    bottom: 13px;
+  }
+}
+@media (max-width: 420px) {
+  .services-list.service-glass-stack .editorial-service-card {
+    grid-template-columns: minmax(82px, .62fr) minmax(0, 1.38fr) !important;
+    column-gap: 12px;
+  }
+  .services-list.service-glass-stack .service-card-media { min-height: 114px; }
+  .services-list.service-glass-stack .editorial-service-card .service-main h3 {
+    font-size: clamp(21px, 6vw, 27px);
+  }
+  .services-list.service-glass-stack .editorial-service-card .service-main p { font-size: 10px; }
+}
