@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const thumbnailSet = new Set(THUMBNAIL_FILENAMES);
+const THUMBNAIL_CATEGORIES = new Set(["GENSHIN", "HSR", "WUWA", "VALORANT", "PUBG", "NTE", "FORZA", "OTHER"]);
 const allowedMime = {
   "image/jpeg": "jpg",
   "image/png": "png",
@@ -44,6 +45,16 @@ function sanitizeConfig(input) {
     copy: { ...seed.copy, ...(config.copy || {}) },
     slots: {},
     overrides: {},
+    thumbnails: Array.isArray(config.thumbnails) ? config.thumbnails.slice(-200).map((thumbnail, index) => {
+      const filename = typeof thumbnail?.filename === "string" && /^[a-z0-9][a-z0-9._-]{0,150}\.(?:jpg|jpeg|png|webp|avif)$/i.test(thumbnail.filename) ? thumbnail.filename : "";
+      const category = THUMBNAIL_CATEGORIES.has(thumbnail?.category) ? thumbnail.category : "OTHER";
+      const src = validSrc(thumbnail?.src) ? thumbnail.src : "";
+      const createdAt = typeof thumbnail?.createdAt === "string" && Number.isFinite(Date.parse(thumbnail.createdAt)) ? new Date(thumbnail.createdAt).toISOString() : "";
+      const id = typeof thumbnail?.id === "string" && /^[a-z0-9-]{1,100}$/i.test(thumbnail.id) ? thumbnail.id : "uploaded-" + (filename || index);
+      const title = typeof thumbnail?.title === "string" ? thumbnail.title.trim().slice(0, 120) : "";
+      const subtitle = typeof thumbnail?.subtitle === "string" ? thumbnail.subtitle.trim().slice(0, 180) : "";
+      return { id, filename, src, category, title: title || filename, subtitle, createdAt };
+    }).filter((thumbnail) => thumbnail.filename && thumbnail.src) : [],
   };
   const themes = ["editorial", "darkroom", "sunset", "minimalism", "custom"];
   if (!themes.includes(result.design.theme)) result.design.theme = "editorial";
@@ -59,7 +70,7 @@ function sanitizeConfig(input) {
   });
   if (config.overrides && typeof config.overrides === "object") {
     Object.entries(config.overrides).forEach(([filename, value]) => {
-      if (!thumbnailSet.has(filename)) return;
+      if (!thumbnailSet.has(filename) && !result.thumbnails.some((thumbnail) => thumbnail.filename === filename)) return;
       result.overrides[filename] = normalizedSettings(value, {
         label: filename,
         group: "Thumbnail archive",
@@ -113,6 +124,7 @@ export async function POST(request) {
   config.version = Math.max(latest.config.version || 1, config.version || 1) + 1;
 
   const upload = body.upload;
+  if (body.target?.kind === "new-thumbnail" && !upload) return fail("Choose an image before adding a thumbnail.");
   if (upload) {
     const mime = String(upload.contentType || "");
     if (!Object.prototype.hasOwnProperty.call(allowedMime, mime)) return fail("Use a PNG, JPEG, WebP or AVIF image.");
@@ -120,19 +132,36 @@ export async function POST(request) {
     const target = body.target || {};
     let settings;
     let name;
+    let newThumbnail = null;
+    const uploadedEntry = Array.isArray(config.thumbnails) ? config.thumbnails.find((thumbnail) => thumbnail.filename === target.key) : null;
     if (target.kind === "slot" && Object.prototype.hasOwnProperty.call(seed.slots, target.key)) {
       settings = config.slots[target.key];
       name = target.key;
-    } else if (target.kind === "thumbnail" && thumbnailSet.has(target.key)) {
+    } else if (target.kind === "thumbnail" && (thumbnailSet.has(target.key) || uploadedEntry)) {
       settings = config.overrides[target.key] || normalizedSettings(null, {
-        label: target.key, group: "Thumbnail archive", description: target.key, src: "",
+        label: uploadedEntry?.title || target.key,
+        group: "Thumbnail archive",
+        description: "Image override for " + (uploadedEntry?.title || target.key),
+        src: uploadedEntry?.src || "",
         fit: "cover", positionX: 50, positionY: 50, scale: 1, opacity: 1,
         overlayColor: "#a8271b", overlayOpacity: 0, visible: true,
       });
-      config.overrides[target.key] = settings;
       name = target.key.replace(/\.[^.]+$/, "");
+    } else if (target.kind === "new-thumbnail") {
+      const category = THUMBNAIL_CATEGORIES.has(target.category) ? target.category : "";
+      const title = typeof target.title === "string" ? target.title.trim().slice(0, 120) : "";
+      if (!category) return fail("Choose a valid thumbnail category.");
+      if (!title) return fail("Add a title for this thumbnail.");
+      newThumbnail = {
+        id: "upload-" + Date.now(),
+        category,
+        title,
+        subtitle: typeof target.subtitle === "string" ? target.subtitle.trim().slice(0, 180) : "",
+        createdAt: new Date().toISOString(),
+      };
+      name = "thumb-upload-" + category.toLowerCase();
     } else {
-      return fail("Select a valid image slot before uploading.");
+      return fail("Select a valid image slot or thumbnail category before uploading.");
     }
 
     const ext = allowedMime[mime];
@@ -143,9 +172,15 @@ export async function POST(request) {
     if (bytes.length > 3500000) return fail("Image is too large. Please upload an image under 3.4 MB.");
     try {
       await writeGitHubFile(path, bytes, "Upload portfolio media: " + fileName);
-      settings.src = "/uploads/" + fileName;
-      if (target.kind === "slot") config.slots[target.key] = settings;
-      else config.overrides[target.key] = settings;
+      if (newThumbnail) {
+        newThumbnail.filename = fileName;
+        newThumbnail.src = "/uploads/" + fileName;
+        config.thumbnails = [...(config.thumbnails || []), newThumbnail].slice(-200);
+      } else {
+        settings.src = "/uploads/" + fileName;
+        if (target.kind === "slot") config.slots[target.key] = settings;
+        else config.overrides[target.key] = settings;
+      }
     } catch (error) {
       return fail(String(error.message || "Image upload failed.").slice(0, 750), 502);
     }
