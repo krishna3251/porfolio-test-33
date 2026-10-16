@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "design": {
     "theme": "editorial",
     "paper": "#eeeadf",
@@ -23,9 +23,9 @@
       "group": "Hero",
       "description": "The large portrait on the home screen.",
       "src": "/hero_krishna_vertical.jpg",
-      "fit": "cover",
+      "fit": "contain",
       "positionX": 50,
-      "positionY": 42,
+      "positionY": 50,
       "scale": 1,
       "opacity": 1,
       "overlayColor": "#a8271b",
@@ -120,14 +120,14 @@
       "label": "Work wheel / Genshin",
       "group": "Work wheel",
       "description": "First image in the interactive project wheel.",
-      "src": "/images/genshin%20cinematic.png",
+      "src": "/uploads/workgenshin-1792176229593.png",
       "fit": "cover",
       "positionX": 50,
       "positionY": 50,
       "scale": 1,
       "opacity": 1,
-      "overlayColor": "#a8271b",
-      "overlayOpacity": 0,
+      "overlayColor": "#0b935f",
+      "overlayOpacity": 0.1,
       "visible": true
     },
     "workSkirk": {
