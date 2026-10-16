@@ -1,5 +1,5 @@
 import { Space_Grotesk, Instrument_Serif, DM_Mono, Barlow_Condensed } from "next/font/google";
-import " ./globals.css";
+import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
