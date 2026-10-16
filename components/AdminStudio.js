@@ -331,7 +331,7 @@ export default function AdminStudio() {
 
             <div className="admin-preview-stage">
               <div className="admin-preview-grid" aria-hidden="true" />
-              {currentSrc ? <img src={pendingFile?.previewUrl || currentSrc} alt="" className="admin-preview-img" style={imageStyle(settings)} /> : <div className="admin-preview-empty"><span>+</span><strong>NO IMAGE SET</strong><small>Upload a transparent cutout or background.</small></div>}
+              {(pendingFile?.previewUrl || currentSrc) ? <img src={pendingFile?.previewUrl || currentSrc} alt="" className="admin-preview-img" style={imageStyle(settings)} /> : <div className="admin-preview-empty"><span>+</span><strong>NO IMAGE SET</strong><small>Upload a transparent cutout or background.</small></div>}
               {settings.overlayOpacity > 0 && <span className="admin-preview-overlay" style={{ backgroundColor: settings.overlayColor || "#a8271b", opacity: settings.overlayOpacity }} />}
               <span className="admin-preview-index">{selectedGroup.toUpperCase()} / PREVIEW</span>
               {settings.visible === false && <span className="admin-hidden-pill">HIDDEN ON SITE</span>}
