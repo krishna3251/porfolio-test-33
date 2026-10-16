@@ -10,7 +10,9 @@ import WobbleImage from "@/components/WobbleImage";
 import useSiteMedia from "@/hooks/useSiteMedia";
 
 export default function ThumbnailViewer({item,previous,next,first,last,index,total}){
-  const router=useRouter();\n  const {media}=useSiteMedia();\n  const override=media.overrides?.[item.filename]||{};
+  const router=useRouter();
+  const {media}=useSiteMedia();
+  const override=media.overrides?.[item.filename]||{};
   const previousIndexRef=useRef(index);
   const direction=index>=previousIndexRef.current?1:-1;
 
