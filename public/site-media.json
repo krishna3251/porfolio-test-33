@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "design": {
     "theme": "editorial",
     "paper": "#eeeadf",
@@ -232,7 +232,7 @@
       "label": "Selected work / Wuthering Waves",
       "group": "Selected work",
       "description": "Image for the third selected-work card.",
-      "src": "/images/wuwa%20cyberpunk%201.png",
+      "src": "/uploads/selectedwuwa-1792176400354.png",
       "fit": "cover",
       "positionX": 50,
       "positionY": 50,
@@ -292,7 +292,7 @@
       "fit": "cover",
       "positionX": 50,
       "positionY": 50,
-      "scale": 1,
+      "scale": 0.95,
       "opacity": 1,
       "overlayColor": "#a8271b",
       "overlayOpacity": 0,
