@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import WobbleImage from "@/components/WobbleImage";
 import { StatusChip } from "@/components/PortfolioUI";
-import r34Image from "@/lib/r34-image";
+import r34Image from "@/lib/r34-image";\nimport useSiteMedia from "@/hooks/useSiteMedia";
 
 const botsData = [
   {
@@ -265,7 +265,7 @@ function BotEntry({ bot, index }) {
             <img 
               src={bot.image} 
               alt={bot.name} 
-              className="w-full h-full object-cover grayscale-[0.25] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
+              className="w-full h-full object-cover grayscale-[0.25] group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" style={{objectFit:bot.imageSettings?.fit==="contain"?"contain":"cover",objectPosition:(bot.imageSettings?.positionX??50)+"% "+(bot.imageSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(bot.imageSettings?.scale)||1))+")",opacity:bot.imageSettings?.visible===false?0:(bot.imageSettings?.opacity??1)}} 
             />
           </WobbleImage>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a090d]/60 via-transparent to-transparent pointer-events-none" />
@@ -344,7 +344,7 @@ export default function Bots() {
       </header>
 
       <div className="flex flex-col gap-6">
-        {botsData.map((bot, index) => (
+        {liveBots.map((bot, index) => (
           <BotEntry key={bot.id} bot={bot} index={index} />
         ))}
       </div>
