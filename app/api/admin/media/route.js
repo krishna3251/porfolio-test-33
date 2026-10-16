@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { isAdminRequest, isSameOriginRequest } from "@/lib/admin-auth";
-import { readSiteMedia, SITE_REPOSITORY, WRITE_BRANCH, writeGitHubFile } from "@/lib/admin-github";
+import { createGitHubBlob, readSiteMedia, SITE_REPOSITORY, WRITE_BRANCH, writeGitHubBatch, writeGitHubFile } from "@/lib/admin-github";
 import seed from "@/lib/site-media-seed";
 import { THUMBNAIL_FILENAMES } from "@/lib/thumbnails";
 
@@ -117,11 +118,87 @@ export async function POST(request) {
 
   let body;
   try { body = await request.json(); } catch { return fail("Invalid request body."); }
+
+  if (body?.action === "stage-thumbnail") {
+    const upload = body.upload || {};
+    const mime = String(upload.contentType || "");
+    if (!Object.prototype.hasOwnProperty.call(allowedMime, mime)) return fail("Use a PNG, JPEG, WebP or AVIF image.");
+    if (typeof upload.data !== "string" || upload.data.length < 16 || upload.data.length > 4700000) return fail("Image is too large. Please upload an image under 3.4 MB.");
+    const bytes = Buffer.from(upload.data, "base64");
+    if (!bytes.length || bytes.length > 3500000) return fail("Image is too large. Please upload an image under 3.4 MB.");
+    const name = String(body.title || upload.filename || "thumbnail")
+      .replace(/\.[^.]+$/, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 42) || "thumbnail";
+    const filename = "thumbnail-" + randomUUID() + "-" + name + "." + allowedMime[mime];
+    try {
+      const blob = await createGitHubBlob(bytes);
+      return NextResponse.json({
+        ok: true,
+        staged: { filename, blobSha: blob.sha },
+        message: "Image staged. It will remain unpublished until you publish the batch.",
+      }, { headers: { "Cache-Control": "no-store" } });
+    } catch (error) {
+      return fail("Could not stage image. " + String(error.message || "").slice(0, 500), 502);
+    }
+  }
+
   if (!body?.config || JSON.stringify(body.config).length > 220000) return fail("Configuration is invalid or too large.");
 
   const latest = await readSiteMedia();
   const config = sanitizeConfig(body.config);
   config.version = Math.max(latest.config.version || 1, config.version || 1) + 1;
+
+  if (body.action === "publish-thumbnail-batch") {
+    if (!Array.isArray(body.thumbnails) || body.thumbnails.length < 1 || body.thumbnails.length > 20) {
+      return fail("Choose between 1 and 20 thumbnails to publish.");
+    }
+    const knownNames = new Set([
+      ...THUMBNAIL_FILENAMES,
+      ...(config.thumbnails || []).map((thumbnail) => thumbnail.filename),
+    ]);
+    const entries = [];
+    for (const item of body.thumbnails) {
+      const filename = typeof item?.filename === "string" ? item.filename : "";
+      const blobSha = typeof item?.blobSha === "string" ? item.blobSha : "";
+      const category = THUMBNAIL_CATEGORIES.has(item?.category) ? item.category : "";
+      const title = typeof item?.title === "string" ? item.title.trim().slice(0, 120) : "";
+      const subtitle = typeof item?.subtitle === "string" ? item.subtitle.trim().slice(0, 180) : "";
+      if (!/^thumbnail-[a-f0-9-]{36}-[a-z0-9-]{1,42}\.(?:jpg|png|webp|avif)$/i.test(filename)) return fail("A staged thumbnail filename is invalid.");
+      if (!/^[a-f0-9]{40}$/i.test(blobSha)) return fail("A staged thumbnail blob is invalid.");
+      if (!category) return fail("Choose a category for every thumbnail.");
+      if (!title) return fail("Add a title for every thumbnail.");
+      if (knownNames.has(filename)) return fail("A thumbnail with the same filename already exists. Please select the files again.");
+      knownNames.add(filename);
+      entries.push({
+        id: "upload-" + randomUUID(),
+        filename,
+        src: "/uploads/" + filename,
+        category,
+        title,
+        subtitle,
+        createdAt: new Date().toISOString(),
+      });
+    }
+    config.thumbnails = [...(config.thumbnails || []), ...entries].slice(-200);
+    try {
+      const files = [
+        ...body.thumbnails.map((item) => ({ path: "public/uploads/" + item.filename, sha: item.blobSha })),
+        { path: "public/site-media.json", content: JSON.stringify(config, null, 2) + "\n" },
+      ];
+      const commit = await writeGitHubBatch(files, "Publish " + entries.length + " portfolio thumbnails");
+      return NextResponse.json({
+        ok: true,
+        config,
+        commit: commit.commit?.html_url || commit.commit?.sha || "",
+        message: "Published " + entries.length + " thumbnail" + (entries.length === 1 ? "" : "s") + " in one GitHub commit. Vercel will deploy the archive update.",
+      }, { headers: { "Cache-Control": "no-store" } });
+    } catch (error) {
+      return fail("Could not publish the thumbnail batch. " + String(error.message || "").slice(0, 650), 502);
+    }
+  }
 
   const upload = body.upload;
   if (body.target?.kind === "new-thumbnail" && !upload) return fail("Choose an image before adding a thumbnail.");
