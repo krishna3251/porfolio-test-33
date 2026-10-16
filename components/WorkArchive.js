@@ -85,7 +85,8 @@ function ThumbnailCard({item,index,active,total}){\n  const settings=item.mediaS
 
 export default function WorkArchive({groups=[]}){
   const [active,setActive]=useState("ALL");
-  const items=useMemo(()=>groups.flatMap(g=>g.thumbnails||[]),[groups]);
+  const {media}=useSiteMedia();
+  const items=useMemo(()=>groups.flatMap(g=>g.thumbnails||[]).map((item)=>{const settings=media.overrides?.[item.filename]||{};return {...item,src:settings.src||item.src,mediaSettings:settings};}),[groups,media.overrides]);
   const cats=useMemo(()=>{
     const counts={};
     items.forEach(item=>{counts[item.label]=(counts[item.label]||0)+1});
