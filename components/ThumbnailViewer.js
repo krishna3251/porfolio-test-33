@@ -74,10 +74,12 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
 
   useEffect(()=>{
     [previous,next].forEach((url)=>{
-      const image=new Image();
-      image.decoding="async";
+      // Use a native HTML image for preloading. The imported Next.js <Image>
+      // component shadows the browser's global Image constructor in this file.
+      const preloadImage=document.createElement("img");
+      preloadImage.decoding="async";
       const filename=new URL(url,window.location.origin).searchParams.get("file");
-      if (filename) image.src = (filename.startsWith("thumb-upload-") || filename.startsWith("thumbnail-")) ? "/uploads/" + filename : getThumbnailSrc(filename);
+      if (filename) preloadImage.src = (filename.startsWith("thumb-upload-") || filename.startsWith("thumbnail-")) ? "/uploads/" + filename : getThumbnailSrc(filename);
     });
   },[previous,next]);
 
