@@ -138,7 +138,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
           return <Card key={item.title} id={"works-wheel-"+i} role="option" aria-selected={i===active} href={item.href}
             ref={node=>cards.current[i]=node} className="works-wheel-card" style={{width:metrics.cardW,height:metrics.cardH}}>
             <span className="works-wheel-face">
-              <img src={item.image} alt={item.title} draggable="false" loading={i<2?"eager":"lazy"}/>
+              <img src={item.image} alt={item.title} draggable="false" loading={i<2?"eager":"lazy"} style={{objectFit:item.fit||"cover",objectPosition:(item.positionX??50)+"% "+(item.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(item.scale)||1))+")",opacity:item.opacity??1}}/>
               <span className="works-wheel-overlay"><small>{String(i+1).padStart(2,"0")} / SELECTED</small><strong>{item.title}</strong>{action&&item.href?<em>{action} ↗</em>:null}</span>
             </span>
           </Card>;
