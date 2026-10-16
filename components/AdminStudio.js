@@ -527,6 +527,7 @@ export default function AdminStudio() {
           <button type="button" className={workspaceTab === "design" ? "active" : ""} aria-pressed={workspaceTab === "design"} onClick={() => switchWorkspaceTab("design")}><span>02</span><strong>Site design</strong><small>Theme & corner style</small></button>
           <button type="button" className={workspaceTab === "content" ? "active" : ""} aria-pressed={workspaceTab === "content"} onClick={() => switchWorkspaceTab("content")}><span>03</span><strong>Text & content</strong><small>Homepage copy</small></button>
           <button type="button" className={workspaceTab === "thumbnails" ? "active" : ""} aria-pressed={workspaceTab === "thumbnails"} onClick={() => switchWorkspaceTab("thumbnails")}><span>04</span><strong>Thumbnail uploads</strong><small>Add work by category</small></button>
+          <button type="button" onClick={() => window.location.assign("/admin/organize")}><span>05</span><strong>Organize thumbnails</strong><small>Move existing work</small></button>
         </nav>
 
         {!canWrite && <section className="admin-setup-alert">
