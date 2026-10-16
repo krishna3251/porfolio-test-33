@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "design": {
     "theme": "sunset",
     "paper": "#eeeadf",
@@ -148,7 +148,7 @@
       "label": "Work wheel / Wuthering Waves",
       "group": "Work wheel",
       "description": "Third image in the interactive project wheel.",
-      "src": "/images/wuwa%20cyberpunk%201.png",
+      "src": "/uploads/workwuwa-1792177721566.png",
       "fit": "cover",
       "positionX": 50,
       "positionY": 50,
