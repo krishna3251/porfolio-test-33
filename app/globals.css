@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&display=swap");
-
 /* Editorial studio system: warm paper, ink, rust and photographic depth. */
 :root {
   --bg: #eeeadf;
@@ -327,9 +325,9 @@ body > * { position: relative; z-index: 1; }
 .process-art-ring-two { width: 62px; height: 62px; border-color: rgba(25, 30, 29, .32); }
 .process-art-core { position: absolute; width: 16px; height: 16px; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; background: var(--orange, #f47b26); background: var(--accent-hot); box-shadow: 0 0 0 9px rgba(244, 123, 38, .13); }
 .process-art-cross { position: absolute; right: calc(50% - 78px); top: calc(50% - 65px); color: var(--accent); font: 500 18px var(--font-dm-mono), monospace; }
-.process-art-shape .process-art-ring-one { transform: translate(-50%, -50%) rotate(30deg); border-radius: 4px; }
-.process-art-polish .process-art-ring-one { transform: translate(-50%, -50%) rotate(45deg); border-radius: 3px; }
-.process-art-ship .process-art-ring-one { border-radius: 9px; width: 105px; height: 72px; }
+.process-art-shape .process-art-ring:first-child { transform: translate(-50%, -50%) rotate(30deg); border-radius: 4px; }
+.process-art-polish .process-art-ring:first-child { transform: translate(-50%, -50%) rotate(45deg); border-radius: 3px; }
+.process-art-ship .process-art-ring:first-child { border-radius: 9px; width: 105px; height: 72px; }
 .process-card-bottom { position: relative; z-index: 2; }
 .process-card h3 {
   margin: 0 0 13px;
