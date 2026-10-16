@@ -325,6 +325,9 @@ function BotEntry({ bot, index }) {
 }
 
 export default function Bots() {
+  const {media}=useSiteMedia();
+  const botSlots={lxeus:"botLxeus",rukia:"botRukiya",r34:"botR34",damu:"botDamu"};
+  const liveBots=botsData.map((bot)=>{const imageSettings=media.slots?.[botSlots[bot.id]]||{};return {...bot,image:imageSettings.src||bot.image,imageSettings};});
   return (
     <main className="flex-grow pt-40 pb-32 px-6 md:px-12 lg:px-16 max-w-7xl mx-auto w-full relative">
       <header className="mb-24 flex flex-col md:flex-row justify-between items-baseline gap-12 border-b border-foreground/5 pb-16">
