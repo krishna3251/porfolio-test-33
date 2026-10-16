@@ -164,6 +164,28 @@ export default function AdminStudio() {
     }
   };
 
+  saveActionRef.current = save;
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (!authenticated) return;
+      const target = event.target;
+      const typing = target instanceof HTMLElement &&
+        (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+
+      if (event.key === "/" && !typing) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        if (!busy) saveActionRef.current?.();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [authenticated, busy]);
+
   const login = async (event) => {
     event.preventDefault();
     setBusy(true);
