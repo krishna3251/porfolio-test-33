@@ -47,7 +47,7 @@ export default function ThumbnailCategoryManager() {
       src: getThumbnailSrc(filename),
       category: CATEGORIES.some((item) => item.value === config.overrides?.[filename]?.category)
         ? config.overrides[filename].category
-        : getShortLabel(filename),
+        : (CATEGORIES.some((item) => item.value === getShortLabel(filename)) ? getShortLabel(filename) : "OTHER"),
       type: "Built-in",
     }));
     const uploaded = (config.thumbnails || []).map((thumbnail) => ({
