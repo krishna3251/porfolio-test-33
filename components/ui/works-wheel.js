@@ -83,12 +83,15 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
   },[count,reduced,metrics,last]);
 
   const onWheel=e=>{
-    const raw=clamp(e.deltaY,-100,100);
+    // Preserve normal desktop page scrolling. Hold Shift to deliberately scrub
+    // through the work wheel; otherwise the page should never feel trapped here.
+    if(!e.shiftKey)return;
+    const raw=clamp(e.deltaY,-120,120);
     const atStart=target.current<=0&&raw<0, atEnd=target.current>=last&&raw>0;
-    if(!atStart&&!atEnd)e.preventDefault();
     if(atStart||atEnd)return;
-    const scale=e.deltaMode===1?.055:.0024;
-    const impulse=raw*scale*.32;
+    e.preventDefault();
+    const scale=e.deltaMode===1?.11:.0036;
+    const impulse=raw*scale*.2;
     go(target.current+raw*scale,impulse);
   };
 
@@ -148,7 +151,7 @@ export default function WorksWheel({items=[],label="Works '26",action="View",cla
     <div className="works-wheel-label" ref={labelRef}>{label}</div>
     <div className="works-wheel-active" ref={activeRef}>{items[active]?.title}</div>
     <ol className="works-wheel-index">{items.map((item,i)=><li key={item.title}><button type="button" onClick={()=>go(i)} className={i===active?"active":""}><span>{String(i+1).padStart(2,"0")}</span>{item.title}</button></li>)}</ol>
-    <div className="works-wheel-hint">SCROLL / DRAG / ARROW KEYS</div>
+    <div className="works-wheel-hint">SHIFT + SCROLL / DRAG / ARROW KEYS</div>
     <div className="works-wheel-progress" aria-hidden="true"><i ref={progressRef}/></div>
     <div className="works-wheel-light" aria-hidden="true"/>
   </section>;
