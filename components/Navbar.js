@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { loadSiteMedia } from "@/hooks/useSiteMedia";
 
 const links=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
 const themes=[
@@ -40,8 +41,7 @@ export default function Navbar(){
 
   useEffect(()=>{
     let alive=true;
-    fetch("/site-media.json?v=latest",{cache:"no-store"})
-      .then((response)=>response.ok?response.json():null)
+    loadSiteMedia()
       .then((config)=>{
         if(!alive||!config)return;
         const version=Number(config.version)||1;
