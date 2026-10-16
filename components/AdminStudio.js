@@ -45,6 +45,7 @@ export default function AdminStudio() {
   const [selectedKey, setSelectedKey] = useState("heroPortrait");
   const [pendingFile, setPendingFile] = useState(null);
   const [sidebarFilter, setSidebarFilter] = useState("All images");
+  const [assetSearch, setAssetSearch] = useState("");
 
   const readMedia = async () => {
     const response = await fetch("/api/admin/media", { cache: "no-store", credentials: "same-origin" });
@@ -77,7 +78,7 @@ export default function AdminStudio() {
     return slots.concat(thumbs);
   }, [config]);
 
-  const visibleEntries = slotEntries.filter((entry) => sidebarFilter === "All images" || entry.group === sidebarFilter);
+  const visibleEntries = slotEntries.filter((entry) => (sidebarFilter === "All images" || entry.group === sidebarFilter) && (entry.label + " " + entry.key + " " + entry.group).toLowerCase().includes(assetSearch.trim().toLowerCase()));
   const groups = ["All images", ...Array.from(new Set(slotEntries.map((entry) => entry.group)))];
   const isThumbnail = selectedKey.startsWith("thumb:");
   const thumbName = isThumbnail ? selectedKey.slice(6) : "";
@@ -229,7 +230,8 @@ export default function AdminStudio() {
         <a href="/" className="admin-brand" aria-label="Return to site">K<span>.</span><small>CREATIVE STUDIO</small></a>
         <div className="admin-side-label">WORKSPACE</div>
         <div className="admin-side-status"><i /> SESSION SECURE <span>12H</span></div>
-        <div className="admin-side-label">MEDIA LIBRARY <b>{slotEntries.length}</b></div>
+        <div className="admin-side-label">MEDIA LIBRARY <b>{visibleEntries.length}/{slotEntries.length}</b></div>
+        <label className="admin-search-wrap"><span aria-hidden="true">⌕</span><input aria-label="Search media assets" value={assetSearch} onChange={(event) => setAssetSearch(event.target.value)} placeholder="Search images…" /><kbd>/</kbd></label>
         <div className="admin-filters">
           {groups.map((group) => <button type="button" key={group} className={sidebarFilter === group ? "active" : ""} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter((entry) => entry.group === group).length}</span></button>)}
         </div>
@@ -249,7 +251,7 @@ export default function AdminStudio() {
 
         <div className="admin-workspace-grid">
           <section className="admin-image-panel">
-            <div className="admin-panel-head"><div><span className="admin-eyebrow">ASSET SELECTOR</span><h2>Media <em>library.</em></h2></div><span className="admin-count">{slotEntries.length} ASSETS</span></div>
+            <div className="admin-panel-head"><div><span className="admin-eyebrow">ASSET SELECTOR / LIVE PREVIEW</span><h2>Media <em>library.</em></h2><p className="admin-panel-subtitle">Pick an asset, preview your changes, then publish once.</p></div><span className="admin-count">{visibleEntries.length} / {slotEntries.length} ASSETS</span></div>
             <label className="admin-field-label" htmlFor="media-target">CHOOSE ANY IMAGE IN THE SITE</label>
             <select id="media-target" value={selectedKey} onChange={(event) => { setSelectedKey(event.target.value); setPendingFile(null); setNotice(""); setError(""); if (fileRef.current) fileRef.current.value = ""; }}>
               {groups.slice(1).map((group) => <optgroup label={group} key={group}>{visibleEntries.filter((entry) => entry.group === group).map((entry) => <option key={entry.key} value={entry.key}>{entry.label}</option>)}</optgroup>)}
@@ -280,7 +282,7 @@ export default function AdminStudio() {
           </section>
 
           <section className="admin-controls-panel">
-            <div className="admin-panel-head"><div><span className="admin-eyebrow">IMAGE COMPOSITION</span><h2>Crop & <em>tune.</em></h2></div><span className="admin-current-tag">{selectedKey}</span></div>
+            <div className="admin-panel-head"><div><span className="admin-eyebrow">EDIT SELECTED ASSET</span><h2>Crop & <em>tune.</em></h2><p className="admin-panel-subtitle">Adjust the image without editing code.</p></div><span className="admin-current-tag">{selectedKey}</span></div>
             <div className="admin-control-group">
               <div className="admin-control-title"><label htmlFor="media-fit">FIT MODE</label><span>FRAME BEHAVIOR</span></div>
               <select id="media-fit" value={settings.fit || "cover"} onChange={(event) => updateSettings({ fit: event.target.value })}><option value="cover">Cover / fill frame</option><option value="contain">Contain / show whole image</option></select>
@@ -321,6 +323,7 @@ export default function AdminStudio() {
             </div>
 
             <div className="admin-save-area">
+              <div className="admin-save-summary"><span className="admin-save-indicator" /><div><strong>{pendingFile ? "New image ready to upload" : "Changes stay in draft until saved"}</strong><small>{canWrite ? "Publish writes to GitHub and triggers a Vercel deployment." : "Connect GITHUB_TOKEN in Vercel to enable publishing."}</small></div></div>
               {error && <p className="admin-error" role="alert">{error}</p>}
               {notice && <p className="admin-notice" role="status">{notice}</p>}
               <button type="button" className="admin-save-button" disabled={busy || !canWrite} onClick={save}>{busy ? "PUBLISHING…" : pendingFile ? "UPLOAD IMAGE + SAVE" : "SAVE CHANGES TO GITHUB"} <span>↗</span></button>
