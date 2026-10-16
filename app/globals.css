@@ -5726,3 +5726,29 @@ button, a, input, select, textarea { touch-action: manipulation; }
   .hero-cinematic-bg { transform: none !important; }
   .hero-topography { mix-blend-mode: normal; }
 }
+
+
+.mobile-menu-theme-picker { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+.mobile-menu-theme-picker > span { display: block; margin-bottom: 10px; color: var(--muted); font: 500 7px var(--font-dm-mono),monospace; letter-spacing: .14em; }
+.mobile-menu-theme-picker > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.mobile-menu-theme-picker button { min-height: 35px; padding: 8px 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); font: 500 8px var(--font-dm-mono),monospace; }
+.mobile-menu-theme-picker button.active { border-color: var(--accent); background: color-mix(in srgb,var(--accent) 8%,transparent); color: var(--fg); }
+@media (max-width:760px) {
+  .sparkles-effect { display: none !important; }
+  .hero-portrait-editorial, .hero-work-section, .services-list, .selected-work-list, .editorial-about, .editorial-process, .contact {
+    contain: layout style;
+  }
+  .hero-intro-block, .hero-work-intro, .section-heading, .services-head, .editorial-about .about-body {
+    min-width: 0;
+  }
+  .hero-intro-block > *, .hero-profile > *, .hero-work-intro > *, .section-heading > *, .services-head > * {
+    min-width: 0;
+  }
+  .hero-copy h1.hero-title .hero-title-name { overflow-wrap: anywhere; }
+  .terminal-bar { max-width: 100%; }
+  .section, .hero-work-section, .project-index, .archive-page { scroll-margin-top: 64px; }
+  .hero-main-photo, .hero-portrait-cutout { will-change: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-theme-picker button { transition: none !important; }
+}
