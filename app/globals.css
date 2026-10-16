@@ -5942,3 +5942,14 @@ button, a, input, select, textarea { touch-action: manipulation; }
   .admin-save-foot { font-size: 6px; }
   .admin-radius-preview { gap: 7px; }
 }
+
+
+@media (max-width: 640px) {
+  .admin-thumbnail-batch-list { grid-template-columns: minmax(0,1fr); }
+  .admin-batch-category-tools { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .admin-batch-category-tools label { grid-column: 1 / -1; }
+  .admin-batch-category-tools button { min-width: 0; font-size: 7px; padding: 9px 7px; }
+  .admin-batch-title-row { align-items: flex-start; flex-direction: column; }
+  .admin-batch-drop { padding: 20px 12px; }
+  .admin-batch-toolbar { gap: 8px; }
+}
