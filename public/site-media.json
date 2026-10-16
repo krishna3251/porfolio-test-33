@@ -1,7 +1,7 @@
 {
-  "version": 6,
+  "version": 7,
   "design": {
-    "theme": "editorial",
+    "theme": "sunset",
     "paper": "#eeeadf",
     "surface": "#f7f4eb",
     "ink": "#191e1d",
