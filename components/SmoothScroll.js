@@ -17,9 +17,9 @@ export default function SmoothScroll({ children }) {
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
-      lerp: 0.085,
+      lerp: 0.11,
       smoothWheel: true,
-      wheelMultiplier: 0.82,
+      wheelMultiplier: 0.95,
       touchMultiplier: 1,
       infinite: false,
     });
