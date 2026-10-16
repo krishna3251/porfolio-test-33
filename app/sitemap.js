@@ -1,4 +1,4 @@
-const siteUrl=process.env.NEXT_PUBLIC_SITE_URL || "https://tests-krishna3251s-projects.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tests-two-nu.vercel.app";
 
 export default function sitemap(){
   const now=new Date();

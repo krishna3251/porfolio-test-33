@@ -101,7 +101,15 @@ function fail(message, status = 400) {
 
 export async function GET(request) {
   if (!isAdminRequest(request)) return fail("Admin login required.", 401);
-  const { config, canWrite, branch } = await readSiteMedia();
+
+  let media;
+  try {
+    media = await readSiteMedia();
+  } catch (error) {
+    return fail("Could not read the saved media manifest from GitHub. No changes were made. " + String(error.message || "").slice(0, 450), 502);
+  }
+
+  const { config, canWrite, branch } = media;
   return NextResponse.json({
     ok: true,
     config: sanitizeConfig(config),
@@ -147,7 +155,13 @@ export async function POST(request) {
 
   if (!body?.config || JSON.stringify(body.config).length > 220000) return fail("Configuration is invalid or too large.");
 
-  const latest = await readSiteMedia();
+  let latest;
+  try {
+    latest = await readSiteMedia();
+  } catch (error) {
+    return fail("Could not read the saved media manifest from GitHub. No changes were made. " + String(error.message || "").slice(0, 450), 502);
+  }
+
   const config = sanitizeConfig(body.config);
   config.version = Math.max(latest.config.version || 1, config.version || 1) + 1;
 

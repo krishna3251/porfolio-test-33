@@ -309,6 +309,7 @@ function BotEntry({ bot, index }) {
               key={link.label} 
               href={link.url} 
               target="_blank" 
+              rel="noopener noreferrer"
               className="mono-metadata text-[9px] text-foreground font-bold tracking-[0.25em] border-b border-foreground/20 pb-1 hover:border-primary hover:text-primary transition-all duration-300 flex items-center gap-1.5"
             >
               {link.label}

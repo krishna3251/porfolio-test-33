@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function ThumbnailViewPage({ searchParams }) {
   const params = await searchParams;
-  const filename = params?.file ? decodeURIComponent(params.file) : "";
+  const filename = params?.file || "";
   const requestedCategory = params?.category || "ALL";
 
   const groups = getChronologicalThumbnailGroups(siteMedia);
