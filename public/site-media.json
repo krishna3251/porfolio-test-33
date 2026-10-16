@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "design": {
     "theme": "editorial",
     "paper": "#eeeadf",
@@ -383,5 +383,115 @@
       "visible": true
     }
   },
-  "overrides": {}
+  "overrides": {},
+  "thumbnails": [
+    {
+      "id": "upload-3c2bfd8f-f727-425e-b127-f33c53172c16",
+      "filename": "thumbnail-01706433-fa8c-46be-a114-7d718638c30c-1000012349.png",
+      "src": "/uploads/thumbnail-01706433-fa8c-46be-a114-7d718638c30c-1000012349.png",
+      "category": "GENSHIN",
+      "title": "1000012349",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-87eb2381-2cbc-4d89-a138-4c222df218f9",
+      "filename": "thumbnail-7c977667-edee-4327-9ecd-2bc72f7b1da1-1000012148.png",
+      "src": "/uploads/thumbnail-7c977667-edee-4327-9ecd-2bc72f7b1da1-1000012148.png",
+      "category": "GENSHIN",
+      "title": "1000012148",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-ab6287fb-3d84-4b51-878a-2d905fce1c0f",
+      "filename": "thumbnail-7910138f-f913-48fe-abf0-8f5b523d3f0c-1000012134.png",
+      "src": "/uploads/thumbnail-7910138f-f913-48fe-abf0-8f5b523d3f0c-1000012134.png",
+      "category": "GENSHIN",
+      "title": "1000012134",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-4ee3ae3d-64ac-489a-82ea-28e6760d04f4",
+      "filename": "thumbnail-dfa4f694-95b8-4a5f-982a-e275f326cf35-1000012128.png",
+      "src": "/uploads/thumbnail-dfa4f694-95b8-4a5f-982a-e275f326cf35-1000012128.png",
+      "category": "GENSHIN",
+      "title": "1000012128",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-662b4870-b668-44b4-87de-a9a361626aec",
+      "filename": "thumbnail-e68df688-5308-4bd7-a929-f1aed70a3baf-1000011919.png",
+      "src": "/uploads/thumbnail-e68df688-5308-4bd7-a929-f1aed70a3baf-1000011919.png",
+      "category": "GENSHIN",
+      "title": "1000011919",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-4734f0c2-5bdc-478b-bec2-6be72fcda9b3",
+      "filename": "thumbnail-e2f1c308-e1bf-4c5c-b220-ae8c939283cf-1000011920.png",
+      "src": "/uploads/thumbnail-e2f1c308-e1bf-4c5c-b220-ae8c939283cf-1000011920.png",
+      "category": "GENSHIN",
+      "title": "1000011920",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-0c5091be-90f4-4afd-8e35-1ebdacf5e1c5",
+      "filename": "thumbnail-9d4f4f84-c036-4748-9951-34838d510c89-1000011349.png",
+      "src": "/uploads/thumbnail-9d4f4f84-c036-4748-9951-34838d510c89-1000011349.png",
+      "category": "WUWA",
+      "title": "1000011349",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-501df246-28fd-4a53-9bc7-5c71b60cd864",
+      "filename": "thumbnail-432f45e9-c3a3-4f15-b4dd-eba2aa2c4585-1000011179.png",
+      "src": "/uploads/thumbnail-432f45e9-c3a3-4f15-b4dd-eba2aa2c4585-1000011179.png",
+      "category": "GENSHIN",
+      "title": "1000011179",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-e8a1302b-2c43-40c0-8624-1458dcfdf5bd",
+      "filename": "thumbnail-e7627d80-0823-4732-865a-b6d88541ce31-1000010130.png",
+      "src": "/uploads/thumbnail-e7627d80-0823-4732-865a-b6d88541ce31-1000010130.png",
+      "category": "VALORANT",
+      "title": "1000010130",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-2ea981ff-5d12-4180-89ac-15e87d42b1ff",
+      "filename": "thumbnail-bd38ae54-a0f7-4d51-afaa-7864742a1ee3-1000009876.png",
+      "src": "/uploads/thumbnail-bd38ae54-a0f7-4d51-afaa-7864742a1ee3-1000009876.png",
+      "category": "VALORANT",
+      "title": "1000009876",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-a85b623f-391e-47a7-be16-2378723c74d0",
+      "filename": "thumbnail-2c3b9faf-2774-4312-b6d7-8fd0977fc9e4-1000009292.png",
+      "src": "/uploads/thumbnail-2c3b9faf-2774-4312-b6d7-8fd0977fc9e4-1000009292.png",
+      "category": "GENSHIN",
+      "title": "1000009292",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    },
+    {
+      "id": "upload-2f9cd92d-1a2d-4e95-8ee3-5bf81fd273ff",
+      "filename": "thumbnail-753c5566-68bd-4113-b865-6059b3a3e267-1000007995.png",
+      "src": "/uploads/thumbnail-753c5566-68bd-4113-b865-6059b3a3e267-1000007995.png",
+      "category": "VALORANT",
+      "title": "1000007995",
+      "subtitle": "",
+      "createdAt": "2026-10-16T10:15:43.980Z"
+    }
+  ]
 }
