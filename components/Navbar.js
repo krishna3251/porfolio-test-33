@@ -1,26 +1,28 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const links=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
+const themes=[
+  ["editorial","Editorial"],
+  ["darkroom","Darkroom"],
+  ["sunset","Sunset"],
+  ["minimalism","Minimalism"],
+  ["maximalism","Maximalism"]
+];
 
 export default function Navbar(){
   const pathname=usePathname();
   const [open,setOpen]=useState(false);
   const [progress,setProgress]=useState(0);
-  const [theme,setTheme]=useState("obsidian");
+  const [theme,setTheme]=useState("editorial");
+  const [themeVersion,setThemeVersion]=useState(1);
   const [themeOpen,setThemeOpen]=useState(false);
 
-  const themes=[
-    ["obsidian","Obsidian"],
-    ["dark-red","Dark Red"],
-    ["black-gold","Black Gold"],
-    ["glassmorphia","Glassmorphia"],
-    ["maximalism","Maximalism"],
-    ["minimalism","Minimalism"]
-  ];
   const viewer=pathname.startsWith("/thumbnails/view");
+  const admin=pathname.startsWith("/admin");
 
   useEffect(()=>{
     const update=()=>{
@@ -34,24 +36,37 @@ export default function Navbar(){
     return()=>{window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
   },[pathname]);
 
-  useEffect(()=>{
-    setOpen(false);
-  },[pathname]);
+  useEffect(()=>{setOpen(false);},[pathname]);
 
   useEffect(()=>{
-    const saved=window.localStorage.getItem("krishna-theme")||"obsidian";
-    setTheme(saved);
-    document.documentElement.dataset.theme=saved;
+    let alive=true;
+    fetch("/site-media.json?v=latest",{cache:"no-store"})
+      .then((response)=>response.ok?response.json():null)
+      .then((config)=>{
+        if(!alive||!config)return;
+        const version=Number(config.version)||1;
+        setThemeVersion(version);
+        let preferred=config.design?.theme||"editorial";
+        try {
+          const stored=JSON.parse(window.localStorage.getItem("krishna-theme-v3")||"null");
+          if(stored&&stored.version===version&&themes.some(([id])=>id===stored.theme))preferred=stored.theme;
+        } catch {}
+        if(!themes.some(([id])=>id===preferred))preferred="editorial";
+        setTheme(preferred);
+        document.documentElement.dataset.theme=preferred;
+      })
+      .catch(()=>{document.documentElement.dataset.theme="editorial";});
+    return()=>{alive=false;};
   },[]);
 
   const changeTheme=(next)=>{
     setTheme(next);
     setThemeOpen(false);
     document.documentElement.dataset.theme=next;
-    window.localStorage.setItem("krishna-theme",next);
+    try { window.localStorage.setItem("krishna-theme-v3",JSON.stringify({theme:next,version:themeVersion})); } catch {}
   };
 
-  if(viewer) return null;
+  if(viewer||admin)return null;
 
   return <header className="site-header">
     <div className="site-header-inner">
@@ -60,7 +75,7 @@ export default function Navbar(){
         {links.map(([label,href])=><Link key={href} href={href} className={pathname===href?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
       </nav>
       <div className="site-header-right">
-        <span className="nav-status"><i/> [OK] AVAILABLE / 2026</span>
+        <span className="nav-status"><i/> AVAILABLE / 2026</span>
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
         <div className="theme-switcher">
           <button type="button" className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">

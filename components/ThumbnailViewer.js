@@ -7,9 +7,12 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailSrc } from "@/lib/thumbnails";
 import WobbleImage from "@/components/WobbleImage";
+import useSiteMedia from "@/hooks/useSiteMedia";
 
 export default function ThumbnailViewer({item,previous,next,first,last,index,total}){
   const router=useRouter();
+  const {media}=useSiteMedia();
+  const override=media.overrides?.[item.filename]||{};
   const previousIndexRef=useRef(index);
   const direction=index>=previousIndexRef.current?1:-1;
 
@@ -106,14 +109,14 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
             transition={{duration:.32,ease:[.16,1,.3,1]}}
           >
             <Image
-              src={item.src}
+              src={override.src||item.src}
               alt={item.title}
               fill
               sizes="100vw"
               quality={72}
               priority
               draggable="false"
-              className="thumbnail-viewer-image"
+              className="thumbnail-viewer-image" style={{objectFit:override.fit==="contain"?"contain":"cover",objectPosition:(override.positionX??50)+"% "+(override.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(override.scale)||1))+")",opacity:override.visible===false?0:(override.opacity??1)}}
             />
           </motion.div>
         </WobbleImage>
