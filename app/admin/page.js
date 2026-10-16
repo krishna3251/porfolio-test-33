@@ -1,4 +1,4 @@
-import AdminStudio from "@/components/AdminStudio";
+import AdminStudioClient from "@/components/AdminStudioClient";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function AdminPage() {
-  return <main className="admin-page"><AdminStudio /></main>;
+  return <main className="admin-page"><AdminStudioClient /></main>;
 }
