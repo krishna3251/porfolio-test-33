@@ -5865,6 +5865,42 @@ button, a, input, select, textarea { touch-action: manipulation; }
 .admin-thumbnail-existing-row b { flex: 0 0 auto; padding: 4px 6px; background: rgba(244,123,38,.09); color: #ffc08d; font: 500 7px var(--font-dm-mono),monospace; }
 .admin-thumbnail-upload-tab .admin-editor-help { line-height: 1.7; }
 
+.admin-batch-title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.admin-batch-title-row h3 { margin: 8px 0 0; color: #f2efe7; font: 700 clamp(22px,3vw,30px)/1 var(--font-barlow),Impact,sans-serif; letter-spacing: -.02em; }
+.admin-batch-count { flex: 0 0 auto; color: #ffc08d; font: 500 8px var(--font-dm-mono),monospace; letter-spacing: .08em; }
+.admin-batch-drop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-top: 18px; padding: 26px 18px; border: 1px dashed rgba(244,123,38,.42); background: rgba(244,123,38,.035); text-align: center; transition: background .18s,border-color .18s; }
+.admin-batch-drop.is-dragging { border-color: #f47b26; background: rgba(244,123,38,.13); }
+.admin-batch-drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.admin-batch-drop-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid rgba(244,123,38,.45); color: #f47b26; font-size: 24px; }
+.admin-batch-drop strong { color: #f2efe7; font-size: 12px; font-weight: 600; }
+.admin-batch-drop small { color: #8d9589; font: 500 8px var(--font-dm-mono),monospace; line-height: 1.7; }
+.admin-batch-drop button,.admin-batch-toolbar button,.admin-batch-category-tools button { min-height: 34px; padding: 9px 11px; border: 1px solid rgba(244,123,38,.48); background: transparent; color: #ffc08d; font: 500 8px var(--font-dm-mono),monospace; letter-spacing: .04em; cursor: pointer; }
+.admin-batch-drop button:hover,.admin-batch-toolbar button:hover,.admin-batch-category-tools button:hover { background: rgba(244,123,38,.1); border-color: #f47b26; }
+.admin-batch-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+.admin-batch-select-all { display: inline-flex; align-items: center; gap: 7px; color: #dce1d8; font-size: 9px; }
+.admin-batch-select-all input,.admin-batch-card-head input { accent-color: #f47b26; width: 15px; height: 15px; }
+.admin-batch-selected { margin-right: auto; color: #8b9588; font: 500 8px var(--font-dm-mono),monospace; }
+.admin-batch-category-tools { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: end; gap: 8px; margin-top: 13px; }
+.admin-batch-category-tools label { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.admin-batch-category-tools label > span { color: #929b90; font: 500 7px var(--font-dm-mono),monospace; letter-spacing: .08em; }
+.admin-batch-category-tools select { width: 100%; min-height: 37px; padding: 8px; border: 1px solid rgba(242,239,231,.14); background: #101410; color: #f2efe7; font: 500 9px var(--font-dm-mono),monospace; }
+.admin-batch-category-tools .admin-batch-clear { border-color: rgba(255,156,140,.3); color: #ff9c8c; }
+.admin-thumbnail-batch-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; gap: 12px; margin-top: 15px; }
+.admin-thumbnail-batch-card { min-width: 0; padding: 11px; border: 1px solid rgba(242,239,231,.1); background: rgba(0,0,0,.13); }
+.admin-batch-card-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+.admin-batch-card-head label { display: inline-flex; align-items: center; gap: 7px; color: #f47b26; font: 500 8px var(--font-dm-mono),monospace; }
+.admin-batch-card-head small { margin-left: auto; color: #858d82; font: 500 7px var(--font-dm-mono),monospace; }
+.admin-batch-card-head button { padding: 4px 0 4px 4px; border: 0; background: transparent; color: #ff9c8c; font: 500 7px var(--font-dm-mono),monospace; cursor: pointer; }
+.admin-batch-image { position: relative; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; display: grid; place-items: center; background: #101410; border: 1px solid rgba(242,239,231,.08); }
+.admin-batch-image img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.admin-batch-image > span { position: absolute; left: 7px; bottom: 7px; padding: 4px 6px; background: rgba(16,20,16,.9); color: #ffc08d; font: 500 7px var(--font-dm-mono),monospace; }
+.admin-batch-filename { overflow: hidden; margin-top: 8px; color: #a3ab9e; font: 500 7px var(--font-dm-mono),monospace; text-overflow: ellipsis; white-space: nowrap; }
+.admin-thumbnail-batch-card .admin-copy-field { margin-top: 10px; }
+.admin-thumbnail-batch-card .admin-copy-field span { font-size: 7px; }
+.admin-thumbnail-batch-card .admin-copy-field input,.admin-thumbnail-batch-card .admin-copy-field select { min-height: 37px; padding: 8px; font-size: 9px; }
+.admin-batch-progress { margin: 14px 0 0; padding: 10px; border-left: 2px solid #f47b26; background: rgba(244,123,38,.06); color: #ffc08d; font: 500 9px var(--font-dm-mono),monospace; }
+.admin-thumbnail-batch-list + .admin-batch-progress { margin-top: 15px; }
+
 @media (max-width: 920px) {
   .admin-mode-nav { gap: 6px; }
   .admin-mode-nav button { min-height: 66px; padding: 11px 10px; grid-template-columns: 23px minmax(0,1fr); column-gap: 7px; }
