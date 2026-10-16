@@ -6,9 +6,12 @@ const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
 
 export default function ContactFooter(){
+  const {media}=useSiteMedia();
+  const backdrop=media.slots?.contactBackground||{};
   const year = new Date().getFullYear();
 
   return <footer className="contact" id="contact">
+    {backdrop.src&&backdrop.visible!==false&&<div className="contact-custom-background" aria-hidden="true"><img src={backdrop.src} alt="" style={{objectFit:backdrop.fit==="contain"?"contain":"cover",objectPosition:(backdrop.positionX??50)+"% "+(backdrop.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(backdrop.scale)||1))+")",opacity:backdrop.opacity??.18}}/><span style={{backgroundColor:backdrop.overlayColor||"#a8271b",opacity:backdrop.overlayOpacity??.5}}/></div>}
     <div className="contact-grid-glow" aria-hidden="true"/>
     <TerminalBar command="printf build" status="READY" meta="CHANNEL / OPEN" />
     <div className="contact-inner">
