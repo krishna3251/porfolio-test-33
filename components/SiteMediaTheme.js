@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { loadSiteMedia } from "@/hooks/useSiteMedia";
 
 const colorProperties = {
   paper: "--bg",
@@ -15,8 +16,7 @@ const colorProperties = {
 export default function SiteMediaTheme() {
   useEffect(() => {
     let alive = true;
-    fetch("/site-media.json?v=latest", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() : null)
+    loadSiteMedia()
       .then((config) => {
         if (!alive || !config) return;
         const design = config.design || {};
