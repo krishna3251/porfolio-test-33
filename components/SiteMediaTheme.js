@@ -20,8 +20,13 @@ export default function SiteMediaTheme() {
       .then((config) => {
         if (!alive || !config) return;
         const design = config.design || {};
-        const palette = ["editorial", "darkroom", "sunset", "minimalism"].includes(design.theme) ? design.theme : "editorial";
-        document.documentElement.dataset.theme = palette;
+        const palette = ["editorial", "darkroom", "sunset", "minimalism", "maximalism"].includes(design.theme) ? design.theme : "editorial";
+        let selected = palette;
+        try {
+          const saved = JSON.parse(localStorage.getItem("krishna-theme-v3") || "null");
+          if (saved?.version === (Number(config.version) || 1) && ["editorial", "darkroom", "sunset", "minimalism", "maximalism"].includes(saved.theme)) selected = saved.theme;
+        } catch {}
+        document.documentElement.dataset.theme = selected;
         Object.entries(colorProperties).forEach(([key, property]) => {
           if (design.theme === "custom" && /^#[0-9a-f]{6}$/i.test(design[key] || "")) {
             document.documentElement.style.setProperty(property, design[key]);

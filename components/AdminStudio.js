@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { THUMBNAIL_FILENAMES, getThumbnailSrc } from "@/lib/thumbnails";
 
@@ -109,10 +110,20 @@ export default function AdminStudio() {
   };
 
   useEffect(() => {
-    readMedia().catch((failure) => {
+    const controller = new AbortController();
+    fetch("/api/admin/media", { cache: "no-store", credentials: "same-origin", signal: controller.signal })
+      .then(async response => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not load the media manifest.");
+        setConfig(data.config); setSavedConfig(data.config); setHasChanges(false);
+        setCanWrite(Boolean(data.canWrite)); setRepo(data.repository || "krishna3251/porfolio-test-33");
+        setBranch(data.branch || "main"); setAuthenticated(true);
+      }).catch((failure) => {
+      if (failure.name === "AbortError") return;
       if (failure.message && !failure.message.toLowerCase().includes("login")) setError(failure.message);
       setAuthenticated(false);
-    }).finally(() => setChecking(false));
+    }).finally(() => { if (!controller.signal.aborted) setChecking(false); });
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
@@ -390,7 +401,7 @@ export default function AdminStudio() {
     }
   };
 
-  saveActionRef.current = save;
+  useEffect(() => { saveActionRef.current = save; });
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -505,7 +516,7 @@ export default function AdminStudio() {
   return (
     <div className="admin-shell">
       <aside className="admin-sidebar">
-        <a href="/" className="admin-brand" aria-label="Return to site">K<span>.</span><small>CREATIVE STUDIO</small></a>
+        <Link href="/" className="admin-brand" aria-label="Return to site">K<span>.</span><small>CREATIVE STUDIO</small></Link>
         <div className="admin-side-label">WORKSPACE</div>
         <div className="admin-side-status"><i /> SESSION SECURE <span>12H</span></div>
         <div className="admin-side-label">MEDIA LIBRARY <b>{visibleEntries.length}/{slotEntries.length}</b></div>
@@ -519,7 +530,7 @@ export default function AdminStudio() {
       <main className="admin-main">
         <header className="admin-topbar">
           <div><span className="admin-eyebrow">CONTROL ROOM / 01</span><h1>Visual <em>designer.</em></h1></div>
-          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{workspaceTab === "thumbnails" ? (thumbnailQueue.length ? thumbnailQueue.length + " THUMBNAILS QUEUED" : "BATCH UPLOADER") : pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><a href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</a></div>
+          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{workspaceTab === "thumbnails" ? (thumbnailQueue.length ? thumbnailQueue.length + " THUMBNAILS QUEUED" : "BATCH UPLOADER") : pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><Link href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</Link></div>
         </header>
 
         <nav className="admin-mode-nav" aria-label="Admin editor mode">
@@ -724,7 +735,7 @@ export default function AdminStudio() {
           </section>
         </div>
 
-        <footer className="admin-footer"><span>KRISHNA® / PRIVATE VISUAL STUDIO</span><span>NO SITE BUILDER LOCK-IN / CONFIG LIVES IN YOUR REPOSITORY</span><a href="/">EXIT STUDIO ↗</a></footer>
+        <footer className="admin-footer"><span>KRISHNA® / PRIVATE VISUAL STUDIO</span><span>NO SITE BUILDER LOCK-IN / CONFIG LIVES IN YOUR REPOSITORY</span><Link href="/">EXIT STUDIO ↗</Link></footer>
       </main>
     </div>
   );

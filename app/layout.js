@@ -1,5 +1,6 @@
 import { Space_Grotesk, Instrument_Serif, DM_Mono, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+import "./refinement.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
@@ -33,6 +34,7 @@ export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",t
 export default function RootLayout({children}){
   return <html lang="en" className={`${spaceGrotesk.variable} ${dmMono.variable} ${instrumentSerif.variable} ${barlowCondensed.variable} h-full antialiased`}>
     <body id="top" className="site-body">
+      <a className="skip-link" href="#route-content">Skip to content</a>
       <SiteMediaTheme/>
       <Navbar/>
       <CustomCursor/>

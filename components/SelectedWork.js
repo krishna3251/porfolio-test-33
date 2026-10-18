@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import WorksWheel from "@/components/ui/works-wheel";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
 import useSiteMedia from "@/hooks/useSiteMedia";
@@ -14,9 +14,6 @@ const work = [
   ["05","AUTOMATION","Lxeus","Moderation and intelligent interaction tools for Discord communities.","/projects","selectedLxeus","/images/bots/lexus.png"],
   ["06","VISUAL DESIGN","Valorant","Agent-focused gaming visuals with strong composition and controlled energy.","/thumbnails","selectedValorant","/images/valorant%20chamber%20velo.png"]
 ];
-
-const listVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.02 } } };
-const rowVariants = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.58, ease: [0.16, 1, 0.3, 1] } } };
 
 function imageStyle(settings) {
   return {
@@ -40,12 +37,12 @@ export default function SelectedWork() {
         <p>A visual index of the things I make: game artwork, useful software and automation. Six distinct frames, with enough room for the work to speak.</p>
       </div>
 
-      <motion.div className="selected-work-list editorial-work-grid" variants={listVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12, margin: "0px 0px -8% 0px" }}>
+      <div className="selected-work-list editorial-work-grid">
         {work.map(([no,label,title,text,href,slot,defaultImage]) => {
           const settings = slots[slot] || {};
           const image = settings.src || defaultImage;
           return (
-            <motion.article key={no} variants={rowVariants} className="selected-work-card">
+            <article key={no} className="selected-work-card">
               <Link href={href} className="selected-work-row" data-cursor={"OPEN " + title.toUpperCase()}>
                 <span className="selected-work-no">{no}<i>/06</i></span>
                 <div className="selected-work-image">
@@ -60,10 +57,16 @@ export default function SelectedWork() {
                 </div>
                 <b className="selected-work-arrow">↗</b>
               </Link>
-            </motion.article>
+            </article>
           );
         })}
-      </motion.div>
+      </div>
+      <details className="work-explorer">
+        <summary>Explore the interactive index <span aria-hidden="true">＋</span></summary>
+        <WorksWheel items={work.map(([, , title, , href, slot, fallback]) => ({
+          title, href, image: slots[slot]?.src || fallback, ...slots[slot]
+        }))} />
+      </details>
       <Link href="/thumbnails" className="archive-link" data-cursor="ARCHIVE">Explore the full archive <span>↗</span></Link>
     </section>
   );

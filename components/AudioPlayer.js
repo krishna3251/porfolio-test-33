@@ -102,14 +102,17 @@ export default function AudioPlayer() {
 
   // Restore saved audio settings
   useEffect(() => {
-    const savedAP = localStorage.getItem("portfolio-autoplay-music");
-    if (savedAP !== null) setAutoplay(savedAP === "true");
-
-    const savedVol = localStorage.getItem("krishna-audio-volume");
-    if (savedVol !== null) setVolume(parseFloat(savedVol));
-
-    const savedMuted = localStorage.getItem("krishna-audio-muted");
-    if (savedMuted !== null) setIsMuted(savedMuted === "true");
+    const frame=requestAnimationFrame(()=>{
+      try {
+        const savedAP = localStorage.getItem("portfolio-autoplay-music");
+        if (savedAP !== null) setAutoplay(savedAP === "true");
+        const savedVol = Number.parseFloat(localStorage.getItem("krishna-audio-volume"));
+        if (Number.isFinite(savedVol)) setVolume(Math.min(1,Math.max(0,savedVol)));
+        const savedMuted = localStorage.getItem("krishna-audio-muted");
+        if (savedMuted !== null) setIsMuted(savedMuted === "true");
+      } catch {}
+    });
+    return()=>cancelAnimationFrame(frame);
   }, []);
 
   // Time update for progress

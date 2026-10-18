@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useReducedMotion, useScroll } from "framer-motion";
 import { useMemo,useRef,useState } from "react";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
@@ -21,18 +21,19 @@ const accentMap={
 };
 
 function ThumbnailCard({item,index,active,total}){
+  const reduce = useReducedMotion();
   const settings=item.mediaSettings||{};
   const ref=useRef(null);
   const [hovered,setHovered]=useState(false);
   const mx=useMotionValue(0), my=useMotionValue(0);
   const rx=useSpring(useTransform(my,[-80,80],[3,-3]),{stiffness:170,damping:22});
   const ry=useSpring(useTransform(mx,[-80,80],[-3,3]),{stiffness:170,damping:22});
-  const {scrollYProgress}=require("framer-motion").useScroll({target:ref,offset:["start end","end start"]});
+  const {scrollYProgress}=useScroll({target:ref,offset:["start end","end start"]});
   const imageY=useTransform(scrollYProgress,[0,1],["-4%","4%"]);
   const accent=accentMap[item.label]||accentMap.OTHER;
 
   const move=(e)=>{
-    if(!window.matchMedia("(pointer:fine)").matches)return;
+    if(reduce||!window.matchMedia("(pointer:fine)").matches)return;
     const r=ref.current?.getBoundingClientRect();
     if(!r)return;
     mx.set(e.clientX-(r.left+r.width/2));
@@ -43,7 +44,7 @@ function ThumbnailCard({item,index,active,total}){
     ref={ref}
     className="thumb-card premium-thumb-card"
     style={{"--card-accent":accent}}
-    initial={{opacity:0,y:54,scale:.97,rotateX:3}}
+    initial={false}
     whileInView={{opacity:1,y:0,scale:1,rotateX:0}}
     viewport={{once:true,amount:.16,margin:"0px 0px -8% 0px"}}
     transition={{duration:.65,delay:(index%3)*.055,ease:[.16,1,.3,1]}}
@@ -57,8 +58,8 @@ function ThumbnailCard({item,index,active,total}){
       aria-label={"View "+item.title}
       data-cursor="VIEW"
     >
-      <motion.div className="thumb-media" style={{rotateX:rx,rotateY:ry,transformStyle:"preserve-3d"}}>
-        <motion.div className="thumb-parallax-image" style={{y:imageY}}>
+      <motion.div className="thumb-media" style={{rotateX:reduce?0:rx,rotateY:reduce?0:ry,transformStyle:"preserve-3d"}}>
+        <motion.div className="thumb-parallax-image" style={{y:reduce?0:imageY}}>
           <WobbleImage className="absolute inset-0">
             <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image" style={{objectFit:settings.fit==="contain"?"contain":"cover",objectPosition:(settings.positionX??50)+"% "+(settings.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(settings.scale)||1))+")",opacity:settings.visible===false?0:(settings.opacity??1)}}/>
           </WobbleImage>
@@ -104,7 +105,7 @@ export default function WorkArchive({groups=[]}){
       <small>VISUAL WORKS INDEXED</small>
     </div>
 
-    {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
+    {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={false} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
       <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image" style={{objectFit:featured.mediaSettings?.fit==="contain"?"contain":"cover",objectPosition:(featured.mediaSettings?.positionX??50)+"% "+(featured.mediaSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(featured.mediaSettings?.scale)||1))+")",opacity:featured.mediaSettings?.visible===false?0:(featured.mediaSettings?.opacity??1)}}/></WobbleImage><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
       <div className="archive-feature-copy"><span>SELECTED FRAME</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={"/thumbnails/view?file="+encodeURIComponent(featured.filename)+"&category=ALL"} data-cursor="FEATURED">OPEN FEATURE ↗</Link></div>
     </motion.div>}
@@ -112,9 +113,9 @@ export default function WorkArchive({groups=[]}){
     <div className="archive-command"><div className="archive-command-left"><span className="archive-live"><i/> LIVE ARCHIVE</span><span>INDEX / {String(filtered.length).padStart(2,"0")}</span></div><span>FILTER / SELECT</span></div>
 
     <div className="archive-filter">
-      <div className="archive-filter-track">
-        <button onClick={()=>setActive("ALL")} className={active==="ALL"?"active":""} data-cursor="ALL WORK">ALL <b>{items.length}</b></button>
-        {cats.map(cat=><button key={cat.label} onClick={()=>setActive(cat.label)} className={active===cat.label?"active":""} data-cursor={cat.label}>{cat.label} <b>{cat.count}</b></button>)}
+      <div className="archive-filter-track" role="group" aria-label="Filter thumbnails by game">
+        <button onClick={()=>setActive("ALL")} aria-pressed={active==="ALL"} className={active==="ALL"?"active":""} data-cursor="ALL WORK">ALL <b>{items.length}</b></button>
+        {cats.map(cat=><button key={cat.label} onClick={()=>setActive(cat.label)} aria-pressed={active===cat.label} className={active===cat.label?"active":""} data-cursor={cat.label}>{cat.label} <b>{cat.count}</b></button>)}
       </div>
       <span>{String(filtered.length).padStart(2,"0")} WORKS / 2026</span>
     </div>

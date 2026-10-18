@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
 import useSiteMedia from "@/hooks/useSiteMedia";
@@ -29,13 +28,13 @@ export default function ProjectsSection(){
     <div className="project-list editorial-project-list">
       {projects.map(([no,name,type,desc,url,slot,defaultImage],index)=>{
         const settings=slots[slot]||{};
-        return <motion.a key={no} href={url} target="_blank" rel="noreferrer" className="project-row editorial-project-row" initial={{opacity:0,y:18}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-30px"}} transition={{duration:.5,delay:index*.045,ease:[.16,1,.3,1]}}>
+        return <a key={no} href={url} target="_blank" rel="noreferrer" className="project-row editorial-project-row">
           <span className="project-no">{no}</span>
           <div className="project-thumb"><img src={settings.src||defaultImage} alt="" loading="lazy" style={imageStyle(settings)}/></div>
           <div className="project-name"><span>{type}</span><h2>{name}<b>.</b></h2></div>
           <p>{desc}</p>
           <strong>↗</strong>
-        </motion.a>;
+        </a>;
       })}
     </div>
     <div className="project-footer-note"><span>EVERYTHING STARTS WITH A PROBLEM.</span><span>THE INTERFACE IS THE LAST 10%.</span></div>
