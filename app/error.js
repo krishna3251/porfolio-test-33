@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect } from "react";
 
 export default function GlobalError({ reset }) {
@@ -21,7 +23,7 @@ export default function GlobalError({ reset }) {
           <button type="button" onClick={() => reset()} className="command-button command-button-accent">
             [ ./retry ↻ ]
           </button>
-          <a href="/" className="command-button">[ ./home ↗ ]</a>
+          <Link href="/" className="command-button">[ ./home ↗ ]</Link>
         </div>
       </section>
     </main>

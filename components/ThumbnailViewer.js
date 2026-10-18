@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailSrc } from "@/lib/thumbnails";
 import WobbleImage from "@/components/WobbleImage";
@@ -13,12 +13,11 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
   const router=useRouter();
   const {media}=useSiteMedia();
   const override=media.overrides?.[item.filename]||{};
-  const previousIndexRef=useRef(index);
-  const direction=index>=previousIndexRef.current?1:-1;
-
-  useEffect(()=>{
-    previousIndexRef.current=index;
-  },[index]);
+  const [navigation, setNavigation] = useState({ index, direction: 1 });
+  if (navigation.index !== index) {
+    setNavigation({ index, direction: index >= navigation.index ? 1 : -1 });
+  }
+  const direction = navigation.direction;
 
   useEffect(()=>{
     const body=document.body;

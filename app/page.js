@@ -14,8 +14,8 @@ export const metadata={
 
 export default function Home(){
   return <div className="site-page">
-    <HomeHero/>
-    <main>
+    <main id="main-content" tabIndex={-1}>
+      <HomeHero/>
       <StudioStrip/>
       <ServicesSection/>
       <SelectedWork/>

@@ -129,12 +129,7 @@ function TerminalOutput({ trigger, output }) {
   const [currentLineIdx, setCurrentLineIdx] = useState(0);
   const [currentCharIdx, setCurrentCharIdx] = useState(0);
 
-  // Reset typewriter when command updates
-  useEffect(() => {
-    setDisplayedLines([]);
-    setCurrentLineIdx(0);
-    setCurrentCharIdx(0);
-  }, [trigger, output]);
+
 
   useEffect(() => {
     if (currentLineIdx >= output.length) return;
@@ -213,7 +208,7 @@ function BotLog({ bot }) {
         ))}
       </div>
       
-      <TerminalOutput trigger={activeCmd.trigger} output={activeCmd.output} />
+      <TerminalOutput key={activeCmd.trigger} trigger={activeCmd.trigger} output={activeCmd.output} />
     </div>
   );
 }
@@ -331,7 +326,7 @@ export default function Bots() {
   const botSlots={lxeus:"botLxeus",rukia:"botRukiya",r34:"botR34",damu:"botDamu"};
   const liveBots=botsData.map((bot)=>{const imageSettings=media.slots?.[botSlots[bot.id]]||{};return {...bot,image:imageSettings.src||bot.image,imageSettings};});
   return (
-    <main className="bots-page flex-grow pt-24 pb-32 px-6 md:px-12 lg:px-16 max-w-7xl mx-auto w-full relative">
+    <main id="main-content" tabIndex={-1} className="bots-page flex-grow pt-24 pb-32 px-6 md:px-12 lg:px-16 max-w-7xl mx-auto w-full relative">
       <header className="mb-24 flex flex-col md:flex-row justify-between items-baseline gap-12 border-b border-foreground/5 pb-16">
         <div className="max-w-2xl">
           <div className="mono-metadata text-primary mb-6 tracking-[0.25em] font-bold">Automation // Systems</div>

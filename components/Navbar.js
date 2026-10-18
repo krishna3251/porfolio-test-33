@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loadSiteMedia } from "@/hooks/useSiteMedia";
 
 const links=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
@@ -16,7 +16,12 @@ const themes=[
 
 export default function Navbar(){
   const pathname=usePathname();
-  const [open,setOpen]=useState(false);
+  const [menuPath,setMenuPath]=useState(null);
+  const open=menuPath===pathname;
+  const menuButton=useRef(null);
+  const themeButton=useRef(null);
+  const headerRef=useRef(null);
+  const setOpen=value=>setMenuPath(value?pathname:null);
   const [progress,setProgress]=useState(0);
   const [theme,setTheme]=useState("editorial");
   const [themeVersion,setThemeVersion]=useState(1);
@@ -37,7 +42,21 @@ export default function Navbar(){
     return()=>{window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
   },[pathname]);
 
-  useEffect(()=>{setOpen(false);},[pathname]);
+  useEffect(()=>{
+    if (!open && !themeOpen) return;
+    const keydown=event=>{
+      if(event.key==="Escape") {
+        setMenuPath(null); setThemeOpen(false);
+        (open?menuButton:themeButton).current?.focus();
+      }
+    };
+    const outside=event=>{if(!headerRef.current?.contains(event.target)){setMenuPath(null);setThemeOpen(false);}};
+    const resize=()=>{if(window.innerWidth>760)setMenuPath(null);};
+    document.addEventListener("keydown",keydown);
+    document.addEventListener("pointerdown",outside);
+    window.addEventListener("resize",resize);
+    return()=>{document.removeEventListener("keydown",keydown);document.removeEventListener("pointerdown",outside);window.removeEventListener("resize",resize);};
+  },[open,themeOpen]);
 
   useEffect(()=>{
     let alive=true;
@@ -62,34 +81,34 @@ export default function Navbar(){
   const changeTheme=(next)=>{
     setTheme(next);
     setThemeOpen(false);
-    document.documentElement.dataset.theme=next;
+    document.documentElement.setAttribute("data-theme",next);
     try { window.localStorage.setItem("krishna-theme-v3",JSON.stringify({theme:next,version:themeVersion})); } catch {}
   };
 
   if(viewer||admin)return null;
 
-  return <header className="site-header">
+  return <header ref={headerRef} className="site-header">
     <div className="site-header-inner">
       <Link href="/" className="site-logo" aria-label="Krishna home"><span className="site-logo-prompt">&gt;</span> KRISHNA<span>.</span></Link>
       <nav className="site-nav" aria-label="Primary navigation">
-        {links.map(([label,href])=><Link key={href} href={href} className={pathname===href?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
+        {links.map(([label,href])=><Link key={href} href={href} aria-current={pathname===href?"page":undefined} className={pathname===href?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
       </nav>
       <div className="site-header-right">
         <span className="nav-status"><i/> AVAILABLE / 2026</span>
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
         <div className="theme-switcher">
-          <button type="button" className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
+          <button type="button" ref={themeButton} className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
             <span className="theme-toggle-mark" aria-hidden="true">◈</span>
             <span className="theme-toggle-label">{theme}</span>
           </button>
-          {themeOpen&&<div id="theme-menu" className="theme-menu" role="menu">
+          {themeOpen&&<div id="theme-menu" className="theme-menu">
             <span className="theme-menu-title">VISUAL SYSTEM / THEME</span>
-            {themes.map(([id,label])=><button key={id} type="button" role="menuitem" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>
+            {themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>
               <i aria-hidden="true"/><span>{label}</span>{theme===id?<b>✓</b>:<b>↗</b>}
             </button>)}
           </div>}
         </div>
-        <button type="button" className="mobile-menu-button" onClick={()=>setOpen(v=>!v)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
+        <button type="button" ref={menuButton} className="mobile-menu-button" onClick={()=>setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
     </div>
     <div className="site-progress" aria-hidden="true"><span style={{transform:`scaleX(${progress})`}} /></div>

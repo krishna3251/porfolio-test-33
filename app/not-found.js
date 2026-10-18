@@ -1,3 +1,5 @@
+
+import Link from "next/link";
 export const metadata = {
   title: "Page Not Found",
   description: "The requested page could not be found on the KRISHNA portfolio.",
@@ -15,8 +17,8 @@ export default function NotFound() {
           This route does not exist, or the link has wandered off into the void.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <a href="/" className="command-button command-button-accent">[ ./home ↗ ]</a>
-          <a href="/thumbnails" className="command-button">[ ./work ↗ ]</a>
+          <Link href="/" className="command-button command-button-accent">[ ./home ↗ ]</Link>
+          <Link href="/thumbnails" className="command-button">[ ./work ↗ ]</Link>
         </div>
       </section>
     </main>

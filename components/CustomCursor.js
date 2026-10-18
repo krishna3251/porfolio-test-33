@@ -12,7 +12,7 @@ export default function CustomCursor(){
 
   useEffect(()=>{
     if(pathname.startsWith("/thumbnails/view")) return;
-    if(!window.matchMedia("(pointer:fine)").matches) return;
+    if(!window.matchMedia("(pointer:fine) and (prefers-reduced-motion:no-preference)").matches) return;
 
     const dot=dotRef.current, ring=ringRef.current, label=labelRef.current, glow=glowRef.current;
     if(!dot||!ring||!label||!glow) return;
@@ -22,6 +22,7 @@ export default function CustomCursor(){
     const glowPos={x:target.x,y:target.y};
     const labelPos={x:target.x+36,y:target.y+28};
     let raf=0;
+    const motionPreference=window.matchMedia("(prefers-reduced-motion:reduce)");
 
     const render=()=>{
       ringPos.x+=(target.x-ringPos.x)*.2;
@@ -36,7 +37,10 @@ export default function CustomCursor(){
       glow.style.transform=`translate3d(${glowPos.x}px,${glowPos.y}px,0) translate(-50%,-50%)`;
       label.style.transform=`translate3d(${labelPos.x}px,${labelPos.y}px,0) translate(-50%,-50%) scale(${activeRef.current?1:.92})`;
 
-      raf=requestAnimationFrame(render);
+      if(activeRef.current && !motionPreference.matches &&
+        Math.abs(target.x-ringPos.x)+Math.abs(target.y-ringPos.y)+Math.abs(target.x-glowPos.x)+Math.abs(target.y-glowPos.y)>0.1) {
+        raf=requestAnimationFrame(render);
+      } else { raf=0; }
     };
 
     const show=()=>{
@@ -51,7 +55,9 @@ export default function CustomCursor(){
       dot.style.opacity="0"; ring.style.opacity="0"; glow.style.opacity="0"; label.style.opacity="0";
     };
     const move=(event)=>{
+      if(motionPreference.matches)return;
       target.x=event.clientX; target.y=event.clientY; show();
+      if(!raf)raf=requestAnimationFrame(render);
     };
     const targetFor=(event)=>event.target instanceof Element?event.target.closest("a,button,[data-cursor]"):null;
     const over=(event)=>{
@@ -74,7 +80,6 @@ export default function CustomCursor(){
     document.addEventListener("pointerover",over,{passive:true});
     document.addEventListener("pointerout",out,{passive:true});
     document.addEventListener("pointerdown",down,{passive:true});
-    raf=requestAnimationFrame(render);
 
     return()=>{cancelAnimationFrame(raf);document.body.classList.remove("custom-cursor-active");window.removeEventListener("pointermove",move);window.removeEventListener("pointerleave",leave);document.removeEventListener("pointerover",over);document.removeEventListener("pointerout",out);document.removeEventListener("pointerdown",down)};
   },[pathname]);

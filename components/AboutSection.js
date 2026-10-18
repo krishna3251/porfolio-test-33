@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import TerminalBar from "@/components/TerminalBar";
 import SquigglyText from "@/components/ui/squiggly-text";
 import useSiteMedia from "@/hooks/useSiteMedia";
@@ -18,7 +17,7 @@ export default function AboutSection(){
     <TerminalBar command="whoami --profile" meta="USER / KRISHNA" />
     {background.src&&background.visible!==false&&<div className="about-custom-background"><img src={background.src} alt="" style={crop(background)}/><span style={{backgroundColor:background.overlayColor||"#eeeadf",opacity:background.overlayOpacity??.3}}/></div>}
     <div className="about-index"><span className="eyebrow">ABOUT</span><strong>04</strong></div>
-    <motion.div className="about-body editorial-about-body" initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-80px"}} transition={{duration:.7}}>
+    <div className="about-body editorial-about-body">
       <div className="about-photo-card">
         <div className="about-photo-frame"><img src={portrait.src||"/hero_krishna.jpg"} alt="Krishna portfolio visual" loading="lazy" style={crop(portrait)}/>{portrait.overlayOpacity>0&&<span style={{backgroundColor:portrait.overlayColor||"#a8271b",opacity:portrait.overlayOpacity}}/>}</div>
         <div className="about-photo-caption"><span>KRISHNA / PROFILE</span><span>HYDERABAD, IN</span></div>
@@ -33,6 +32,6 @@ export default function AboutSection(){
         </div>
         <div className="about-facts">{[["FOCUS","AI + WEB"],["TOOLS","PYTHON / REACT"],["VISUAL","GAMING ART"],["STATUS","BUILDING"]].map(([a,b])=><div key={a}><span>{a}</span><strong>{b}</strong></div>)}</div>
       </div>
-    </motion.div>
+    </div>
   </section>;
 }
