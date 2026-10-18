@@ -13,12 +13,12 @@ export const metadata={
 };
 
 export default function Home(){
-  return <div className="site-page">
-    <HomeHero/>
-    <main>
+  return <div className="site-page portfolio-refresh">
+    <main id="main-content">
+      <HomeHero/>
+      <SelectedWork/>
       <StudioStrip/>
       <ServicesSection/>
-      <SelectedWork/>
       <AboutSection/>
       <SkillsMarquee/>
       <HowIBuild/>

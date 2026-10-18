@@ -10,35 +10,38 @@ export default function SmoothScroll({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const touch = window.matchMedia("(pointer: coarse)").matches;
-    if (reduce || touch) return;
-
     gsap.registerPlugin(ScrollTrigger);
-
-    const lenis = new Lenis({
-      lerp: 0.11,
-      smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1,
-      infinite: false,
-    });
-
-    // Keep scroll-linked GSAP animations in lockstep with Lenis.
-    const updateScrollTrigger = () => ScrollTrigger.update();
-    lenis.on("scroll", updateScrollTrigger);
-
-    const raf = (time) => lenis.raf(time * 1000);
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
-
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    const query = window.matchMedia("(prefers-reduced-motion: no-preference) and (pointer: fine)");
+    let dispose = () => {};
+    const configure = () => {
+      dispose();
+      if (!query.matches || pathname.startsWith("/admin")) return;
+      const lenis = new Lenis({
+        lerp: 0.11,
+        smoothWheel: true,
+        wheelMultiplier: 0.95,
+        anchors: { offset: -72 },
+        stopInertiaOnNavigate: true,
+      });
+      const update = () => ScrollTrigger.update();
+      const raf = time => lenis.raf(time * 1000);
+      lenis.on("scroll", update);
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
+      const frame = requestAnimationFrame(() => ScrollTrigger.refresh());
+      dispose = () => {
+        cancelAnimationFrame(frame);
+        gsap.ticker.remove(raf);
+        lenis.off("scroll", update);
+        lenis.destroy();
+      };
+    };
+    configure();
+    query.addEventListener("change", configure);
 
     return () => {
-      gsap.ticker.remove(raf);
-      lenis.off("scroll", updateScrollTrigger);
-      lenis.destroy();
-      ScrollTrigger.refresh();
+      query.removeEventListener("change", configure);
+      dispose();
     };
   }, [pathname]);
 
