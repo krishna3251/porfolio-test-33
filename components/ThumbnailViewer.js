@@ -1,9 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailSrc } from "@/lib/thumbnails";
 import WobbleImage from "@/components/WobbleImage";
@@ -13,11 +12,6 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
   const router=useRouter();
   const {media}=useSiteMedia();
   const override=media.overrides?.[item.filename]||{};
-  const [navigation, setNavigation] = useState({ index, direction: 1 });
-  if (navigation.index !== index) {
-    setNavigation({ index, direction: index >= navigation.index ? 1 : -1 });
-  }
-  const direction = navigation.direction;
 
   useEffect(()=>{
     const body=document.body;
@@ -40,6 +34,7 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
   useEffect(()=>{
     const onKey=(event)=>{
       if(event.metaKey||event.ctrlKey||event.altKey) return;
+      if(event.target instanceof Element && event.target.closest("input,textarea,select,[contenteditable='true']")) return;
       const key=event.key.toLowerCase();
       if(key==="escape"||key==="backspace"){
         event.preventDefault();
@@ -93,21 +88,10 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
 
     <section className="thumbnail-viewer-stage" aria-label={item.title}>
       <div className="viewer-side-tag">VISUAL / {item.label}</div>
-      <AnimatePresence mode="wait" initial={false} custom={direction}>
         <WobbleImage className="thumbnail-viewer-wobble">
-          <motion.div
+          <div
             key={item.id}
             className="thumbnail-viewer-image-frame"
-            custom={direction}
-            variants={{
-              enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
-              center:{opacity:1,x:0,scale:1},
-              exit:(dir)=>({opacity:0,x:dir*-42,scale:.985})
-            }}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{duration:.32,ease:[.16,1,.3,1]}}
           >
             <Image
               src={override.src||item.src}
@@ -119,9 +103,8 @@ export default function ThumbnailViewer({item,previous,next,first,last,index,tot
               draggable="false"
               className="thumbnail-viewer-image" style={{objectFit:override.fit==="contain"?"contain":"cover",objectPosition:(override.positionX??50)+"% "+(override.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(override.scale)||1))+")",opacity:override.visible===false?0:(override.opacity??1)}}
             />
-          </motion.div>
+          </div>
         </WobbleImage>
-      </AnimatePresence>
       <span className="thumbnail-viewer-help">← A / P &nbsp; PREVIOUS &nbsp;&nbsp; D / N → &nbsp; NEXT &nbsp;&nbsp; ESC &nbsp; BACK</span>
     </section>
 

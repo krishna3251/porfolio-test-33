@@ -97,28 +97,28 @@ export default function Navbar(){
         <span className="nav-status"><i/> AVAILABLE / 2026</span>
         <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
         <div className="theme-switcher">
-          <button type="button" ref={themeButton} className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
+          <button type="button" ref={themeButton} className="theme-toggle" onClick={()=>{setThemeOpen(v=>!v);setMenuPath(null);}} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
             <span className="theme-toggle-mark" aria-hidden="true">◈</span>
             <span className="theme-toggle-label">{theme}</span>
           </button>
           {themeOpen&&<div id="theme-menu" className="theme-menu">
             <span className="theme-menu-title">VISUAL SYSTEM / THEME</span>
-            {themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>
+            {themes.map(([id,label])=><button key={id} type="button" aria-pressed={theme===id} className={theme===id?"active":""} onClick={()=>{changeTheme(id);themeButton.current?.focus();}}>
               <i aria-hidden="true"/><span>{label}</span>{theme===id?<b>✓</b>:<b>↗</b>}
             </button>)}
           </div>}
         </div>
-        <button type="button" ref={menuButton} className="mobile-menu-button" onClick={()=>setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
+        <button type="button" ref={menuButton} className="mobile-menu-button" onClick={()=>{setOpen(!open);setThemeOpen(false);}} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
     </div>
     <div className="site-progress" aria-hidden="true"><span style={{transform:`scaleX(${progress})`}} /></div>
     {open&&<div id="mobile-navigation" className="mobile-menu">
       <div className="mobile-menu-meta">NAVIGATION / 2026</div>
-      {links.map(([label,href])=><Link key={href} href={href} onClick={()=>setOpen(false)} data-cursor={label.toUpperCase()}>{label}<span>↗</span></Link>)}
+      {links.map(([label,href])=><Link key={href} href={href} aria-current={pathname===href?"page":undefined} onClick={()=>setOpen(false)} data-cursor={label.toUpperCase()}>{label}<span>↗</span></Link>)}
       <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
       <div className="mobile-menu-theme-picker">
         <span>VISUAL THEME</span>
-        <div>{themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>{label}</button>)}</div>
+        <div>{themes.map(([id,label])=><button key={id} type="button" aria-pressed={theme===id} className={theme===id?"active":""} onClick={()=>changeTheme(id)}>{label}</button>)}</div>
       </div>
     </div>}
   </header>;
