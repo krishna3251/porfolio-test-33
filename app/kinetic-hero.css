@@ -446,3 +446,166 @@
   .kinetic-art-toggle,
   .kinetic-mode-button span { transform: none !important; transition: none !important; }
 }
+
+
+/* Scroll-scrub scene: the reference holds the panel in view while the ribbons
+   travel through four reversible states. No timer or autoplay is involved. */
+.kinetic-scroll-scene {
+  --kinetic-header-height: 76px;
+  position: relative;
+  height: calc((100svh - var(--kinetic-header-height)) * 3.8);
+  min-height: 1500px;
+  isolation: isolate;
+}
+.kinetic-scroll-scene > .kinetic-hero {
+  position: sticky;
+  top: var(--kinetic-header-height);
+  height: calc(100svh - var(--kinetic-header-height));
+  min-height: 0;
+  padding-top: clamp(14px, 3vh, 35px);
+  padding-bottom: clamp(12px, 2vh, 26px);
+  gap: clamp(10px, 2.5vh, 25px);
+}
+.kinetic-scroll-scene .kinetic-panel {
+  flex: 1 1 auto;
+  height: 100%;
+  max-height: 700px;
+  min-height: 0;
+}
+.kinetic-scroll-scene .kinetic-panel-top {
+  padding-top: clamp(17px, 2.8vh, 34px);
+  padding-bottom: clamp(8px, 1.8vh, 23px);
+}
+.kinetic-scroll-scene .kinetic-panel-footer {
+  padding-top: clamp(7px, 1.3vh, 17px);
+  padding-bottom: clamp(16px, 2.5vh, 29px);
+}
+.kinetic-scroll-scene .kinetic-panel-content { min-height: 0; }
+.kinetic-scroll-heading {
+  position: relative;
+  display: block;
+  min-height: 1.74em;
+}
+.kinetic-scroll-heading .kinetic-heading-phase {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: block;
+  width: max-content;
+  opacity: 1;
+  will-change: opacity, transform;
+}
+.kinetic-scroll-heading .kinetic-heading-phase--last { opacity: 0; }
+.kinetic-subtitle-wrap {
+  opacity: 1;
+  will-change: opacity;
+}
+.kinetic-scroll-scene .kinetic-art-toggle {
+  cursor: default;
+  transform: perspective(950px)
+    rotateY(var(--tilt-x))
+    rotateX(var(--tilt-y))
+    rotateZ(var(--scroll-tilt, -12deg));
+  will-change: transform;
+}
+.kinetic-scroll-scene .kinetic-scroll-fibers polygon {
+  stroke: rgba(255, 186, 196, .22);
+  stroke-width: .65;
+  vector-effect: non-scaling-stroke;
+}
+.kinetic-scroll-scene .kinetic-scroll-sparks circle {
+  fill: #ff5f59;
+  filter: drop-shadow(0 0 5px #f42d4c) drop-shadow(0 0 7px #fd725d);
+  pointer-events: none;
+}
+.kinetic-scroll-scene .kinetic-orbit {
+  animation: none;
+}
+.kinetic-scroll-scene .kinetic-sculpture-core {
+  filter: drop-shadow(1px 2px 3px rgba(75,35,40,.25));
+}
+.kinetic-scroll-scene .kinetic-mode-button:hover span { transform: translateY(5px); }
+.kinetic-scroll-progress {
+  position: absolute;
+  z-index: 4;
+  left: 18%;
+  right: 18%;
+  bottom: 0;
+  height: 2px;
+  background: rgba(147,58,76,.12);
+  pointer-events: none;
+}
+.kinetic-scroll-progress > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #d63350;
+  box-shadow: 0 0 13px rgba(236,50,79,.7);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.kinetic-scroll-scene .kinetic-ambient-footer > span:nth-child(2) {
+  color: white;
+  white-space: nowrap;
+}
+.kinetic-scroll-scene .kinetic-ambient-footer > span:nth-child(2) span {
+  padding-left: 9px;
+  font-size: 15px;
+}
+@media (max-width: 760px) {
+  .kinetic-scroll-scene {
+    min-height: 0;
+    height: calc((100svh - var(--kinetic-header-height)) * 3.25);
+  }
+  .kinetic-scroll-scene > .kinetic-hero {
+    min-height: 0;
+    height: calc(100svh - var(--kinetic-header-height));
+    padding: 12px 12px 10px !important;
+    gap: 9px;
+  }
+  .kinetic-scroll-scene .kinetic-panel { min-height: 0; max-height: none; }
+  .kinetic-scroll-scene .kinetic-panel-content {
+    padding: 7px 20px 0;
+    gap: 1px;
+    align-content: space-around;
+  }
+  .kinetic-scroll-scene .kinetic-panel-top { padding: 15px 20px 7px; }
+  .kinetic-scroll-scene .kinetic-panel-footer { padding: 5px 20px 14px; }
+  .kinetic-scroll-scene .kinetic-eyebrow { margin-bottom: 15px; }
+  .kinetic-scroll-scene .kinetic-description { margin-top: 12px; }
+  .kinetic-scroll-scene .kinetic-intro-links { margin-top: 12px; }
+  .kinetic-scroll-scene .kinetic-art-stage {
+    width: min(100%, 350px);
+    height: min(34svh, 265px);
+    aspect-ratio: auto;
+    margin: 0 auto;
+  }
+  .kinetic-scroll-scene .kinetic-art-toggle { width: min(100%, 285px); }
+  .kinetic-scroll-scene .kinetic-art-caption { bottom: -2px; }
+  .kinetic-scroll-scene .kinetic-ambient-footer > span:first-child,
+  .kinetic-scroll-scene .kinetic-ambient-footer > span:last-child { display: none; }
+}
+@media (max-width: 760px) and (max-height: 690px) {
+  .kinetic-scroll-scene > .kinetic-hero { padding: 7px 9px 8px !important; }
+  .kinetic-scroll-scene .kinetic-panel-top { padding-top: 9px; padding-bottom: 0; }
+  .kinetic-scroll-scene .kinetic-panel-content { padding-top: 0; }
+  .kinetic-scroll-scene .kinetic-eyebrow { margin-bottom: 9px; }
+  .kinetic-scroll-scene .kinetic-description { font-size: 10px; margin-top: 7px; line-height: 1.4; }
+  .kinetic-scroll-scene .kinetic-intro-links { margin-top: 7px; }
+  .kinetic-scroll-scene .kinetic-art-stage { height: min(25svh, 170px); }
+  .kinetic-scroll-scene .kinetic-art-toggle { width: min(100%, 205px); }
+  .kinetic-scroll-scene .kinetic-panel-footer { padding-bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-scroll-scene { height: auto; min-height: 0; }
+  .kinetic-scroll-scene > .kinetic-hero {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: max(670px, calc(100svh - var(--kinetic-header-height)));
+    padding-block: 30px;
+  }
+  .kinetic-scroll-scene .kinetic-panel { min-height: 530px; }
+  .kinetic-scroll-scene .kinetic-scroll-heading .kinetic-heading-phase { will-change: auto; }
+  .kinetic-scroll-scene .kinetic-scroll-progress > span { will-change: auto; }
+}
