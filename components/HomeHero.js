@@ -45,7 +45,7 @@ const RIBBONS = Array.from({ length: COUNT }, (_, index) => {
     251 + spread * 135 + wave * 16, 354 - t * 60
   ];
   const fan = polarRibbon(Math.PI + t * Math.PI, 62 + noise * .3, 177 + noise, width * 1.8, .76);
-  const ring = polarRibbon(-Math.PI / 2 + t * TAU, 62 + wave * 5, 143 + noise, width, .83);
+  const ring = polarRibbon(Math.PI + t * TAU, 62 + wave * 5, 143 + noise, width, .83);
   return {
     poses: [descending, folding, fan, ring],
     fill: "hsl(" + (352 + Math.round(wave * 6)) + " 76% " + (34 + Math.round((wave + 1) * 11)) + "%)"
