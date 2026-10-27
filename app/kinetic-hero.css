@@ -603,3 +603,15 @@ html.lenis.lenis-stopped { overflow: hidden; }
   }
   .fullbleed-gallery-image img { transition: none; }
 }
+
+
+/* The SVG path data is updated during scrubbing. Avoid an expensive
+   fullscreen filter pass per animation frame, especially on mobile GPUs. */
+.fullbleed-artwork { filter: none; }
+.fullbleed-gallery-card { filter: none; }
+.fullbleed-gallery-link {
+  box-shadow: 0 17px 36px rgba(36,17,31,.17), 0 1px 0 rgba(255,255,255,.6);
+}
+@media (max-width: 760px) {
+  .fullbleed-gallery-link { box-shadow: 0 8px 20px rgba(36,17,31,.17); }
+}
