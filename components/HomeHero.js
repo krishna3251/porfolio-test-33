@@ -186,7 +186,7 @@ export default function HomeHero() {
       onUpdate: () => draw(scrub.value),
       scrollTrigger: {
         trigger: scene,
-        start: "top top",
+        start: () => "top top+=" + (parseFloat(scene.style.getPropertyValue("--fullbleed-header")) || 0),
         end: "bottom bottom",
         scrub: .55,
         invalidateOnRefresh: true
