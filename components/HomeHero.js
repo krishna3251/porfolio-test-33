@@ -175,8 +175,8 @@ export default function HomeHero() {
     let observer;
     let indexCurrent = -1;
     let percentCurrent = -1;
-    let introActive = true;
-    let finaleActive = false;
+    let introActive = false;
+    let finaleActive = true;
     const introLinks = [...introRef.current.querySelectorAll("a")];
     const finaleLinks = [...finaleRef.current.querySelectorAll("a")];
 
