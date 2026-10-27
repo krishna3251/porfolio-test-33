@@ -196,7 +196,7 @@ body:has(.site-page--cinematic) .theme-menu button:hover {
   grid-column: 1 / -1;
 }
 .site-page--cinematic .editorial-work-grid .selected-work-card:first-child .selected-work-image {
-  aspect-ratio: 21 / 8;
+  aspect-ratio: 21 / 10;
 }
 .site-page--cinematic .editorial-work-grid .selected-work-row {
   overflow: hidden;
@@ -522,5 +522,60 @@ body:has(.site-page--cinematic) :focus-visible {
     background:#2e1d1b;
     color:#ffdbc4;
     border-color:rgba(247,185,153,.3);
+  }
+}
+
+
+/* Shared navigation on archive, projects, and bot pages matches the hero.
+   Scope away from homepage because the route has more navigation targets. */
+body:not(:has(.site-page--cinematic)) .site-header {
+  background: #241917 !important;
+  color: #f8e7d6 !important;
+  border-bottom-color: rgba(240,175,147,.23) !important;
+  box-shadow: 0 9px 30px rgba(20,11,12,.08) !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .site-logo {
+  color: #ffebdc !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .site-logo span,
+body:not(:has(.site-page--cinematic)) .site-header .site-logo-prompt {
+  color: #f28c75 !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .site-nav a,
+body:not(:has(.site-page--cinematic)) .site-header .site-header-right > a {
+  color: #dec1b0 !important;
+  font-size: 10px !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .site-nav a:hover,
+body:not(:has(.site-page--cinematic)) .site-header .site-nav a[aria-current="page"] {
+  color: #ffa68e !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .nav-status {color: #bca092 !important;}
+body:not(:has(.site-page--cinematic)) .site-header .theme-toggle,
+body:not(:has(.site-page--cinematic)) .site-header .mobile-menu-button {
+  color: #f2d9c8 !important;
+  background: rgba(245,190,152,.075) !important;
+  border-color: rgba(246,195,159,.27) !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .theme-toggle-mark,
+body:not(:has(.site-page--cinematic)) .site-header .theme-toggle-label {
+  color: #eeb397 !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .site-progress > span {
+  background:linear-gradient(90deg,#b53748,#ec926f) !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .mobile-menu,
+body:not(:has(.site-page--cinematic)) .site-header .theme-menu {
+  color:#f6e3d5 !important;
+  background:#312321 !important;
+  border-color:rgba(245,195,170,.25) !important;
+}
+body:not(:has(.site-page--cinematic)) .site-header .mobile-menu a,
+body:not(:has(.site-page--cinematic)) .site-header .theme-menu button {
+  color:#f5d5c2 !important;
+}
+@media(max-width:760px) {
+  body:not(:has(.site-page--cinematic)) .site-header {
+    padding:10px 16px !important;
   }
 }
