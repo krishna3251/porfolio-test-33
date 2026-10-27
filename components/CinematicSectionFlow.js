@@ -18,7 +18,7 @@ export default function CinematicSectionFlow() {
 
     const page = document.querySelector(".site-page--cinematic");
     if (!page) return;
-    const sections = [...page.querySelectorAll("main > section:not(.cinema-story)")];
+    const sections = [...page.querySelectorAll("main > section:not(.cinema-story), footer.contact")];
     if (!sections.length) return;
 
     gsap.registerPlugin(ScrollTrigger);
