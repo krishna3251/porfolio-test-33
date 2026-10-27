@@ -408,3 +408,198 @@
   .fullbleed-art { will-change: auto; transform: none; }
   .fullbleed-progress-track span { will-change: auto; }
 }
+
+
+/* -------------------------------------------------------------------------
+   GENSHIN / SCROLL-SYNCHRONIZED FEATURE REVEAL
+   Cards are real works, not a separate landing-page box. SVG stays behind.
+   ------------------------------------------------------------------------- */
+.fullbleed-gallery {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  isolation: isolate;
+}
+.fullbleed-gallery-heading {
+  position: absolute;
+  z-index: 1;
+  top: clamp(90px, 14vh, 170px);
+  right: clamp(26px, 5.4vw, 100px);
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  color: #60464e;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+.fullbleed-gallery-heading > span:first-child {
+  font: 500 9px/1.5 var(--font-dm-mono), monospace;
+  letter-spacing: .14em;
+}
+.fullbleed-gallery-heading strong {
+  font: 700 clamp(22px, 3vw, 46px)/.95 var(--font-barlow), "Arial Narrow", sans-serif;
+  letter-spacing: -.018em;
+  color: #9d2f49;
+}
+.fullbleed-gallery-heading .fullbleed-gallery-count {
+  font: 500 10px/1.4 var(--font-dm-mono), monospace;
+}
+.fullbleed-gallery-card {
+  position: absolute;
+  display: block;
+  width: clamp(205px, 23vw, 350px);
+  aspect-ratio: 1.56;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform-origin: 50% 70%;
+  filter: drop-shadow(0 19px 28px rgba(25,15,22,.17));
+  backface-visibility: hidden;
+}
+.fullbleed-gallery-card:nth-of-type(1) { top: 23%; right: 7%; z-index: 4; }
+.fullbleed-gallery-card:nth-of-type(2) { top: 37%; right: 27%; z-index: 3; }
+.fullbleed-gallery-card:nth-of-type(3) { top: 50%; right: 4%; z-index: 5; }
+.fullbleed-gallery-card:nth-of-type(4) { top: 63%; right: 24%; z-index: 6; }
+.fullbleed-gallery-link {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 4px;
+  background: #171115;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(255,255,255,.6), 0 15px 45px rgba(68,22,38,.12);
+  pointer-events: auto;
+}
+.fullbleed-gallery-link:focus-visible {
+  outline: 3px solid #c63251;
+  outline-offset: 4px;
+}
+.fullbleed-gallery-image {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #2b1b27;
+}
+.fullbleed-gallery-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter .35s ease;
+}
+.fullbleed-gallery-link:hover .fullbleed-gallery-image img {
+  filter: brightness(1.13) saturate(1.06);
+}
+.fullbleed-gallery-link::after {
+  content: "";
+  position: absolute;
+  inset: 35% 0 0;
+  background: linear-gradient(transparent, rgba(14,8,15,.84));
+  pointer-events: none;
+}
+.fullbleed-gallery-meta {
+  position: absolute;
+  z-index: 1;
+  inset: auto 13px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px 8px;
+  align-items: end;
+  text-shadow: 0 1px 5px rgba(0,0,0,.35);
+}
+.fullbleed-gallery-meta > span:first-child {
+  grid-column: 1 / -1;
+  font: 500 8px/1.4 var(--font-dm-mono), monospace;
+  letter-spacing: .15em;
+  color: #f4d8df;
+}
+.fullbleed-gallery-meta strong {
+  max-width: 29ch;
+  font: 700 clamp(17px, 1.55vw, 25px)/1 var(--font-barlow), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -.012em;
+}
+.fullbleed-gallery-meta > span:last-child {
+  align-self: end;
+  justify-self: end;
+  font: 24px/1 var(--font-space), sans-serif;
+}
+.fullbleed-gallery-archive {
+  position: absolute;
+  right: clamp(24px, 5.6vw, 100px);
+  bottom: clamp(97px, 12.5vh, 145px);
+  z-index: 8;
+  display: block;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #a63b55;
+  font: 500 10px var(--font-dm-mono), monospace;
+  letter-spacing: .08em;
+  color: #80263a;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.fullbleed-gallery-archive:hover { color: #dc385a; }
+.fullbleed-gallery-archive:focus-visible { outline: 2px solid #ba3152; outline-offset: 3px; }
+
+/* Lenis adjusts only wheel scrolling on fine-pointer devices. Keep the native
+   touch scroll and the global focus/anchor behaviours functional. */
+html.lenis.lenis-smooth { scroll-behavior: auto !important; }
+html.lenis.lenis-stopped { overflow: hidden; }
+
+@media (max-width: 1100px) {
+  .fullbleed-gallery-card { width: clamp(175px, 26vw, 300px); }
+  .fullbleed-gallery-heading strong { font-size: clamp(20px, 2.7vw, 32px); }
+  .fullbleed-gallery-card:nth-of-type(2) { right: 24%; }
+  .fullbleed-gallery-card:nth-of-type(4) { right: 20%; }
+}
+@media (max-width: 760px) {
+  /* Retain the whole circular silhouette while drawing half as many paths. */
+  .fullbleed-ribbons path:nth-child(even) { display: none; }
+  .fullbleed-gallery-heading {
+    top: 11%;
+    right: 7%;
+    gap: 3px;
+  }
+  .fullbleed-gallery-heading > span:first-child { font-size: 7px; }
+  .fullbleed-gallery-heading strong { font-size: 23px; }
+  .fullbleed-gallery-heading .fullbleed-gallery-count { font-size: 8px; }
+  .fullbleed-gallery-card {
+    width: min(56vw, 245px);
+    aspect-ratio: 1.72;
+    filter: drop-shadow(0 10px 12px rgba(25,15,22,.21));
+  }
+  .fullbleed-gallery-card:nth-of-type(1) { top: 18%; right: 5%; }
+  .fullbleed-gallery-card:nth-of-type(2) { top: 32%; right: 23%; }
+  .fullbleed-gallery-card:nth-of-type(3) { top: 45%; right: 3%; }
+  .fullbleed-gallery-card:nth-of-type(4) { top: 56%; right: 26%; }
+  .fullbleed-gallery-meta { inset: auto 9px 8px; gap: 2px 5px; }
+  .fullbleed-gallery-meta strong { font-size: 16px; }
+  .fullbleed-gallery-meta > span:first-child { font-size: 7px; }
+  .fullbleed-gallery-meta > span:last-child { font-size: 16px; }
+  .fullbleed-gallery-archive {
+    bottom: 12%;
+    right: 5%;
+    font-size: 8px;
+  }
+}
+@media (max-width: 390px) {
+  .fullbleed-gallery-card { width: 55vw; }
+  .fullbleed-gallery-heading { top: 8%; right: 5%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fullbleed-gallery-card,
+  .fullbleed-gallery-heading,
+  .fullbleed-gallery-archive {
+    will-change: auto;
+  }
+  .fullbleed-gallery-image img { transition: none; }
+}
