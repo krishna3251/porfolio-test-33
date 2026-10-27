@@ -349,9 +349,9 @@
       "positionX": 50,
       "positionY": 50,
       "scale": 1,
-      "opacity": 0.22,
+      "opacity": 0.9,
       "overlayColor": "#191e1d",
-      "overlayOpacity": 0.65,
+      "overlayOpacity": 0.16,
       "visible": true
     },
     "serviceWeb": {
@@ -363,9 +363,9 @@
       "positionX": 50,
       "positionY": 50,
       "scale": 1,
-      "opacity": 0.22,
+      "opacity": 0.9,
       "overlayColor": "#191e1d",
-      "overlayOpacity": 0.65,
+      "overlayOpacity": 0.16,
       "visible": true
     },
     "serviceVisual": {
@@ -377,9 +377,9 @@
       "positionX": 50,
       "positionY": 50,
       "scale": 1,
-      "opacity": 0.22,
+      "opacity": 0.9,
       "overlayColor": "#191e1d",
-      "overlayOpacity": 0.65,
+      "overlayOpacity": 0.16,
       "visible": true
     }
   },
