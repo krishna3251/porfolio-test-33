@@ -1,0 +1,372 @@
+/* PORTFOLIO DESIGN AUDIT / 2026
+   Cohesive warm-ink navigation, legible typography, quieter details and
+   expressive image-led project cards. Reuses the existing art and page markup.
+   New selectors deliberately sit after the older CSS and are scoped where
+   needed: other app routes and admin controls keep their native themes. */
+
+:root {
+  --editorial-ease: cubic-bezier(.22,1,.36,1);
+  --editorial-cocoa: #241917;
+  --editorial-cream: #f7e9d8;
+  --editorial-rose: #f28b76;
+}
+
+/* The header lives OUTSIDE the homepage component. :has keeps the cinematic
+   treatment route-scoped without storing another theme in JS. */
+body:has(.site-page--cinematic) .site-header {
+  background: rgba(34,23,23,.97) !important;
+  color: #fae9d9 !important;
+  border-bottom: 1px solid rgba(240,175,147,.23) !important;
+  box-shadow: 0 9px 32px rgba(20,11,12,.13) !important;
+}
+body:has(.site-page--cinematic) .site-header-inner {
+  max-width: 1460px;
+  width: 100%;
+}
+body:has(.site-page--cinematic) .site-logo {
+  color: #f8e7d6 !important;
+  letter-spacing: .014em !important;
+}
+body:has(.site-page--cinematic) .site-logo span,
+body:has(.site-page--cinematic) .site-logo-prompt {
+  color: #f77f6d !important;
+}
+body:has(.site-page--cinematic) .site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px,1.7vw,27px);
+}
+body:has(.site-page--cinematic) .site-nav a,
+body:has(.site-page--cinematic) .site-header-right > a {
+  color: #d7bcb0 !important;
+  font-size: 10px !important;
+  letter-spacing: .07em !important;
+  transition: color .25s ease, opacity .25s ease;
+}
+body:has(.site-page--cinematic) .site-nav a:hover,
+body:has(.site-page--cinematic) .site-nav a[aria-current="page"],
+body:has(.site-page--cinematic) .site-header-right > a:hover {
+  color: #ffad99 !important;
+}
+body:has(.site-page--cinematic) .nav-status {
+  color: #b99a8d !important;
+  font-size: 9px !important;
+}
+body:has(.site-page--cinematic) .theme-toggle,
+body:has(.site-page--cinematic) .mobile-menu-button {
+  color: #fae3d5 !important;
+  background: rgba(242,172,145,.08) !important;
+  border: 1px solid rgba(234,179,150,.3) !important;
+}
+body:has(.site-page--cinematic) .theme-toggle:hover,
+body:has(.site-page--cinematic) .mobile-menu-button:hover {
+  background: rgba(250,157,127,.16) !important;
+}
+body:has(.site-page--cinematic) .theme-toggle-mark,
+body:has(.site-page--cinematic) .theme-toggle-label {
+  color: #f3ac97 !important;
+}
+body:has(.site-page--cinematic) .site-progress {
+  background: rgba(248,192,162,.08) !important;
+}
+body:has(.site-page--cinematic) .site-progress > span {
+  background: linear-gradient(90deg,#bd3947,#efa279) !important;
+}
+body:has(.site-page--cinematic) .mobile-menu,
+body:has(.site-page--cinematic) .theme-menu {
+  background: #312321 !important;
+  border: 1px solid rgba(240,178,149,.24) !important;
+  color: #f9e6d4 !important;
+}
+body:has(.site-page--cinematic) .mobile-menu a,
+body:has(.site-page--cinematic) .theme-menu button,
+body:has(.site-page--cinematic) .theme-menu-title,
+body:has(.site-page--cinematic) .mobile-menu-meta {
+  color: #efceb9 !important;
+}
+body:has(.site-page--cinematic) .mobile-menu-theme-picker > span {
+  color: #f4ab8e !important;
+}
+body:has(.site-page--cinematic) .mobile-menu a:hover,
+body:has(.site-page--cinematic) .theme-menu button:hover {
+  color: #fff7ee !important;
+  background: rgba(240,144,112,.11) !important;
+}
+
+/* Lighter editorial content after the dark hero. Increases contrast so the
+   project images are the emphasis, not the site's decorative textures. */
+.site-page--cinematic .section,
+.site-page--cinematic .studio-strip,
+.site-page--cinematic .editorial-process {
+  --muted: #6d5146;
+  --border: rgba(77,44,35,.21);
+}
+.site-page--cinematic .section-marker,
+.site-page--cinematic .eyebrow,
+.site-page--cinematic .studio-stat-no,
+.site-page--cinematic .project-no {
+  color: #a33d39 !important;
+}
+.site-page--cinematic .section-heading h2,
+.site-page--cinematic .services-head h2,
+.site-page--cinematic .about-text-column h2,
+.site-page--cinematic .skills-head h2,
+.site-page--cinematic .process-display {
+  letter-spacing: -.035em !important;
+  line-height: .98 !important;
+  text-wrap: balance;
+}
+.site-page--cinematic .section-heading p,
+.site-page--cinematic .services-head > p,
+.site-page--cinematic .about-copy p,
+.site-page--cinematic .process-intro-copy {
+  color: #5c453c !important;
+  line-height: 1.7 !important;
+}
+.site-page--cinematic .studio-strip {
+  padding-top: clamp(36px,5vw,74px);
+}
+.site-page--cinematic .studio-strip-inner {
+  background: rgba(245,228,207,.3);
+  border-color: rgba(77,44,35,.24) !important;
+}
+.site-page--cinematic .studio-stat {
+  border-color: rgba(77,44,35,.17) !important;
+}
+.site-page--cinematic .studio-stat-main strong {
+  color: #3a211c !important;
+  font-variant-numeric: tabular-nums;
+}
+.site-page--cinematic .studio-stat-main span,
+.site-page--cinematic .studio-stat p {
+  color: #685047 !important;
+  letter-spacing: .05em;
+}
+
+/* Show the genuine visual work: previous media settings produced almost
+   invisible images (22% media opacity stacked under a 65% overlay). */
+.site-page--cinematic .services-list.service-glass-stack {
+  gap: clamp(16px,2vw,27px) !important;
+}
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(116,79,61,.28) !important;
+  background: #f2e4d4 !important;
+  box-shadow: 0 14px 42px rgba(80,44,32,.08) !important;
+  transition: transform .5s var(--editorial-ease),box-shadow .5s var(--editorial-ease),border-color .3s ease;
+}
+.site-page--cinematic .services-list.service-glass-stack .service-card-media {
+  overflow: hidden;
+  background: #48332d !important;
+}
+.site-page--cinematic .services-list.service-glass-stack .service-card-media img {
+  filter: saturate(.95) contrast(1.04);
+  transition: filter .4s ease, scale .75s var(--editorial-ease);
+}
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card .service-main h3 {
+  color: #2f201d !important;
+  letter-spacing: -.025em;
+}
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card .service-main p {
+  color: #57443f !important;
+  font-size: clamp(13px,1vw,15px) !important;
+  line-height: 1.62 !important;
+}
+.site-page--cinematic .service-command { color: #a13d3c !important; }
+@media (hover: hover) and (pointer:fine) {
+  .site-page--cinematic .services-list.service-glass-stack .editorial-service-card:hover {
+    transform: translateY(-7px) !important;
+    border-color: #d1695b !important;
+    box-shadow: 0 25px 60px rgba(74,33,22,.17) !important;
+  }
+  .site-page--cinematic .services-list.service-glass-stack .editorial-service-card:hover .service-card-media img {
+    filter: saturate(1.08) contrast(1.05);
+    scale: 1.035;
+  }
+}
+
+/* Featured work leads with a large, cinematic image; the next pieces retain a
+   balanced two-column editorial rhythm on desktop. */
+.site-page--cinematic .selected-work-list.editorial-work-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: clamp(16px,2vw,28px);
+}
+.site-page--cinematic .editorial-work-grid .selected-work-card:first-child {
+  grid-column: 1 / -1;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-card:first-child .selected-work-image {
+  aspect-ratio: 21 / 8;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-row {
+  overflow: hidden;
+  border: 1px solid rgba(97,54,43,.22) !important;
+  background: #f1e2d1 !important;
+  box-shadow: 0 12px 35px rgba(55,27,23,.08) !important;
+  padding: clamp(12px,1.25vw,20px) !important;
+  transition: transform .5s var(--editorial-ease),box-shadow .5s var(--editorial-ease),border-color .3s ease;
+}
+.site-page--cinematic .selected-work-image {
+  overflow: hidden;
+  background: #503a3e;
+}
+.site-page--cinematic .selected-work-image img {
+  filter: saturate(1.05);
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy {
+  padding: 19px 12px 10px !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy strong {
+  color: #32201d !important;
+  font-size: clamp(27px,2.6vw,42px) !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy small {
+  color: #ac4e49 !important;
+  font-size: 10px !important;
+  letter-spacing: .1em;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy p {
+  color: #685348 !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-arrow {color:#b0473f !important;}
+@media (hover:hover) and (pointer:fine) {
+  .site-page--cinematic .editorial-work-grid .selected-work-row:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 60px rgba(74,33,22,.14) !important;
+    border-color: #c2695a !important;
+  }
+}
+
+/* About, skills and process belong to the same visual family. */
+.site-page--cinematic .about-photo-frame {
+  border: 1px solid rgba(90,51,42,.28);
+  box-shadow: 13px 17px 0 rgba(144,71,62,.16);
+  background: #c1a494;
+}
+.site-page--cinematic .about-photo-caption { color:#7e4b42 !important; }
+.site-page--cinematic .about-facts {
+  background: rgba(255,241,222,.24);
+  border-color: rgba(89,50,40,.19) !important;
+}
+.site-page--cinematic .about-facts strong,
+.site-page--cinematic .skill-item {
+  color: #322321 !important;
+}
+.site-page--cinematic .skill-grid { gap: 0; }
+.site-page--cinematic .skill-box {
+  background: rgba(250,235,214,.36);
+  border: 1px solid rgba(99,58,45,.22) !important;
+  transition: background .25s ease;
+}
+.site-page--cinematic .skill-box:hover { background: rgba(255,239,223,.74); }
+.site-page--cinematic .skill-item { font-size: clamp(13px,1vw,15px) !important; }
+.site-page--cinematic .editorial-process {
+  border-top: 1px solid rgba(80,40,31,.18);
+}
+.site-page--cinematic .process-card {
+  border: 1px solid rgba(100,59,44,.22) !important;
+  background: #f1e4d4 !important;
+  box-shadow: 0 11px 32px rgba(69,36,27,.07);
+}
+.site-page--cinematic .process-card h3 {color: #30201c !important;}
+.site-page--cinematic .process-card p {color: #5e4840 !important;}
+.site-page--cinematic .process-card h3 em {color: #b0473e !important;}
+
+/* Footer uses dark warm cocoa instead of the old oversaturated orange panel.
+   Background art still works if enabled through the media editor. */
+.site-page--cinematic .contact {
+  position: relative;
+  color: #f4e1d1 !important;
+  background:
+    radial-gradient(ellipse at 88% 35%,rgba(149,72,61,.34),transparent 48%),
+    linear-gradient(120deg,#37221f,#241818 80%) !important;
+  border-top: 1px solid rgba(241,178,146,.2);
+}
+.site-page--cinematic .contact .section-marker,
+.site-page--cinematic .contact .eyebrow,
+.site-page--cinematic .contact .contact-copy > span,
+.site-page--cinematic .contact .contact-bottom {
+  color: #d1ab97 !important;
+}
+.site-page--cinematic .contact h2 {
+  color: #ffeddd !important;
+  line-height: .85 !important;
+}
+.site-page--cinematic .contact h2 em {
+  color: #ff997e !important;
+}
+.site-page--cinematic .contact-copy p { color: #e2bdab !important; }
+.site-page--cinematic .contact-row { border-color:rgba(255,209,185,.24) !important; }
+.site-page--cinematic .contact .btn,
+.site-page--cinematic .contact .text-link {
+  transition: background .3s ease,border-color .3s ease,color .3s ease,transform .35s var(--editorial-ease);
+}
+.site-page--cinematic .contact .btn:hover { transform: translateY(-3px); }
+.site-page--cinematic .contact .text-link { color: #ffd6bd !important; }
+.site-page--cinematic .contact-bottom {
+  border-color: rgba(246,200,180,.18) !important;
+}
+.site-page--cinematic .contact-bottom a { color: #f4c7ad !important; }
+
+/* Better spacing/contrast also applies to the adjacent real galleries/routes. */
+.archive-page .archive-hero,
+.projects-page .editorial-project-index { overflow-wrap:anywhere; }
+.archive-page .archive-hero p,
+.projects-page .project-intro p { line-height:1.7 !important; }
+.archive-page .thumb-card .thumb-meta h3 { line-height:1.05 !important; }
+.archive-page .thumb-card .thumb-meta p { line-height:1.55 !important; }
+.archive-page .thumb-card a:focus-visible,
+.projects-page .project-row:focus-visible {
+  outline:3px solid var(--accent);
+  outline-offset:4px;
+}
+.projects-page .editorial-project-row {
+  transition:background .35s ease,transform .35s var(--editorial-ease);
+}
+.projects-page .editorial-project-row:hover {
+  background:color-mix(in srgb,var(--accent) 7%,var(--surface));
+  transform:translateX(4px);
+}
+
+/* The player remains discoverable, but does not compete with the work. */
+.site-audio .song-box {
+  opacity: .86;
+  border: 1px solid rgba(235,174,151,.25);
+  box-shadow: 0 10px 38px rgba(10,7,9,.14);
+}
+.site-audio .song-box:hover,
+.site-audio .song-box:focus-within {opacity:1;}
+body:has(.site-page--cinematic) :focus-visible {
+  outline-color: #d46c59;
+  outline-offset: 3px;
+}
+
+@media(max-width:1120px) and (min-width:761px) {
+  body:has(.site-page--cinematic) .site-nav {gap:9px;}
+  body:has(.site-page--cinematic) .site-nav a {font-size:8px !important;}
+  body:has(.site-page--cinematic) .nav-status {display:none !important;}
+}
+@media(max-width:760px) {
+  body:has(.site-page--cinematic) .site-header {padding:10px 16px !important;}
+  body:has(.site-page--cinematic) .site-nav {display:none !important;}
+  .site-page--cinematic .selected-work-list.editorial-work-grid {grid-template-columns:1fr;}
+  .site-page--cinematic .editorial-work-grid .selected-work-card:first-child {grid-column:auto;}
+  .site-page--cinematic .editorial-work-grid .selected-work-card:first-child .selected-work-image {aspect-ratio:16/10;}
+  .site-page--cinematic .editorial-work-grid .selected-work-copy {padding:12px 3px 6px !important;}
+  .site-page--cinematic .editorial-work-grid .selected-work-copy strong {font-size:clamp(27px,7vw,37px) !important;}
+  .site-page--cinematic .editorial-work-grid .selected-work-copy p {font-size:12px !important;}
+  .site-page--cinematic .services-list.service-glass-stack .editorial-service-card {box-shadow:0 8px 22px rgba(80,44,32,.09) !important;}
+  .site-page--cinematic .skill-item {font-size:12px !important;}
+  .site-page--cinematic .studio-stat-main span {font-size:8px !important;}
+  .site-page--cinematic .contact h2 {font-size:clamp(62px,15vw,94px) !important;}
+  .site-page--cinematic .contact-copy p {font-size:14px !important;}
+  .site-audio .song-box {opacity:.75;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .site-page--cinematic .editorial-work-grid .selected-work-row,
+  .site-page--cinematic .editorial-service-card,
+  .projects-page .editorial-project-row {transition:none !important;transform:none !important;}
+  .site-audio .song-box {transition:none !important;}
+}
