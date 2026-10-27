@@ -150,6 +150,7 @@ export default function HomeHero() {
   const progressRef = useRef(null);
   const progressLabelRef = useRef(null);
   const bloomRef = useRef(null);
+  const chapterLabelRef = useRef(null);
   const transitionRef = useRef(null);
 
   const items = useMemo(() => {
@@ -171,6 +172,7 @@ export default function HomeHero() {
     const fibers = [...fibersRef.current.children];
     const chapters = [...chaptersRef.current.children];
     const links = chapters.map(node => node.querySelector(".cinema-feature-image"));
+    const threadLength = threadRef.current.getTotalLength();
     const mobile = window.matchMedia("(max-width: 760px)").matches;
     let tween;
     let observer;
@@ -194,10 +196,11 @@ export default function HomeHero() {
       });
       threadRef.current.style.strokeDasharray = "100";
       threadRef.current.style.strokeDashoffset = String(100 - Math.min(100, p * 128));
-      const dotX = 732 + 98 * Math.sin((p * 2.8 + .14) * Math.PI);
-      const dotY = 65 + p * 672;
-      dotRef.current.setAttribute("cx", String(dotX));
-      dotRef.current.setAttribute("cy", String(dotY));
+      // Keep the traveling bead attached to the actual ribbon path, instead
+      // of approximating its location with an unrelated sine wave.
+      const location = threadRef.current.getPointAtLength(threadLength * Math.min(1, p * 1.28));
+      dotRef.current.setAttribute("cx", location.x.toFixed(1));
+      dotRef.current.setAttribute("cy", location.y.toFixed(1));
       dotRef.current.style.opacity = String(smooth(.08, .18, p) * (1 - smooth(.88, 1, p)));
       bloomRef.current.style.opacity = String(smooth(.79, .96, p));
       transitionRef.current.style.opacity = String(smooth(.945, .998, p));
@@ -250,6 +253,11 @@ export default function HomeHero() {
       if (active !== indexCurrent) {
         indexCurrent = active;
         scene.dataset.chapter = String(active);
+        if (chapterLabelRef.current) {
+          chapterLabelRef.current.textContent = active < 0
+            ? (p < .16 ? "01 / INTRODUCTION" : "06 / FINALE")
+            : "0" + (active + 2) + " / ARTWORK";
+        }
       }
     };
 
@@ -311,9 +319,12 @@ export default function HomeHero() {
       </div>
 
       <div className="cinema-eyeline" aria-hidden="true">
-        <span>KRISHNA / VISUAL EXPERIENCE</span>
-        <span>STORY IN MOTION <b>001 — 006</b></span>
+        <span>KRISHNA / CREATIVE DEVELOPER</span>
+        <span ref={chapterLabelRef}>01 / INTRODUCTION</span>
       </div>
+      <a className="cinema-skip-story" href="#work" aria-label="Skip cinematic introduction and view selected work">
+        SKIP TO WORK <span aria-hidden="true">↘</span>
+      </a>
 
       <div className="cinema-intro" ref={introRef}>
         <span className="cinema-kicker">{copy.heroEyebrow || "CREATIVE DEVELOPER × VISUAL DESIGNER"}</span>
