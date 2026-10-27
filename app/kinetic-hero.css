@@ -325,7 +325,7 @@
   }
   .fullbleed-art {
     width: 165%;
-    left: -49%;
+    left: -67%;
     right: auto;
     transform: translate3d(0, var(--ribbon-drift, 0px), 0);
   }
