@@ -31,7 +31,7 @@ export const metadata={
   twitter:{card:"summary_large_image",title:"KRISHNA / Creative Developer + Visual Designer",description:"Software, AI systems, gaming visuals and experiments by Krishna.",images:[heroImage]},
 };
 
-export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",themeColor:"#241917",colorScheme:"light dark"};
+export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",themeColor:"#241917",colorScheme:"light"};
 
 export default function RootLayout({children}){
   return <html lang="en" className={`${spaceGrotesk.variable} ${dmMono.variable} ${instrumentSerif.variable} ${barlowCondensed.variable} h-full antialiased`}>
