@@ -175,6 +175,10 @@ export default function HomeHero() {
     let observer;
     let indexCurrent = -1;
     let percentCurrent = -1;
+    let introActive = true;
+    let finaleActive = false;
+    const introLinks = [...introRef.current.querySelectorAll("a")];
+    const finaleLinks = [...finaleRef.current.querySelectorAll("a")];
 
     const header = document.querySelector(".site-header");
     const measure = () => {
@@ -199,9 +203,21 @@ export default function HomeHero() {
       const introOpacity = 1 - smooth(.115, .21, p);
       introRef.current.style.opacity = String(introOpacity);
       introRef.current.style.transform = "translate3d(" + (-95 * (1 - introOpacity)).toFixed(1) + "px,0,0)";
+      const allowIntro = introOpacity > .96;
+      if (introActive !== allowIntro) {
+        introActive = allowIntro;
+        introRef.current.setAttribute("aria-hidden", allowIntro ? "false" : "true");
+        introLinks.forEach(a => a.tabIndex = allowIntro ? 0 : -1);
+      }
       const finish = smooth(.89, .965, p);
       finaleRef.current.style.opacity = String(finish);
       finaleRef.current.style.transform = "translate3d(" + (100 * (1 - finish)).toFixed(1) + "px,0,0)";
+      const allowFinale = finish > .96;
+      if (finaleActive !== allowFinale) {
+        finaleActive = allowFinale;
+        finaleRef.current.setAttribute("aria-hidden", allowFinale ? "false" : "true");
+        finaleLinks.forEach(a => a.tabIndex = allowFinale ? 0 : -1);
+      }
 
       chapters.forEach((chapter, index) => {
         const [start, end] = windows[index];
@@ -238,6 +254,10 @@ export default function HomeHero() {
     measure();
     if (reduced) {
       render(0);
+      introRef.current.removeAttribute("aria-hidden");
+      finaleRef.current.removeAttribute("aria-hidden");
+      introLinks.forEach(link => link.tabIndex = 0);
+      finaleLinks.forEach(link => link.tabIndex = 0);
       chapters.forEach((node, index) => {
         node.style.opacity = "1";
         node.style.visibility = "visible";
