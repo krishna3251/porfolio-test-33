@@ -11,7 +11,9 @@ export default function PageTransition({ children }) {
   const pathname = usePathname();
   const root = useRef(null);
   useLayoutEffect(() => {
-    if (!root.current || pathname.startsWith("/admin")) return;
+    // Homepage chapters and section reveals already own their ScrollTriggers.
+    // Duplicating animation timelines here caused section flicker and reflows.
+    if (!root.current || pathname.startsWith("/admin") || pathname === "/") return;
     gsap.registerPlugin(ScrollTrigger);
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", context => {
