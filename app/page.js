@@ -1,4 +1,5 @@
 import HomeHero from "@/components/HomeHero";
+import CinematicThread from "@/components/CinematicThread";
 import StudioStrip from "@/components/StudioStrip";
 import ServicesSection from "@/components/ServicesSection";
 import SelectedWork from "@/components/SelectedWork";
@@ -13,9 +14,10 @@ export const metadata={
 };
 
 export default function Home(){
-  return <div className="site-page">
+  return <div className="site-page site-page--cinematic">
     <main id="main-content" tabIndex={-1}>
       <HomeHero/>
+      <CinematicThread/>
       <StudioStrip/>
       <ServicesSection/>
       <SelectedWork/>
