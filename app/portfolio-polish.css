@@ -370,3 +370,111 @@ body:has(.site-page--cinematic) :focus-visible {
   .projects-page .editorial-project-row {transition:none !important;transform:none !important;}
   .site-audio .song-box {transition:none !important;}
 }
+
+
+/* Shorter cinematic story: four chapters remain fully reversible, but the
+   portfolio work arrives after ~5 screenfuls instead of an endless intro. */
+.cinema-story {
+  height: calc((100svh - var(--cinema-header)) * 5.75);
+  min-height: 2450px;
+}
+.cinema-eyeline { font-size: 11px; }
+.cinema-intro h1 {
+  font-size: clamp(75px,8.8vw,150px);
+  line-height: .83;
+  letter-spacing: -.035em;
+}
+.cinema-intro p {
+  color: #f0d1bf;
+  font-size: clamp(14px,1.15vw,17px);
+  max-width: 440px;
+}
+.cinema-chapter-text h2 {
+  font-size: clamp(62px,6.65vw,116px);
+  line-height: .88;
+  text-wrap: balance;
+}
+.cinema-chapter-text > p {
+  color: #efd0bc;
+  font-size: clamp(13px,1vw,15px);
+}
+.cinema-image-track {
+  max-width: 720px;
+}
+.cinema-feature-image {
+  border-color: rgba(255,204,170,.64);
+  box-shadow: 0 30px 78px rgba(9,4,7,.3),0 0 0 7px rgba(244,163,128,.055);
+}
+.cinema-feature-image img {
+  filter: saturate(1.08) contrast(1.04);
+  transition: filter .4s ease;
+}
+.cinema-feature-image:hover img { filter: saturate(1.17) contrast(1.04); }
+.cinema-skip-story {
+  position: absolute;
+  z-index: 12;
+  top: clamp(60px,8.5vw,105px);
+  right: clamp(22px,6vw,110px);
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 0 8px;
+  border-bottom: 1px solid rgba(246,177,149,.7);
+  color: #ffd4b9;
+  text-decoration: none;
+  font: 500 10px/1.4 var(--font-dm-mono),monospace;
+  letter-spacing: .11em;
+  transition: color .25s ease,border-color .25s ease;
+}
+.cinema-skip-story span { font-size: 18px; line-height: 1; }
+.cinema-skip-story:hover {
+  color: #fff8ed;
+  border-color: #fff8ed;
+}
+.cinema-skip-story:focus-visible {
+  outline: 2px solid #ffa88c;
+  outline-offset: 5px;
+}
+.cinema-chapter-count { margin-top: 25px; }
+.cinema-image-tail { color: #e0ab96; }
+.cinema-page-thread { opacity: 0; }
+
+@media(max-width:1100px) {
+  .cinema-intro h1 {font-size:clamp(62px,8vw,105px);}
+  .cinema-chapter-text h2 {font-size:clamp(52px,6vw,86px);}
+  .cinema-skip-story {right:5%;top:70px;}
+}
+@media(max-width:760px) {
+  .cinema-story {
+    height: calc((100svh - var(--cinema-header)) * 5.45);
+    min-height: 0;
+  }
+  .cinema-intro h1 { font-size: clamp(57px,13.2vw,96px); }
+  .cinema-intro p {font-size:13px;}
+  .cinema-chapter-text h2 {
+    font-size:clamp(46px,10.8vw,76px);
+    line-height:.9;
+    white-space:normal;
+  }
+  .cinema-chapter-text > p {font-size:12px;}
+  .cinema-chapter-count {margin-top:11px;}
+  .cinema-skip-story {
+    top:54px;
+    right:18px;
+    padding-bottom:5px;
+    font-size:8px;
+    gap:6px;
+  }
+  .cinema-eyeline {font-size:8px;top:20px;}
+  .cinema-image-track {max-width:100%;}
+  .cinema-feature-image {box-shadow:0 16px 38px rgba(9,4,7,.27);}
+}
+@media (max-height:680px) and (min-width:761px) {
+  .cinema-intro h1 {font-size:clamp(64px,7.4vw,102px);}
+  .cinema-chapter-text h2 {font-size:clamp(55px,6vw,96px);}
+}
+@media(prefers-reduced-motion:reduce) {
+  .cinema-story {height:auto;min-height:0;}
+  .cinema-skip-story {display:none;}
+  .cinema-feature-image img {transition:none;}
+}
