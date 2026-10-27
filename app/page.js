@@ -1,5 +1,6 @@
 import HomeHero from "@/components/HomeHero";
 import CinematicThread from "@/components/CinematicThread";
+import CinematicSectionFlow from "@/components/CinematicSectionFlow";
 import StudioStrip from "@/components/StudioStrip";
 import ServicesSection from "@/components/ServicesSection";
 import SelectedWork from "@/components/SelectedWork";
@@ -18,6 +19,7 @@ export default function Home(){
     <main id="main-content" tabIndex={-1}>
       <HomeHero/>
       <CinematicThread/>
+      <CinematicSectionFlow/>
       <StudioStrip/>
       <ServicesSection/>
       <SelectedWork/>
