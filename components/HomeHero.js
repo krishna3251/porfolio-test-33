@@ -150,6 +150,7 @@ export default function HomeHero() {
   const progressRef = useRef(null);
   const progressLabelRef = useRef(null);
   const bloomRef = useRef(null);
+  const transitionRef = useRef(null);
 
   const items = useMemo(() => {
     const all = getChronologicalThumbnailGroups(media).flatMap(group => group.thumbnails)
@@ -199,6 +200,7 @@ export default function HomeHero() {
       dotRef.current.setAttribute("cy", String(dotY));
       dotRef.current.style.opacity = String(smooth(.08, .18, p) * (1 - smooth(.88, 1, p)));
       bloomRef.current.style.opacity = String(smooth(.79, .96, p));
+      transitionRef.current.style.opacity = String(smooth(.945, .998, p));
 
       const introOpacity = 1 - smooth(.115, .21, p);
       introRef.current.style.opacity = String(introOpacity);
@@ -337,6 +339,7 @@ export default function HomeHero() {
         </div>
       </div>
 
+      <div className="cinema-transition-wash" ref={transitionRef} aria-hidden="true" />
       <div className="cinema-bottom-bar">
         <div className="cinema-byline">
           {portrait.src && portrait.visible !== false && <span className="cinema-avatar">
