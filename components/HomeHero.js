@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import Link from "next/link";
+import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useSiteMedia from "@/hooks/useSiteMedia";
 
-const RIBBON_COUNT = 84;
+// Dense visual silhouette without excessive DOM work per animation frame.
+const RIBBON_COUNT = 64;
 const TAU = Math.PI * 2;
 const clamp = (n) => Math.min(1, Math.max(0, n));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -134,6 +137,33 @@ export default function HomeHero() {
   const descriptionRef = useRef(null);
   const progressRef = useRef(null);
   const progressTextRef = useRef(null);
+  const galleryRef = useRef(null);
+  const galleryTitleRef = useRef(null);
+  const galleryIndexRef = useRef(null);
+
+  // Reuse the actual archive's category mapping and admin overrides.
+  const galleryItems = useMemo(() => {
+    const all = getChronologicalThumbnailGroups(media)
+      .flatMap((group) => group.thumbnails)
+      .filter((item) => item.label === "GENSHIN");
+    const featuredOrder = [
+      "genshin cinematic.png", "genshin skirk.png",
+      "genshin furina.png", "genshin miko.png", "oddete genshin.png"
+    ];
+    return all
+      .sort((a, b) => {
+        const ar = featuredOrder.indexOf(a.filename);
+        const br = featuredOrder.indexOf(b.filename);
+        return (ar < 0 ? 99 : ar) - (br < 0 ? 99 : br);
+      })
+      .slice(0, 4)
+      .map((item) => ({
+        ...item,
+        src: media.overrides?.[item.filename]?.src || item.src,
+        settings: media.overrides?.[item.filename] || {}
+      }));
+  }, [media]);
+  const galleryKey = galleryItems.map((item) => item.filename).join("|");
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -142,6 +172,9 @@ export default function HomeHero() {
     const paths = Array.from(pathsRef.current.children);
     const tips = Array.from(tipsRef.current.children);
     const glowingRibbons = RIBBONS.filter(r => r.tip);
+    const galleryCards = Array.from(galleryRef.current?.querySelectorAll(".fullbleed-gallery-card") || []);
+    const mobile = window.matchMedia("(max-width: 760px)").matches;
+    let lastLabel = -1;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let tween;
     let observer;
@@ -153,7 +186,11 @@ export default function HomeHero() {
 
     function draw(progress) {
       const p = clamp(progress);
-      paths.forEach((path, index) => path.setAttribute("d", cubicPath(ribbonAt(RIBBONS[index], p))));
+      paths.forEach((path, index) => {
+        // Alternate ribbons on phones: 32 paths still cover the full shape.
+        if (mobile && index % 2 !== 0) return;
+        path.setAttribute("d", cubicPath(ribbonAt(RIBBONS[index], p)));
+      });
       tips.forEach((tip, index) => {
         const coords = ribbonAt(glowingRibbons[index], p);
         tip.setAttribute("transform", "translate(" + coords[6].toFixed(1) + " " + coords[7].toFixed(1) + ")");
@@ -164,11 +201,41 @@ export default function HomeHero() {
       firstHeadingRef.current.style.transform = "translateY(" + (-18 * ease(.41, .61, p)) + "px)";
       finalHeadingRef.current.style.opacity = String(ease(.68, .87, p));
       finalHeadingRef.current.style.transform = "translateY(" + (22 * (1 - ease(.68, .87, p))) + "px)";
-      descriptionRef.current.style.opacity = String(.85 + .15 * (1 - ease(.35, .62, p)));
+      descriptionRef.current.style.opacity = String(1 - ease(.34, .61, p) * .55);
+      galleryCards.forEach((card, index) => {
+        const first = .32 + index * .105;
+        const reveal = ease(first, first + .135, p);
+        const settle = ease(first + .16, first + .38, p);
+        const y = (1 - reveal) * 95 - settle * 18;
+        const rotate = (index % 2 ? 1 : -1) * (1 - reveal) * 9;
+        card.style.opacity = String(reveal);
+        card.style.visibility = reveal < .02 ? "hidden" : "visible";
+        card.style.pointerEvents = reveal > .58 ? "auto" : "none";
+        card.style.transform =
+          "translate3d(" + ((1 - reveal) * 56).toFixed(1) + "px," +
+          y.toFixed(1) + "px,0) rotate(" + rotate.toFixed(1) + "deg) scale(" +
+          (.88 + reveal * .12).toFixed(3) + ")";
+        card.setAttribute("aria-hidden", reveal > .58 ? "false" : "true");
+        const link = card.querySelector("a");
+        if (link) link.tabIndex = reveal > .58 ? 0 : -1;
+      });
+      if (galleryTitleRef.current) {
+        const appear = ease(.28, .43, p);
+        galleryTitleRef.current.style.opacity = String(appear);
+        galleryTitleRef.current.style.transform = "translateY(" + (20 * (1 - appear)).toFixed(1) + "px)";
+      }
+      if (galleryIndexRef.current) {
+        const index = Math.min(4, Math.max(0, Math.floor((p - .3) / .105)));
+        galleryIndexRef.current.textContent = String(index).padStart(2, "0") + " / 04";
+      }
       artRef.current.style.setProperty("--ribbon-drift", (-27 * ease(0, .58, p) + 20 * ease(.58, 1, p)).toFixed(1) + "px");
       progressRef.current.style.transform = "scaleX(" + p + ")";
       if (progressTextRef.current) {
-        progressTextRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0") + "%";
+        const next = Math.round(p * 100);
+        if (next !== lastLabel) {
+          lastLabel = next;
+          progressTextRef.current.textContent = String(next).padStart(2, "0") + "%";
+        }
       }
     }
 
@@ -209,7 +276,7 @@ export default function HomeHero() {
       tween?.kill();
       scene.style.removeProperty("--fullbleed-header");
     };
-  }, []);
+  }, [galleryKey]);
 
   function advance() {
     const scene = sceneRef.current;
@@ -239,6 +306,38 @@ export default function HomeHero() {
           <FallingRibbons pathsRef={pathsRef} tipsRef={tipsRef} ringShadowRef={ringShadowRef} />
         </div>
         <div className="fullbleed-grain" aria-hidden="true" />
+
+        {galleryItems.length > 0 && (
+          <div className="fullbleed-gallery" ref={galleryRef} aria-label="Genshin Impact thumbnail highlights">
+            <div className="fullbleed-gallery-heading" ref={galleryTitleRef}>
+              <span>SELECTED / VISUAL ARCHIVE</span>
+              <strong>GENSHIN IMPACT</strong>
+              <span className="fullbleed-gallery-count" ref={galleryIndexRef}>00 / 04</span>
+            </div>
+            {galleryItems.map((item, index) => (
+              <article className="fullbleed-gallery-card" key={item.filename} aria-hidden="true">
+                <Link
+                  href={"/thumbnails/view?file=" + encodeURIComponent(item.filename) + "&category=GENSHIN"}
+                  className="fullbleed-gallery-link"
+                  aria-label={"View Genshin artwork: " + item.title}
+                  tabIndex={-1}
+                >
+                  <span className="fullbleed-gallery-image">
+                    <img src={item.src} alt={item.title}
+                      loading={index < 2 ? "eager" : "lazy"} decoding="async"
+                      style={imageStyle(item.settings)} />
+                  </span>
+                  <span className="fullbleed-gallery-meta">
+                    <span>0{index + 1} / GENSHIN</span>
+                    <strong>{item.title}</strong>
+                    <span aria-hidden="true">↗</span>
+                  </span>
+                </Link>
+              </article>
+            ))}
+            <Link href="/thumbnails" className="fullbleed-gallery-archive">VIEW ALL THUMBNAILS ↗</Link>
+          </div>
+        )}
 
         <div className="fullbleed-overline">
           <span><i aria-hidden="true" /> KRISHNA / DIGITAL CRAFT</span>
