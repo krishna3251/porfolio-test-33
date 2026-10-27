@@ -5,7 +5,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { loadSiteMedia } from "@/hooks/useSiteMedia";
 
-const links=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
+const siteLinks=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
+const homeLinks=[
+  ["Home","#home"],
+  ["Work","#work"],
+  ["Thumbnails","/thumbnails"],
+  ["Projects","/projects"],
+  ["About","#about"],
+  ["Contact","#contact"]
+];
 const themes=[
   ["editorial","Editorial"],
   ["darkroom","Darkroom"],
@@ -27,6 +35,7 @@ export default function Navbar(){
   const [themeVersion,setThemeVersion]=useState(1);
   const [themeOpen,setThemeOpen]=useState(false);
 
+  const links=pathname==="/"?homeLinks:siteLinks;
   const viewer=pathname.startsWith("/thumbnails/view");
   const admin=pathname.startsWith("/admin");
 
@@ -91,7 +100,7 @@ export default function Navbar(){
     <div className="site-header-inner">
       <Link href="/" className="site-logo" aria-label="Krishna home"><span className="site-logo-prompt">&gt;</span> KRISHNA<span>.</span></Link>
       <nav className="site-nav" aria-label="Primary navigation">
-        {links.map(([label,href])=><Link key={href} href={href} aria-current={pathname===href?"page":undefined} className={pathname===href?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
+        {links.map(([label,href])=><Link key={href} href={href} aria-current={(pathname===href || pathname==="/"&&href==="#home")?"page":undefined} className={(pathname===href || pathname==="/"&&href==="#home")?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
       </nav>
       <div className="site-header-right">
         <span className="nav-status"><i/> AVAILABLE / 2026</span>
