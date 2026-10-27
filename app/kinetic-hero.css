@@ -85,7 +85,7 @@
   top: 50%;
   left: clamp(22px,7vw,128px);
   width: min(52vw,760px);
-  transform: translate3d(0,-50%,0);
+  translate: 0 -50%;
   pointer-events: none;
 }
 .cinema-intro h1,
@@ -322,6 +322,13 @@
   background: transparent !important;
   color: #2d1c1a;
 }
+.site-page--cinematic .contact {
+  background: #b66d53 !important;
+  color: #2c1715;
+}
+.site-page--cinematic .studio-strip {
+  border-color: rgba(64,33,24,.2);
+}
 .site-page--cinematic .editorial-service-card,
 .site-page--cinematic .selected-work-card,
 .site-page--cinematic .process-card {
@@ -432,7 +439,7 @@
   .cinema-intro,.cinema-finale,.cinema-chapters,.cinema-chapter,
   .cinema-chapter-text,.cinema-image-track {
     position:relative;top:auto;left:auto;right:auto;
-    width:100%;transform:none !important;
+    width:100%;transform:none !important;translate:none !important;
   }
   .cinema-intro {max-width:680px;opacity:1 !important;}
   .cinema-chapters {display:grid;gap:55px;margin-top:65px;}
