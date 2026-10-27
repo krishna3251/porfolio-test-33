@@ -4,59 +4,56 @@ import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Side-to-center reveals for the sections after the scroll narrative.
-// Scrubbing preserves the same motion vocabulary when scrolling backwards,
-// without replacing or disabling any existing interactive sections.
+const clamp = value => Math.max(0, Math.min(1, value));
+const eased = value => {
+  const t = clamp(value);
+  return t * t * (3 - 2 * t);
+};
+
+// One reversible calculation per section: no competing opacity tweens.
+// Existing carousels, links and in-section animations remain intact.
 export default function CinematicSectionFlow() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const page = document.querySelector(".site-page--cinematic");
     if (!page) return;
-
     const sections = [...page.querySelectorAll("main > section:not(.cinema-story)")];
     if (!sections.length) return;
 
     gsap.registerPlugin(ScrollTrigger);
-    const context = gsap.context(() => {
-      sections.forEach((section, index) => {
-        const direction = index % 2 === 0 ? -1 : 1;
-        const fromX = direction * (window.innerWidth < 760 ? 26 : 70);
-        gsap.fromTo(section, {
-          x: fromX,
-          opacity: .68
-        }, {
-          x: 0,
-          opacity: 1,
-          ease: "none",
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: section,
-            start: "top 94%",
-            end: "top 49%",
-            scrub: .5,
-            invalidateOnRefresh: true
-          }
-        });
-        gsap.fromTo(section, {
-          opacity: 1,
-        }, {
-          opacity: .82,
-          ease: "none",
-          immediateRender: false,
-          scrollTrigger: {
-            trigger: section,
-            start: "bottom 26%",
-            end: "bottom 4%",
-            scrub: .5,
-            invalidateOnRefresh: true
-          }
-        });
+    const triggers = sections.map((section, index) => {
+      const direction = index % 2 === 0 ? -1 : 1;
+      const update = () => {
+        const rect = section.getBoundingClientRect();
+        const entry = eased((window.innerHeight - rect.top) / (window.innerHeight * .46));
+        const departure = eased((window.innerHeight * .25 - rect.bottom) / (window.innerHeight * .25));
+        const distance = window.innerWidth < 760 ? 25 : 70;
+        section.style.opacity = String(.68 + .32 * entry - departure * .16);
+        section.style.transform = "translate3d(" +
+          (direction * (distance * (1 - entry) + 16 * departure)).toFixed(2) + "px,0,0)";
+      };
+      const trigger = ScrollTrigger.create({
+        trigger: section,
+        start: "top bottom",
+        end: "bottom top",
+        onUpdate: update,
+        onRefresh: update,
+        onEnter: update,
+        onLeaveBack: update
       });
-    }, page);
+      update();
+      return trigger;
+    });
     ScrollTrigger.refresh();
 
-    return () => context.revert();
+    return () => {
+      triggers.forEach(trigger => trigger.kill());
+      sections.forEach(section => {
+        section.style.removeProperty("opacity");
+        section.style.removeProperty("transform");
+      });
+    };
   }, []);
 
   return null;
