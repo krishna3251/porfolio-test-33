@@ -478,3 +478,49 @@ body:has(.site-page--cinematic) :focus-visible {
   .cinema-skip-story {display:none;}
   .cinema-feature-image img {transition:none;}
 }
+
+
+/* The old footer button theme used dark text on the newly dark footer.
+   Reinstate intentional light/dark actions and explicit readable states. */
+.site-page--cinematic .contact .btn-light {
+  color:#2f1d1a !important;
+  background:#ffe2c6 !important;
+  border-color:#ffe2c6 !important;
+}
+.site-page--cinematic .contact .btn-light:hover {
+  color:#241513 !important;
+  background:#fff1df !important;
+  border-color:#fff1df !important;
+}
+.site-page--cinematic .contact .btn-dark {
+  color:#ffe5d1 !important;
+  background:rgba(246,200,172,.07) !important;
+  border-color:rgba(255,220,192,.53) !important;
+}
+.site-page--cinematic .contact .btn-dark:hover {
+  color:#fff6ea !important;
+  background:rgba(246,200,172,.16) !important;
+  border-color:#ffdcbd !important;
+}
+.site-page--cinematic .contact .text-link {
+  border-color:rgba(254,216,192,.58) !important;
+}
+
+/* Same artistic cursor as the sculpture, without a large GPU-heavy glow. */
+@media(pointer:fine) {
+  body:has(.site-page--cinematic) .cursor-dot {background:#ff806e !important;}
+  body:has(.site-page--cinematic) .cursor-ring {
+    border-color:#ffdfc4;
+    background:rgba(249,142,112,.04);
+  }
+  body:has(.site-page--cinematic) .cursor-glow {
+    width:110px;height:110px;
+    filter:none;opacity:.6;
+    background:radial-gradient(circle,rgba(244,131,98,.12),transparent 70%);
+  }
+  body:has(.site-page--cinematic) .cursor-label {
+    background:#2e1d1b;
+    color:#ffdbc4;
+    border-color:rgba(247,185,153,.3);
+  }
+}
