@@ -3,284 +3,288 @@
 import { useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useSiteMedia from "@/hooks/useSiteMedia";
+import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 
-// Dense visual silhouette without excessive DOM work per animation frame.
-const RIBBON_COUNT = 64;
-const TAU = Math.PI * 2;
-const clamp = (n) => Math.min(1, Math.max(0, n));
+const clamp = value => Math.max(0, Math.min(1, value));
 const lerp = (a, b, t) => a + (b - a) * t;
-const ease = (a, b, t) => {
-  const p = clamp((t - a) / (b - a));
-  return p * p * (3 - 2 * p);
+const smooth = (a, b, value) => {
+  const t = clamp((value - a) / (b - a));
+  return t * t * (3 - 2 * t);
 };
+const interval = (progress, start, end) =>
+  smooth(start, start + .05, progress) * (1 - smooth(end - .055, end, progress));
 
-function radialPath(angle, outerRadius, innerRadius, curl) {
-  const cx = 790;
-  const cy = 410;
-  const at = (radius, rotation) => [
-    cx + Math.cos(rotation) * radius,
-    cy + Math.sin(rotation) * radius * .87
-  ];
-  return [
-    ...at(outerRadius, angle + curl),
-    ...at(outerRadius * .88, angle + curl * 1.65),
-    ...at(innerRadius * 1.28, angle + curl * .48),
-    ...at(innerRadius, angle)
-  ];
-}
-
-const RIBBONS = Array.from({ length: RIBBON_COUNT }, (_, index) => {
-  const t = index / (RIBBON_COUNT - 1);
-  const wave = Math.sin(index * 1.83);
-  const flutter = Math.cos(index * .77);
-  const fanAngle = Math.PI + t * Math.PI;
-  const circleAngle = Math.PI + t * TAU;
-  const topX = 570 + t * 280 + wave * 26;
-  const initial = [
-    topX - 20, -350 - t * 110,
-    topX + 55, -60,
-    730 + t * 160 + flutter * 30, 80 + wave * 35,
-    740 + t * 175 + flutter * 60, 260 + Math.sin(t * 8) * 110
-  ];
-  const falling = [
-    410 + t * 500 + flutter * 18, -270 - t * 80,
-    490 + t * 400 + wave * 63, 120 + t * 110,
-    830 + Math.sin(t * 4.4) * 155, 450 + wave * 90,
-    520 + t * 490 + flutter * 55, 890 + t * 110
-  ];
-  const fan = radialPath(fanAngle, 285 + flutter * 23, 88 + wave * 9, .17);
-  const circle = radialPath(circleAngle, 226 + flutter * 20, 103 + wave * 9, .22);
+const FIBERS = Array.from({ length: 48 }, (_, index) => {
+  const t = index / 47;
+  const wave = Math.sin(index * 2.4);
+  const perturb = Math.cos(index * 1.18);
+  const center = 855;
+  const angle = -Math.PI / 2 + 2 * Math.PI * t;
+  const radius = 195 + wave * 20;
+  const inner = 91 + perturb * 12;
+  const yscale = .83;
   return {
-    poses: [initial, falling, fan, circle],
-    width: (5.7 + (1 + wave) * 3.1 + (index % 7 === 0 ? 2.2 : 0)).toFixed(2),
-    hue: 350 + Math.round(wave * 6),
-    lightness: 30 + Math.round((wave + 1) * 12),
-    tip: index % 7 === 0
+    ink: "hsl(" + (350 + Math.round(wave * 5)) + " 71% " + (45 + Math.round(wave * 10)) + "%)",
+    size: 2.9 + (wave + 1) * 1.6,
+    start: [
+      470 + t * 440 + perturb * 34, -260 - 130 * t,
+      485 + t * 475 + perturb * 20, -160,
+      630 + t * 220 + wave * 72, 160 + t * 70,
+      760 + t * 165 + wave * 44, 420 + t * 120
+    ],
+    waterfall: [
+      530 + t * 460, -210 - t * 75,
+      590 + t * 420 + wave * 39, 120,
+      605 + t * 250 + perturb * 60, 475 + 80 * t,
+      750 + t * 195 + wave * 30, 950 + perturb * 75
+    ],
+    orbit: [
+      center + Math.cos(angle) * radius, 400 + Math.sin(angle) * radius * yscale,
+      center + Math.cos(angle + .68) * (radius + 36), 400 + Math.sin(angle + .68) * (radius + 36) * yscale,
+      center + Math.cos(angle + 1.1) * inner, 400 + Math.sin(angle + 1.1) * inner * yscale,
+      center + Math.cos(angle + .16) * inner, 400 + Math.sin(angle + .16) * inner * yscale
+    ]
   };
 });
 
-function cubicPath(points) {
-  return "M " + points[0].toFixed(1) + " " + points[1].toFixed(1) +
-    " C " + points[2].toFixed(1) + " " + points[3].toFixed(1) +
-    ", " + points[4].toFixed(1) + " " + points[5].toFixed(1) +
-    ", " + points[6].toFixed(1) + " " + points[7].toFixed(1);
+function fiberPath(points) {
+  return "M" + points[0].toFixed(1) + "," + points[1].toFixed(1) +
+    " C" + points[2].toFixed(1) + "," + points[3].toFixed(1) +
+    " " + points[4].toFixed(1) + "," + points[5].toFixed(1) +
+    " " + points[6].toFixed(1) + "," + points[7].toFixed(1);
 }
-
-function ribbonAt(ribbon, progress) {
+function fiberAt(fiber, progress) {
   const p = clamp(progress);
-  const breaks = [0, .29, .63, .88];
-  const stage = p < breaks[1] ? 0 : p < breaks[2] ? 1 : 2;
-  const phase = ease(breaks[stage], breaks[stage + 1], p);
-  return ribbon.poses[stage].map((point, index) =>
-    lerp(point, ribbon.poses[stage + 1][index], phase)
-  );
+  if (p < .63) {
+    const t = smooth(.02, .61, p);
+    return fiber.start.map((a, index) => lerp(a, fiber.waterfall[index], t));
+  }
+  const t = smooth(.62, .99, p);
+  return fiber.waterfall.map((a, index) => lerp(a, fiber.orbit[index], t));
 }
-
 function imageStyle(settings) {
   return {
     objectFit: settings?.fit === "contain" ? "contain" : "cover",
     objectPosition: (settings?.positionX ?? 50) + "% " + (settings?.positionY ?? 50) + "%",
-    transform: "scale(" + Math.min(2.5, Math.max(.5, Number(settings?.scale) || 1)) + ")",
-    opacity: settings?.visible === false ? 0 : (settings?.opacity ?? 1)
+    opacity: settings?.visible === false ? 0 : (settings?.opacity ?? 1),
+    transform: "scale(" + Math.min(2.5, Math.max(.5, Number(settings?.scale) || 1)) + ")"
   };
 }
+const order = [
+  "genshin cinematic.png",
+  "genshin skirk.png",
+  "genshin furina.png",
+  "genshin miko.png"
+];
+const windows = [
+  [.175, .35],
+  [.355, .53],
+  [.535, .71],
+  [.715, .89]
+];
+const stories = [
+  { tag: "01 / THE ATMOSPHERE", headline: "MAKE THEM", accent: "LOOK UP.", body: "A frame designed to stop the scroll. Cinematic atmosphere, one impossible moment." },
+  { tag: "02 / THE CHARACTER", headline: "ONE FACE.", accent: "ONE STORY.", body: "Every detail leads back to the subject. Clarity first, then spectacle." },
+  { tag: "03 / THE COMPOSITION", headline: "FRAME THE", accent: "FEELING.", body: "Shape, typography and color work together instead of fighting for attention." },
+  { tag: "04 / THE FINISH", headline: "MAKE IT", accent: "MATTER.", body: "Expressive character art polished for a frame that feels worth clicking." }
+];
 
-function FallingRibbons({ pathsRef, tipsRef, ringShadowRef }) {
-  return (
-    <svg className="fullbleed-artwork" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice"
-      role="presentation" aria-hidden="true" focusable="false">
-      <defs>
-        <radialGradient id="fullbleed-red-glow">
-          <stop offset="0" stopColor="#e94954" stopOpacity=".18" />
-          <stop offset=".63" stopColor="#ed5579" stopOpacity=".06" />
-          <stop offset="1" stopColor="#ed5579" stopOpacity="0" />
-        </radialGradient>
-        <filter id="fullbleed-soft-glow" x="-200%" y="-200%" width="500%" height="500%">
-          <feGaussianBlur stdDeviation="5" />
-        </filter>
-      </defs>
-      <circle cx="790" cy="410" r="360" fill="url(#fullbleed-red-glow)" />
-      <ellipse ref={ringShadowRef} cx="795" cy="606" rx="240" ry="31"
-        fill="#9c3e48" opacity="0" filter="url(#fullbleed-soft-glow)" />
-      <g className="fullbleed-ribbons" ref={pathsRef} fill="none" strokeLinecap="round">
-        {RIBBONS.map((ribbon, index) => (
-          <path key={index} d={cubicPath(ribbon.poses[0])}
-            stroke={"hsl(" + ribbon.hue + " 69% " + ribbon.lightness + "%)"}
-            strokeWidth={ribbon.width} />
-        ))}
-      </g>
-      <g className="fullbleed-light-tips" ref={tipsRef}>
-        {RIBBONS.filter(r => r.tip).map((ribbon, index) => (
-          <g key={index}>
-            <circle r="12" fill="#ee4359" filter="url(#fullbleed-soft-glow)" />
-            <circle r="3.5" fill="#ffb8a5" />
-          </g>
-        ))}
-      </g>
-    </svg>
-  );
+function RibbonArt({ fibersRef, threadRef, dotRef }) {
+  return <svg className="cinema-art" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="cinema-ribbon-stroke" x1="0" y1="0" x2="1" y2="1">
+        <stop stopColor="#f1a274" />
+        <stop offset=".5" stopColor="#db444e" />
+        <stop offset="1" stopColor="#8e2034" />
+      </linearGradient>
+    </defs>
+    <path className="cinema-main-thread" ref={threadRef}
+      d="M690,-90 C520,250 1000,240 760,520 S1110,840 840,990"
+      pathLength="100" fill="none" stroke="url(#cinema-ribbon-stroke)" strokeWidth="4.5"
+      strokeLinecap="round" />
+    <g ref={fibersRef} fill="none" strokeLinecap="round">
+      {FIBERS.map((fiber, index) => <path key={index} d={fiberPath(fiber.start)}
+        stroke={fiber.ink} strokeWidth={fiber.size} opacity={.5 + (index % 6) * .065}/>)}
+    </g>
+    <circle ref={dotRef} cx="816" cy="401" r="7" fill="#f7d0b3" stroke="#dd4c56" strokeWidth="3" />
+  </svg>;
+}
+function ArtworkCard({ item, index }) {
+  const [start, end] = windows[index];
+  return <div className="cinema-chapter" data-start={start} data-end={end} aria-hidden="true">
+    <div className="cinema-chapter-text">
+      <span className="cinema-chapter-label">{stories[index].tag} · GENSHIN IMPACT</span>
+      <h2>{stories[index].headline}<br/><em>{stories[index].accent}</em></h2>
+      <p>{stories[index].body}</p>
+      <span className="cinema-chapter-count">0{index + 1} <b>/ 04</b> <i /> SCROLL / REVEAL</span>
+    </div>
+    <div className="cinema-image-track">
+      <span className="cinema-image-knot" aria-hidden="true" />
+      <Link href={"/thumbnails/view?file=" + encodeURIComponent(item.filename) + "&category=GENSHIN"}
+        className="cinema-feature-image" tabIndex={-1} aria-label={"View artwork: " + item.title}>
+        <Image src={item.src} alt={item.title} fill quality={72}
+          sizes="(max-width: 760px) 88vw, (max-width: 1280px) 47vw, 45vw"
+          loading={index ? "lazy" : "eager"} style={imageStyle(item.settings)} />
+        <span className="cinema-image-shade" />
+        <span className="cinema-image-caption">
+          <small>0{index + 1} / ART DIRECTION</small><strong>{item.title}</strong><b>↗</b>
+        </span>
+      </Link>
+      <span className="cinema-image-tail">CONNECTED TO THE LINE / 0{index + 1}</span>
+    </div>
+  </div>;
 }
 
 export default function HomeHero() {
   const { media } = useSiteMedia();
-  const { slots = {}, copy = {} } = media;
   const sceneRef = useRef(null);
-  const artRef = useRef(null);
-  const pathsRef = useRef(null);
-  const tipsRef = useRef(null);
-  const ringShadowRef = useRef(null);
-  const firstHeadingRef = useRef(null);
-  const finalHeadingRef = useRef(null);
-  const descriptionRef = useRef(null);
+  const fibersRef = useRef(null);
+  const threadRef = useRef(null);
+  const dotRef = useRef(null);
+  const introRef = useRef(null);
+  const finaleRef = useRef(null);
+  const chaptersRef = useRef(null);
   const progressRef = useRef(null);
-  const progressTextRef = useRef(null);
-  const galleryRef = useRef(null);
-  const galleryTitleRef = useRef(null);
-  const galleryIndexRef = useRef(null);
+  const progressLabelRef = useRef(null);
+  const bloomRef = useRef(null);
+  const transitionRef = useRef(null);
 
-  // Reuse the actual archive's category mapping and admin overrides.
-  const galleryItems = useMemo(() => {
-    const all = getChronologicalThumbnailGroups(media)
-      .flatMap((group) => group.thumbnails)
-      .filter((item) => item.label === "GENSHIN");
-    const featuredOrder = [
-      "genshin cinematic.png", "genshin skirk.png",
-      "genshin furina.png", "genshin miko.png", "oddete genshin.png"
-    ];
-    return all
-      .sort((a, b) => {
-        const ar = featuredOrder.indexOf(a.filename);
-        const br = featuredOrder.indexOf(b.filename);
-        return (ar < 0 ? 99 : ar) - (br < 0 ? 99 : br);
-      })
-      .slice(0, 4)
-      .map((item) => ({
+  const items = useMemo(() => {
+    const all = getChronologicalThumbnailGroups(media).flatMap(group => group.thumbnails)
+      .filter(item => item.label === "GENSHIN");
+    return order.map(name => all.find(item => item.filename === name))
+      .filter(Boolean).map(item => ({
         ...item,
-        src: media.overrides?.[item.filename]?.src || item.src,
-        settings: media.overrides?.[item.filename] || {}
+        settings: media.overrides?.[item.filename] || {},
+        src: media.overrides?.[item.filename]?.src || item.src
       }));
   }, [media]);
-  const galleryKey = galleryItems.map((item) => item.filename + item.src).join("|");
+  const itemKey = items.map(item => item.filename + item.src).join("|");
 
   useEffect(() => {
     const scene = sceneRef.current;
-    if (!scene || !pathsRef.current) return undefined;
-
-    const paths = Array.from(pathsRef.current.children);
-    const tips = Array.from(tipsRef.current.children);
-    const glowingRibbons = RIBBONS.filter(r => r.tip);
-    const galleryCards = Array.from(galleryRef.current?.querySelectorAll(".fullbleed-gallery-card") || []);
-    const galleryLinks = galleryCards.map((card) => card.querySelector("a"));
-    const archiveLink = galleryRef.current?.querySelector(".fullbleed-gallery-archive");
+    if (!scene) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fibers = [...fibersRef.current.children];
+    const chapters = [...chaptersRef.current.children];
+    const links = chapters.map(node => node.querySelector(".cinema-feature-image"));
     const mobile = window.matchMedia("(max-width: 760px)").matches;
-    let lastLabel = -1;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let tween;
     let observer;
-
-    const updateLayout = () => {
-      const header = document.querySelector(".site-header");
-      scene.style.setProperty("--fullbleed-header", (header?.getBoundingClientRect().height || 0) + "px");
-    };
-
-    function draw(progress) {
-      const p = clamp(progress);
-      paths.forEach((path, index) => {
-        // Alternate ribbons on phones: 32 paths still cover the full shape.
-        if (mobile && index % 2 !== 0) return;
-        path.setAttribute("d", cubicPath(ribbonAt(RIBBONS[index], p)));
-      });
-      tips.forEach((tip, index) => {
-        const coords = ribbonAt(glowingRibbons[index], p);
-        tip.setAttribute("transform", "translate(" + coords[6].toFixed(1) + " " + coords[7].toFixed(1) + ")");
-        tip.style.opacity = String(1 - ease(.38, .68, p));
-      });
-      ringShadowRef.current.setAttribute("opacity", String(ease(.65, .9, p) * .18));
-      firstHeadingRef.current.style.opacity = String(1 - ease(.41, .61, p));
-      firstHeadingRef.current.style.transform = "translateY(" + (-18 * ease(.41, .61, p)) + "px)";
-      finalHeadingRef.current.style.opacity = String(ease(.68, .87, p));
-      finalHeadingRef.current.style.transform = "translateY(" + (22 * (1 - ease(.68, .87, p))) + "px)";
-      descriptionRef.current.style.opacity = String(1 - ease(.34, .61, p) * .55);
-      galleryCards.forEach((card, index) => {
-        const first = .32 + index * .105;
-        const reveal = ease(first, first + .135, p);
-        const settle = ease(first + .16, first + .38, p);
-        const y = (1 - reveal) * 95 - settle * 18;
-        const rotate = (index % 2 ? 1 : -1) * (1 - reveal) * 9;
-        const retreat = mobile ? 1 - ease(.78, .98, p) * .80 : 1;
-        card.style.opacity = String(reveal * retreat);
-        card.style.visibility = reveal < .02 ? "hidden" : "visible";
-        const interactive = reveal * retreat > .58;
-        if (card.dataset.interactive !== String(interactive)) {
-          card.dataset.interactive = String(interactive);
-          card.style.pointerEvents = interactive ? "auto" : "none";
-          card.setAttribute("aria-hidden", interactive ? "false" : "true");
-          if (galleryLinks[index]) galleryLinks[index].tabIndex = interactive ? 0 : -1;
-        }
-        card.style.transform =
-          "translate3d(" + ((1 - reveal) * 56).toFixed(1) + "px," +
-          y.toFixed(1) + "px,0) rotate(" + rotate.toFixed(1) + "deg) scale(" +
-          (.88 + reveal * .12).toFixed(3) + ")";
-       });
-      if (archiveLink) {
-        const showArchive = ease(.73, .89, p);
-        archiveLink.style.opacity = String(showArchive);
-        archiveLink.style.visibility = showArchive > .02 ? "visible" : "hidden";
-        archiveLink.style.pointerEvents = showArchive > .65 ? "auto" : "none";
-        archiveLink.tabIndex = showArchive > .65 ? 0 : -1;
-      }
-      if (galleryTitleRef.current) {
-        const appear = ease(.28, .43, p);
-        galleryTitleRef.current.style.opacity = String(appear);
-        galleryTitleRef.current.style.transform = "translateY(" + (20 * (1 - appear)).toFixed(1) + "px)";
-      }
-      if (galleryIndexRef.current) {
-        const index = Math.min(4, Math.max(0, Math.floor((p - .3) / .105)));
-        galleryIndexRef.current.textContent = String(index).padStart(2, "0") + " / 04";
-      }
-      artRef.current.style.setProperty("--ribbon-drift", (-27 * ease(0, .58, p) + 20 * ease(.58, 1, p)).toFixed(1) + "px");
-      progressRef.current.style.transform = "scaleX(" + p + ")";
-      if (progressTextRef.current) {
-        const next = Math.round(p * 100);
-        if (next !== lastLabel) {
-          lastLabel = next;
-          progressTextRef.current.textContent = String(next).padStart(2, "0") + "%";
-        }
-      }
-    }
-
-    updateLayout();
-    if (reducedMotion.matches) {
-      draw(1);
-      return () => scene.style.removeProperty("--fullbleed-header");
-    }
-
-    gsap.registerPlugin(ScrollTrigger);
-    const scrub = { value: 0 };
-    tween = gsap.to(scrub, {
-      value: 1,
-      ease: "none",
-      onUpdate: () => draw(scrub.value),
-      scrollTrigger: {
-        trigger: scene,
-        start: () => "top top+=" + (parseFloat(scene.style.getPropertyValue("--fullbleed-header")) || 0),
-        end: "bottom bottom",
-        scrub: .55,
-        invalidateOnRefresh: true
-      }
-    });
-    draw(tween.scrollTrigger?.progress ?? 0);
+    let indexCurrent = -1;
+    let percentCurrent = -1;
+    let introActive = false;
+    let finaleActive = true;
+    const introLinks = [...introRef.current.querySelectorAll("a")];
+    const finaleLinks = [...finaleRef.current.querySelectorAll("a")];
 
     const header = document.querySelector(".site-header");
-    if (header) {
-      observer = new ResizeObserver(() => {
-        updateLayout();
-        ScrollTrigger.refresh();
+    const measure = () => {
+      scene.style.setProperty("--cinema-header", (header?.getBoundingClientRect().height || 0) + "px");
+    };
+    const render = value => {
+      const p = clamp(value);
+      const artProgress = p < .15 ? p * .9 : p < .86 ? .16 + (p - .15) * .88 : .79 + (p - .86) * 1.5;
+      fibers.forEach((fiber, index) => {
+        if (mobile && index % 2) return;
+        fiber.setAttribute("d", fiberPath(fiberAt(FIBERS[index], artProgress)));
       });
+      threadRef.current.style.strokeDasharray = "100";
+      threadRef.current.style.strokeDashoffset = String(100 - Math.min(100, p * 128));
+      const dotX = 732 + 98 * Math.sin((p * 2.8 + .14) * Math.PI);
+      const dotY = 65 + p * 672;
+      dotRef.current.setAttribute("cx", String(dotX));
+      dotRef.current.setAttribute("cy", String(dotY));
+      dotRef.current.style.opacity = String(smooth(.08, .18, p) * (1 - smooth(.88, 1, p)));
+      bloomRef.current.style.opacity = String(smooth(.79, .96, p));
+      transitionRef.current.style.opacity = String(smooth(.945, .998, p));
+
+      const introOpacity = 1 - smooth(.115, .21, p);
+      introRef.current.style.opacity = String(introOpacity);
+      introRef.current.style.transform = "translate3d(" + (-95 * (1 - introOpacity)).toFixed(1) + "px,0,0)";
+      const allowIntro = introOpacity > .96;
+      if (introActive !== allowIntro) {
+        introActive = allowIntro;
+        introRef.current.setAttribute("aria-hidden", allowIntro ? "false" : "true");
+        introLinks.forEach(a => { a.tabIndex = allowIntro ? 0 : -1; a.style.pointerEvents = allowIntro ? "auto" : "none"; });
+      }
+      const finish = smooth(.89, .965, p);
+      finaleRef.current.style.opacity = String(finish);
+      finaleRef.current.style.transform = "translate3d(" + (100 * (1 - finish)).toFixed(1) + "px,0,0)";
+      const allowFinale = finish > .96;
+      if (finaleActive !== allowFinale) {
+        finaleActive = allowFinale;
+        finaleRef.current.setAttribute("aria-hidden", allowFinale ? "false" : "true");
+        finaleLinks.forEach(a => { a.tabIndex = allowFinale ? 0 : -1; a.style.pointerEvents = allowFinale ? "auto" : "none"; });
+      }
+
+      chapters.forEach((chapter, index) => {
+        const [start, end] = windows[index];
+        const visibility = interval(p, start, end);
+        const entry = 1 - smooth(start, start + .075, p);
+        const exit = smooth(end - .075, end, p);
+        chapter.style.opacity = String(visibility);
+        chapter.style.visibility = visibility < .008 ? "hidden" : "visible";
+        chapter.style.setProperty("--chapter-x", ((entry * 100) - (exit * 75)).toFixed(1) + "px");
+        chapter.style.setProperty("--chapter-text-x", ((-entry * 90) + (exit * 65)).toFixed(1) + "px");
+        chapter.style.setProperty("--chapter-image-y", ((entry * 86) - (exit * 45)).toFixed(1) + "px");
+        const allowed = visibility > .92;
+        if (chapter.dataset.active !== String(allowed)) {
+          chapter.dataset.active = String(allowed);
+          chapter.style.pointerEvents = allowed ? "auto" : "none";
+          chapter.setAttribute("aria-hidden", allowed ? "false" : "true");
+          if (links[index]) { links[index].tabIndex = allowed ? 0 : -1; links[index].style.pointerEvents = allowed ? "auto" : "none"; }
+        }
+      });
+
+      progressRef.current.style.transform = "scaleX(" + p + ")";
+      const percent = Math.round(p * 100);
+      if (percent !== percentCurrent) {
+        percentCurrent = percent;
+        progressLabelRef.current.textContent = String(percent).padStart(2, "0") + "%";
+      }
+      const active = windows.findIndex(([start,end]) => p >= start && p < end);
+      if (active !== indexCurrent) {
+        indexCurrent = active;
+        scene.dataset.chapter = String(active);
+      }
+    };
+
+    measure();
+    if (reduced) {
+      render(0);
+      introRef.current.removeAttribute("aria-hidden");
+      finaleRef.current.removeAttribute("aria-hidden");
+      introLinks.forEach(link => { link.tabIndex = 0; link.style.pointerEvents = "auto"; });
+      finaleLinks.forEach(link => { link.tabIndex = 0; link.style.pointerEvents = "auto"; });
+      chapters.forEach((node, index) => {
+        node.style.opacity = "1";
+        node.style.visibility = "visible";
+        node.style.pointerEvents = "auto";
+        node.setAttribute("aria-hidden", "false");
+        node.style.setProperty("--chapter-x", "0px");
+        node.style.setProperty("--chapter-text-x", "0px");
+        node.style.setProperty("--chapter-image-y", "0px");
+        if (links[index]) { links[index].tabIndex = 0; links[index].style.pointerEvents = "auto"; }
+      });
+      return () => scene.style.removeProperty("--cinema-header");
+    }
+    gsap.registerPlugin(ScrollTrigger);
+    const state = { progress: 0 };
+    tween = gsap.to(state, {
+      progress: 1, ease: "none", onUpdate: () => render(state.progress),
+      scrollTrigger: {
+        trigger: scene,
+        start: () => "top top+=" + (parseFloat(scene.style.getPropertyValue("--cinema-header")) || 0),
+        end: "bottom bottom", scrub: .4, invalidateOnRefresh: true
+      }
+    });
+    render(tween.scrollTrigger?.progress || 0);
+    if (header) {
+      observer = new ResizeObserver(() => { measure(); ScrollTrigger.refresh(); });
       observer.observe(header);
     }
     ScrollTrigger.refresh();
@@ -288,117 +292,65 @@ export default function HomeHero() {
       observer?.disconnect();
       tween?.scrollTrigger?.kill();
       tween?.kill();
-      scene.style.removeProperty("--fullbleed-header");
+      scene.style.removeProperty("--cinema-header");
     };
-  }, [galleryKey]);
+  }, [itemKey]);
 
-  function advance() {
-    const scene = sceneRef.current;
-    if (!scene) return;
-    const begin = window.scrollY + scene.getBoundingClientRect().top;
-    const travel = Math.max(0, scene.offsetHeight - (window.innerHeight - (parseFloat(scene.style.getPropertyValue("--fullbleed-header")) || 0)));
-    const relative = (window.scrollY - begin) / (travel || 1);
-    const next = Math.min(1, Math.floor(relative * 4 + 1) / 4);
-    window.scrollTo({
-      top: begin + next * travel,
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
-    });
-  }
+  const copy = media.copy || {};
+  const portrait = media.slots?.heroPortrait || {
+    src: "/hero_krishna_vertical.jpg", visible: true, positionX: 50, positionY: 42
+  };
 
-  const portrait = slots.heroPortrait || { src: "/hero_krishna_vertical.jpg", fit: "cover", positionX: 50, positionY: 42 };
-
-  return (
-    <section className="fullbleed-scroll-scene" ref={sceneRef} id="home" aria-label="Krishna portfolio, scroll to transform the artwork">
-      <div className="fullbleed-hero">
-        <div className="fullbleed-texture" aria-hidden="true" />
-        {slots.heroBackground?.src && slots.heroBackground.visible !== false && (
-          <img className="fullbleed-background-photo" src={slots.heroBackground.src} alt="" aria-hidden="true"
-            style={imageStyle(slots.heroBackground)} />
-        )}
-
-        <div className="fullbleed-art" ref={artRef} aria-hidden="true">
-          <FallingRibbons pathsRef={pathsRef} tipsRef={tipsRef} ringShadowRef={ringShadowRef} />
-        </div>
-        <div className="fullbleed-grain" aria-hidden="true" />
-
-        {galleryItems.length > 0 && (
-          <div className="fullbleed-gallery" ref={galleryRef} aria-label="Genshin Impact thumbnail highlights">
-            <div className="fullbleed-gallery-heading" ref={galleryTitleRef}>
-              <span>SELECTED / VISUAL ARCHIVE</span>
-              <strong>GENSHIN IMPACT</strong>
-              <span className="fullbleed-gallery-count" ref={galleryIndexRef}>00 / 04</span>
-            </div>
-            {galleryItems.map((item, index) => (
-              <article className="fullbleed-gallery-card" key={item.filename} aria-hidden="true">
-                <Link
-                  href={"/thumbnails/view?file=" + encodeURIComponent(item.filename) + "&category=GENSHIN"}
-                  className="fullbleed-gallery-link"
-                  aria-label={"View Genshin artwork: " + item.title}
-                  tabIndex={-1}
-                >
-                  <span className="fullbleed-gallery-image">
-                    <Image src={item.src} alt={item.title} fill
-                      sizes="(max-width: 760px) 56vw, (max-width: 1100px) 26vw, 23vw"
-                      quality={72} loading={index === 0 ? "eager" : "lazy"} decoding="async"
-                      style={imageStyle(item.settings)} />
-                  </span>
-                  <span className="fullbleed-gallery-meta">
-                    <span>0{index + 1} / GENSHIN</span>
-                    <strong>{item.title}</strong>
-                    <span aria-hidden="true">↗</span>
-                  </span>
-                </Link>
-              </article>
-            ))}
-            <Link href="/thumbnails" className="fullbleed-gallery-archive" tabIndex={-1}>VIEW ALL THUMBNAILS ↗</Link>
-          </div>
-        )}
-
-        <div className="fullbleed-overline">
-          <span><i aria-hidden="true" /> KRISHNA / DIGITAL CRAFT</span>
-          <span>INDEPENDENT DEVELOPER<br />VISUAL DESIGNER / HYDERABAD</span>
-          <span>EXPERIMENT NO. 001<br />SCROLL TO DISCOVER ↓</span>
-        </div>
-
-        <div className="fullbleed-editorial-content">
-          <div className="fullbleed-intro">
-            <p className="fullbleed-eyebrow">{copy.heroEyebrow || "WHERE DEVELOPMENT MEETS DESIGN"}</p>
-            <h1 className="fullbleed-heading" aria-label="Where code meets your vision. Start seeing differently.">
-              <span ref={firstHeadingRef} className="fullbleed-heading-state">
-                WHERE CODE<br />MEETS <em>YOUR</em><br />VISION<span className="fullbleed-period">.</span>
-              </span>
-              <span ref={finalHeadingRef} className="fullbleed-heading-state fullbleed-heading-state-final" aria-hidden="true">
-                START SEEING<br /><em>DIFFERENTLY</em><span className="fullbleed-period">.</span>
-              </span>
-            </h1>
-            <div className="fullbleed-description" ref={descriptionRef}>
-              <p>{copy.heroDescription ||
-                "I build intelligent software, expressive websites, and gaming visuals that stand out. Code with character. Design with purpose."}</p>
-              <div className="fullbleed-links">
-                <a href="#work">EXPLORE WORK <span aria-hidden="true">↗</span></a>
-                <a href="#contact">LET&apos;S CONNECT <span aria-hidden="true">↗</span></a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="fullbleed-bottom">
-          <div className="fullbleed-person">
-            {portrait.src && portrait.visible !== false && (
-              <span className="fullbleed-avatar">
-                <img src={portrait.src} alt="" aria-hidden="true" style={imageStyle(portrait)} />
-              </span>
-            )}
-            <span>KRISHNA<br /><small>CODE / ART / AI</small></span>
-          </div>
-          <button className="fullbleed-scroll-hint" type="button" onClick={advance}
-            aria-label="Advance the scroll animation">
-            SCROLL TO TRANSFORM <span aria-hidden="true">↓</span>
-          </button>
-          <div className="fullbleed-progress-label">SCROLL PROGRESS <span ref={progressTextRef}>00%</span></div>
-        </div>
-        <div className="fullbleed-progress-track" aria-hidden="true"><span ref={progressRef} /></div>
+  return <section className="cinema-story" id="home" ref={sceneRef} aria-label="Scroll through Krishna's work">
+    <div className="cinema-stage">
+      <div className="cinema-noise" aria-hidden="true" />
+      <div className="cinema-amber-light" aria-hidden="true" />
+      <div className="cinema-art-layer" aria-hidden="true">
+        <RibbonArt fibersRef={fibersRef} threadRef={threadRef} dotRef={dotRef} />
+        <div className="cinema-bloom" ref={bloomRef}/>
       </div>
-    </section>
-  );
+
+      <div className="cinema-eyeline" aria-hidden="true">
+        <span>KRISHNA / VISUAL EXPERIENCE</span>
+        <span>STORY IN MOTION <b>001 — 006</b></span>
+      </div>
+
+      <div className="cinema-intro" ref={introRef}>
+        <span className="cinema-kicker">{copy.heroEyebrow || "CREATIVE DEVELOPER × VISUAL DESIGNER"}</span>
+        <h1>NOT JUST<br/>A <em>FRAME.</em><br/>A FEELING.</h1>
+        <p>{copy.heroDescription || "I craft immersive websites, intelligent software and expressive gaming artwork. Every detail has a reason."}</p>
+        <div className="cinema-intro-actions">
+          <a href="#work">EXPLORE MY WORK ↗</a>
+          <a href="#contact">START A CONVERSATION ↗</a>
+        </div>
+      </div>
+
+      <div className="cinema-chapters" ref={chaptersRef}>
+        {items.map((item, index) => <ArtworkCard key={item.filename} item={item} index={index} />)}
+      </div>
+
+      <div className="cinema-finale" ref={finaleRef}>
+        <span>FINAL CHAPTER / THE BIG PICTURE</span>
+        <h2>BUILT WITH<br/><em>INTENT.</em></h2>
+        <p>Great work is never just the image. It is the idea, the interaction, and the story that connects them.</p>
+        <div className="cinema-finale-actions">
+          <Link href="/thumbnails">DISCOVER THE ARCHIVE ↗</Link>
+          <a href="#work">CONTINUE THE JOURNEY ↓</a>
+        </div>
+      </div>
+
+      <div className="cinema-transition-wash" ref={transitionRef} aria-hidden="true" />
+      <div className="cinema-bottom-bar">
+        <div className="cinema-byline">
+          {portrait.src && portrait.visible !== false && <span className="cinema-avatar">
+            <img src={portrait.src} alt="" style={imageStyle(portrait)} />
+          </span>}
+          <span>KRISHNA <small>CODE • ART • EXPERIMENTS</small></span>
+        </div>
+        <span className="cinema-scroll-notice">SCROLL TO FOLLOW THE RED THREAD ↓</span>
+        <span className="cinema-percent" ref={progressLabelRef}>00%</span>
+      </div>
+      <div className="cinema-viewport-progress"><span ref={progressRef}/></div>
+    </div>
+  </section>;
 }
