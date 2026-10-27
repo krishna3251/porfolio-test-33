@@ -209,7 +209,7 @@ export default function HomeHero() {
       if (introActive !== allowIntro) {
         introActive = allowIntro;
         introRef.current.setAttribute("aria-hidden", allowIntro ? "false" : "true");
-        introLinks.forEach(a => a.tabIndex = allowIntro ? 0 : -1);
+        introLinks.forEach(a => { a.tabIndex = allowIntro ? 0 : -1; a.style.pointerEvents = allowIntro ? "auto" : "none"; });
       }
       const finish = smooth(.89, .965, p);
       finaleRef.current.style.opacity = String(finish);
@@ -218,7 +218,7 @@ export default function HomeHero() {
       if (finaleActive !== allowFinale) {
         finaleActive = allowFinale;
         finaleRef.current.setAttribute("aria-hidden", allowFinale ? "false" : "true");
-        finaleLinks.forEach(a => a.tabIndex = allowFinale ? 0 : -1);
+        finaleLinks.forEach(a => { a.tabIndex = allowFinale ? 0 : -1; a.style.pointerEvents = allowFinale ? "auto" : "none"; });
       }
 
       chapters.forEach((chapter, index) => {
@@ -236,7 +236,7 @@ export default function HomeHero() {
           chapter.dataset.active = String(allowed);
           chapter.style.pointerEvents = allowed ? "auto" : "none";
           chapter.setAttribute("aria-hidden", allowed ? "false" : "true");
-          if (links[index]) links[index].tabIndex = allowed ? 0 : -1;
+          if (links[index]) { links[index].tabIndex = allowed ? 0 : -1; links[index].style.pointerEvents = allowed ? "auto" : "none"; }
         }
       });
 
@@ -258,8 +258,8 @@ export default function HomeHero() {
       render(0);
       introRef.current.removeAttribute("aria-hidden");
       finaleRef.current.removeAttribute("aria-hidden");
-      introLinks.forEach(link => link.tabIndex = 0);
-      finaleLinks.forEach(link => link.tabIndex = 0);
+      introLinks.forEach(link => { link.tabIndex = 0; link.style.pointerEvents = "auto"; });
+      finaleLinks.forEach(link => { link.tabIndex = 0; link.style.pointerEvents = "auto"; });
       chapters.forEach((node, index) => {
         node.style.opacity = "1";
         node.style.visibility = "visible";
@@ -268,7 +268,7 @@ export default function HomeHero() {
         node.style.setProperty("--chapter-x", "0px");
         node.style.setProperty("--chapter-text-x", "0px");
         node.style.setProperty("--chapter-image-y", "0px");
-        if (links[index]) links[index].tabIndex = 0;
+        if (links[index]) { links[index].tabIndex = 0; links[index].style.pointerEvents = "auto"; }
       });
       return () => scene.style.removeProperty("--cinema-header");
     }
