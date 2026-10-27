@@ -13,7 +13,7 @@ export default function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.35);
-  const [autoplay, setAutoplay] = useState(true);
+  const [autoplay, setAutoplay] = useState(false);
   const [progress, setProgress] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isWobbleHover, setIsWobbleHover] = useState(false);
@@ -153,7 +153,7 @@ export default function AudioPlayer() {
 
     // First interaction trigger
     const triggerPlayOnInteraction = () => {
-      const isAutoplayEnabled = localStorage.getItem("portfolio-autoplay-music") !== "false";
+      const isAutoplayEnabled = localStorage.getItem("portfolio-autoplay-music") === "true";
       if (!isAutoplayEnabled) {
         removeInteractionListeners();
         return;
