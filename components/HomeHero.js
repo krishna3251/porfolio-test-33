@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -163,7 +164,7 @@ export default function HomeHero() {
         settings: media.overrides?.[item.filename] || {}
       }));
   }, [media]);
-  const galleryKey = galleryItems.map((item) => item.filename).join("|");
+  const galleryKey = galleryItems.map((item) => item.filename + item.src).join("|");
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -173,6 +174,8 @@ export default function HomeHero() {
     const tips = Array.from(tipsRef.current.children);
     const glowingRibbons = RIBBONS.filter(r => r.tip);
     const galleryCards = Array.from(galleryRef.current?.querySelectorAll(".fullbleed-gallery-card") || []);
+    const galleryLinks = galleryCards.map((card) => card.querySelector("a"));
+    const archiveLink = galleryRef.current?.querySelector(".fullbleed-gallery-archive");
     const mobile = window.matchMedia("(max-width: 760px)").matches;
     let lastLabel = -1;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -208,17 +211,28 @@ export default function HomeHero() {
         const settle = ease(first + .16, first + .38, p);
         const y = (1 - reveal) * 95 - settle * 18;
         const rotate = (index % 2 ? 1 : -1) * (1 - reveal) * 9;
-        card.style.opacity = String(reveal);
+        const retreat = mobile ? 1 - ease(.78, .98, p) * .80 : 1;
+        card.style.opacity = String(reveal * retreat);
         card.style.visibility = reveal < .02 ? "hidden" : "visible";
-        card.style.pointerEvents = reveal > .58 ? "auto" : "none";
+        const interactive = reveal * retreat > .58;
+        if (card.dataset.interactive !== String(interactive)) {
+          card.dataset.interactive = String(interactive);
+          card.style.pointerEvents = interactive ? "auto" : "none";
+          card.setAttribute("aria-hidden", interactive ? "false" : "true");
+          if (galleryLinks[index]) galleryLinks[index].tabIndex = interactive ? 0 : -1;
+        }
         card.style.transform =
           "translate3d(" + ((1 - reveal) * 56).toFixed(1) + "px," +
           y.toFixed(1) + "px,0) rotate(" + rotate.toFixed(1) + "deg) scale(" +
           (.88 + reveal * .12).toFixed(3) + ")";
-        card.setAttribute("aria-hidden", reveal > .58 ? "false" : "true");
-        const link = card.querySelector("a");
-        if (link) link.tabIndex = reveal > .58 ? 0 : -1;
-      });
+       });
+      if (archiveLink) {
+        const showArchive = ease(.73, .89, p);
+        archiveLink.style.opacity = String(showArchive);
+        archiveLink.style.visibility = showArchive > .02 ? "visible" : "hidden";
+        archiveLink.style.pointerEvents = showArchive > .65 ? "auto" : "none";
+        archiveLink.tabIndex = showArchive > .65 ? 0 : -1;
+      }
       if (galleryTitleRef.current) {
         const appear = ease(.28, .43, p);
         galleryTitleRef.current.style.opacity = String(appear);
@@ -323,8 +337,9 @@ export default function HomeHero() {
                   tabIndex={-1}
                 >
                   <span className="fullbleed-gallery-image">
-                    <img src={item.src} alt={item.title}
-                      loading={index < 2 ? "eager" : "lazy"} decoding="async"
+                    <Image src={item.src} alt={item.title} fill
+                      sizes="(max-width: 760px) 56vw, (max-width: 1100px) 26vw, 23vw"
+                      quality={72} loading={index === 0 ? "eager" : "lazy"} decoding="async"
                       style={imageStyle(item.settings)} />
                   </span>
                   <span className="fullbleed-gallery-meta">
@@ -335,7 +350,7 @@ export default function HomeHero() {
                 </Link>
               </article>
             ))}
-            <Link href="/thumbnails" className="fullbleed-gallery-archive">VIEW ALL THUMBNAILS ↗</Link>
+            <Link href="/thumbnails" className="fullbleed-gallery-archive" tabIndex={-1}>VIEW ALL THUMBNAILS ↗</Link>
           </div>
         )}
 
