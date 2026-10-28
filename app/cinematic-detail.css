@@ -57,3 +57,61 @@
 @media(prefers-reduced-motion:reduce) {
   .cinema-object-frame,.cinema-feature-image img,.selected-work-image img {transition:none}
 }
+
+/* Art direction: frame the work inside the viewport, with readable UI at every size. */
+@media (min-width: 761px) {
+  .cinema-intro-object {
+    left: calc(54vw - clamp(22px, 7vw, 128px));
+    width: min(39vw, 610px);
+  }
+}
+.cinema-object-frame {
+  border-color: rgba(255, 218, 190, .6);
+  box-shadow: 0 38px 80px rgba(8, 4, 6, .52), 0 2px 1px rgba(255, 237, 213, .25) inset,
+    12px 12px 0 -6px #5e3431, 13px 13px 0 -6px rgba(255, 170, 140, .3);
+}
+.cinema-object-frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border: 1px solid rgba(255, 247, 230, .13);
+  box-shadow: inset 0 0 35px rgba(9, 4, 7, .2);
+}
+.cinema-object-label { text-shadow: 0 1px 6px #160b0c; }
+.site-page--cinematic .section-heading p,
+.site-page--cinematic .services-head > p,
+.site-page--cinematic .about-copy p,
+.site-page--cinematic .process-intro-copy { max-width: 55ch; }
+.site-page--cinematic .selected-work-image { border: 1px solid rgba(76, 41, 36, .19); }
+.site-page--cinematic .editorial-work-grid .selected-work-row {
+  background: linear-gradient(150deg, #f8ecdf, #ead8c7) !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy p { max-width: 54ch; }
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card {
+  background: linear-gradient(150deg, #f8ecdf, #ead8c7) !important;
+}
+.projects-page .project-row > p { font-size: clamp(14px, 1vw, 16px); line-height: 1.6; }
+.projects-page .project-thumb { overflow: hidden; border: 1px solid rgba(91, 51, 42, .22); }
+.projects-page .project-thumb img { transition: scale .6s cubic-bezier(.22,1,.36,1); }
+.archive-page .thumb-meta p { font-size: max(13px, .85rem); }
+@media (hover:hover) and (pointer:fine) {
+  .projects-page .project-row:hover .project-thumb img { scale: 1.06; }
+}
+@media (max-width: 1100px) and (min-width: 761px) {
+  body:has(.site-page--cinematic) .site-nav a { font-size: 10px !important; }
+  .cinema-intro-object { left: calc(55vw - clamp(22px, 7vw, 128px)); width: 38vw; }
+}
+@media (max-width:760px) {
+  .cinema-intro-object { right: -3vw; bottom: -4vh; width: 50vw; opacity: .28; }
+  .cinema-intro p { color: #f1dbce; }
+  .cinema-intro-actions a { font-size: 11px; }
+  .cinema-chapter-text > p { font-size: 13px; line-height: 1.55; }
+  .cinema-chapter-label, .cinema-kicker { font-size: 10px; }
+  .site-page--cinematic .studio-stat-main span { font-size: 10px !important; }
+  .projects-page .project-row > p { font-size: 14px; }
+}
+@media (max-width:760px) and (max-height:690px) {
+  .cinema-chapter-text > p { font-size: 12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .cinema-intro-object { display: none; }
+  .projects-page .project-thumb img { transition: none; }
+}
