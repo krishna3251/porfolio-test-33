@@ -456,6 +456,10 @@ export default function AdminStudio() {
   };
 
   const switchWorkspaceTab = (nextTab) => {
+    if (nextTab !== workspaceTab && pendingFile) {
+      setError("Publish or discard the staged image before changing sections.");
+      return;
+    }
     if (nextTab !== workspaceTab) {
       setPendingFile(null);
       if (fileRef.current) fileRef.current.value = "";
@@ -522,7 +526,7 @@ export default function AdminStudio() {
         <div className="admin-side-label">MEDIA LIBRARY <b>{visibleEntries.length}/{slotEntries.length}</b></div>
         <label className="admin-search-wrap"><span aria-hidden="true">⌕</span><input aria-label="Search media assets" value={assetSearch} onChange={(event) => setAssetSearch(event.target.value)} placeholder="Search images…" /><kbd>/</kbd></label>
         <div className="admin-filters">
-          {groups.map((group) => <button type="button" key={group} className={sidebarFilter === group ? "active" : ""} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter((entry) => entry.group === group).length}</span></button>)}
+          {groups.map((group) => <button type="button" key={group} className={sidebarFilter === group ? "active" : ""} aria-pressed={sidebarFilter === group} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter((entry) => entry.group === group).length}</span></button>)}
         </div>
         <div className="admin-side-bottom"><span>REPOSITORY</span><a href={"https://github.com/" + repo} target="_blank" rel="noreferrer">{repo} ↗</a><button type="button" onClick={logout}>LOCK STUDIO ↗</button></div>
       </aside>
@@ -538,7 +542,7 @@ export default function AdminStudio() {
           <button type="button" className={workspaceTab === "design" ? "active" : ""} aria-pressed={workspaceTab === "design"} onClick={() => switchWorkspaceTab("design")}><span>02</span><strong>Site design</strong><small>Theme & corner style</small></button>
           <button type="button" className={workspaceTab === "content" ? "active" : ""} aria-pressed={workspaceTab === "content"} onClick={() => switchWorkspaceTab("content")}><span>03</span><strong>Text & content</strong><small>Homepage copy</small></button>
           <button type="button" className={workspaceTab === "thumbnails" ? "active" : ""} aria-pressed={workspaceTab === "thumbnails"} onClick={() => switchWorkspaceTab("thumbnails")}><span>04</span><strong>Thumbnail uploads</strong><small>Add work by category</small></button>
-          <button type="button" onClick={() => window.location.assign("/admin/organize")}><span>05</span><strong>Organize thumbnails</strong><small>Move existing work</small></button>
+          <button type="button" onClick={() => { if (hasChanges || pendingFile || thumbnailQueue.length) { setError("Publish or discard your draft before opening the organizer."); return; } window.location.assign("/admin/organize"); }}><span>05</span><strong>Organize thumbnails</strong><small>Move existing work</small></button>
         </nav>
 
         {!canWrite && <section className="admin-setup-alert">
@@ -549,11 +553,16 @@ export default function AdminStudio() {
         <div className={`admin-workspace-grid ${workspaceTab !== "images" ? "admin-workspace-grid-single" : ""}`}>
           {workspaceTab === "images" && <section className="admin-image-panel">
             <div className="admin-panel-head"><div><span className="admin-eyebrow">ASSET SELECTOR / LIVE PREVIEW</span><h2>Media <em>library.</em></h2><p className="admin-panel-subtitle">Pick an asset, preview your changes, then publish once.</p></div><span className="admin-count">{visibleEntries.length} / {slotEntries.length} ASSETS</span></div>
+            <div className="admin-category-heading">Browse by section <span>Choose a category, then an image</span></div>
+            <div className="admin-category-list" role="group" aria-label="Filter images by section">
+              {groups.map(group => <button type="button" key={group} aria-pressed={sidebarFilter === group} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter(entry => entry.group === group).length}</span></button>)}
+            </div>
             <label className="admin-field-label" htmlFor="media-target">CHOOSE ANY IMAGE IN THE SITE</label>
-            <select id="media-target" value={selectedKey} onChange={(event) => { setSelectedKey(event.target.value); setPendingFile(null); setNotice(""); setError(""); if (fileRef.current) fileRef.current.value = ""; }}>
+            <select id="media-target" value={selectedKey} onChange={(event) => { if (pendingFile) { setError("Publish or discard the staged image before choosing another image."); return; } setSelectedKey(event.target.value); setNotice(""); setError(""); if (fileRef.current) fileRef.current.value = ""; }}>
+              {selectedEntry && !visibleEntries.some(entry => entry.key === selectedKey) && <option value={selectedKey}>Current: {selectedEntry.label}</option>}
               {groups.slice(1).map((group) => <optgroup label={group} key={group}>{visibleEntries.filter((entry) => entry.group === group).map((entry) => <option key={entry.key} value={entry.key}>{entry.label}</option>)}</optgroup>)}
-              {visibleEntries.filter((entry) => entry.group === "Thumbnail archive").length === 0 && sidebarFilter !== "All images" ? null : null}
             </select>
+            {!visibleEntries.length && <p className="admin-no-results" role="status">No images match this filter. Try another section or search.</p>}
 
             <div className="admin-preview-stage">
               <div className="admin-preview-grid" aria-hidden="true" />

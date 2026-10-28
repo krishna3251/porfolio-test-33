@@ -107,6 +107,8 @@
   .cinema-intro-object { left: calc(55vw - clamp(22px, 7vw, 128px)); width: 38vw; }
 }
 @media (max-width:760px) {
+  .cinema-art-layer g > path:not(:nth-child(3n + 1)) {display:none}
+  .cinema-art-layer g > path:nth-child(3n + 1) {display:block}
   .cinema-intro-object { right: -3vw; bottom: -4vh; width: 50vw; opacity: .28; }
   .cinema-intro p { color: #f1dbce; }
   .cinema-intro-actions a { font-size: 11px; }
@@ -121,4 +123,57 @@
 @media (prefers-reduced-motion:reduce) {
   .cinema-intro-object { display: none; }
   .projects-page .project-thumb img { transition: none; }
+}
+
+/* Split-paper edges open with the existing scroll story; no extra animation loop. */
+.cinema-paper-reveal {position:absolute;z-index:2;inset:0;overflow:hidden;pointer-events:none;--paper-open:0}
+.cinema-paper-reveal span {position:absolute;top:0;bottom:0;width:12%;opacity:.5;background:linear-gradient(100deg,#170e0e,#4a2924 70%,#b87862);filter:drop-shadow(0 12px 24px rgba(0,0,0,.3));}
+.cinema-paper-reveal span:first-child {left:-8%;clip-path:polygon(0 0,85% 0,92% 8%,86% 16%,94% 23%,88% 32%,97% 40%,89% 50%,95% 59%,86% 68%,95% 76%,88% 86%,94% 93%,86% 100%,0 100%);transform:translateX(calc(var(--paper-open) * -70%));}
+.cinema-paper-reveal span:last-child {right:-8%;clip-path:polygon(15% 0,100% 0,100% 100%,14% 100%,6% 93%,12% 85%,4% 76%,13% 67%,5% 59%,12% 50%,3% 40%,12% 31%,6% 23%,14% 15%,8% 8%);transform:translateX(calc(var(--paper-open) * 70%));}
+.cinema-welcome {display:flex;align-items:center;gap:10px;margin-bottom:16px;color:#f4cfb9;font:500 10px/1.4 var(--font-dm-mono),monospace;letter-spacing:.12em}
+.cinema-welcome i {width:30px;height:1px;background:#e99681}
+.cinema-bottom-bar .cinema-scroll-notice {display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:8px 12px;border:0;background:transparent;color:#f6d7c7;font:500 10px/1.4 var(--font-dm-mono),monospace;letter-spacing:.12em;cursor:pointer}
+.cinema-scroll-notice:focus-visible {outline:2px solid #ffb89a;outline-offset:3px}
+.cinema-scroll-notice span {font-size:17px;transition:transform .2s ease}
+@media (hover:hover) { .cinema-scroll-notice:hover span {transform:translateY(4px)} }
+
+/* Studio: clear categories, larger controls and a quiet cinematic palette. */
+.admin-shell {background:radial-gradient(ellipse at 85% 0%,#2c1d1a 0,transparent 38%),#111210}
+.admin-sidebar {background:#161513}
+.admin-image-panel,.admin-controls-panel {background:#1c1b19;border-color:rgba(247,213,191,.15);box-shadow:0 16px 48px rgba(0,0,0,.18)}
+.admin-mode-nav button {border-radius:5px;min-height:76px}
+.admin-mode-nav button > strong {font-size:13px}
+.admin-mode-nav button > small,.admin-panel-subtitle,.admin-editor-help {font-size:12px;line-height:1.6;color:#c0b8ad}
+.admin-image-panel select,.admin-controls-panel select,.admin-source-block input,.admin-copy-field input,.admin-copy-field textarea,.admin-login-form input {font-size:14px;min-height:46px}
+.admin-filters button {font-size:11px;min-height:44px}
+.admin-search-wrap input {font-size:13px}
+.admin-category-heading {display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;color:#f6e8da;font-size:14px;font-weight:600;margin:22px 0 10px}
+.admin-category-heading span {font-size:12px;font-weight:400;color:#bdb3a6}
+.admin-category-list {display:flex;flex-wrap:wrap;gap:7px;margin:0 0 22px}
+.admin-category-list button {min-height:42px;padding:9px 12px;border:1px solid #62514a;border-radius:4px;background:#25221f;color:#eee0d1;font:500 12px/1.3 var(--font-space),sans-serif;cursor:pointer}
+.admin-category-list button span {margin-left:8px;color:#d8a796}
+.admin-category-list button[aria-pressed="true"] {border-color:#ef9a7f;background:#51322c;color:#fff6ef}
+.admin-category-list button:focus-visible,.admin-mode-nav button:focus-visible,.admin-filters button:focus-visible {outline:2px solid #ffad91;outline-offset:2px}
+.admin-no-results {color:#f0c8b5;font-size:13px;margin:10px 0}
+.admin-save-summary strong {font-size:12px}.admin-save-summary small {font-size:11px}
+.admin-quick-actions button,.admin-discard-button {min-height:44px;font-size:10px}
+@media (max-width:760px) {
+  .cinema-welcome {font-size:9px;margin-bottom:10px}
+  .cinema-paper-reveal span {width:9%;opacity:.32}
+  .cinema-bottom-bar {grid-template-columns:1fr auto;gap:8px}
+  .cinema-bottom-bar .cinema-scroll-notice {display:inline-flex;grid-column:2;grid-row:1;font-size:9px;padding:5px 8px}
+  .cinema-percent {display:none}
+  .admin-mode-nav {position:relative;top:auto;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-mode-nav button {min-height:58px}
+  .admin-mode-nav button > strong {font-size:12px}
+  .admin-panel-subtitle,.admin-editor-help {font-size:12px}
+  .admin-category-heading span {width:100%}
+  .admin-category-list {gap:6px}
+  .admin-category-list button {min-height:44px;font-size:12px}
+  .admin-save-area {position:relative !important;bottom:auto}
+  .admin-save-summary small {font-size:11px}
+}
+@media (prefers-reduced-motion:reduce) {
+  .cinema-paper-reveal {display:none}
+  .cinema-scroll-notice span {transition:none}
 }

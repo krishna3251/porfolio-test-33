@@ -152,6 +152,7 @@ export default function HomeHero() {
   const bloomRef = useRef(null);
   const chapterLabelRef = useRef(null);
   const transitionRef = useRef(null);
+  const paperRef = useRef(null);
 
   const items = useMemo(() => {
     const all = getChronologicalThumbnailGroups(media).flatMap(group => group.thumbnails)
@@ -191,7 +192,7 @@ export default function HomeHero() {
       const p = clamp(value);
       const artProgress = p < .15 ? p * .9 : p < .86 ? .16 + (p - .15) * .88 : .79 + (p - .86) * 1.5;
       fibers.forEach((fiber, index) => {
-        if (mobile && index % 2) return;
+        if (mobile && index % 3) return;
         fiber.setAttribute("d", fiberPath(fiberAt(FIBERS[index], artProgress)));
       });
       threadRef.current.style.strokeDasharray = "100";
@@ -206,6 +207,7 @@ export default function HomeHero() {
       transitionRef.current.style.opacity = String(smooth(.945, .998, p));
 
       const introOpacity = 1 - smooth(.115, .21, p);
+      if (paperRef.current) paperRef.current.style.setProperty("--paper-open", String(smooth(.015, .19, p)));
       introRef.current.style.opacity = String(introOpacity);
       introRef.current.style.transform = "translate3d(" + (-95 * (1 - introOpacity)).toFixed(1) + "px,0,0)";
       const allowIntro = introOpacity > .96;
@@ -326,6 +328,7 @@ export default function HomeHero() {
         <RibbonArt fibersRef={fibersRef} threadRef={threadRef} dotRef={dotRef} />
         <div className="cinema-bloom" ref={bloomRef}/>
       </div>
+      <div className="cinema-paper-reveal" ref={paperRef} aria-hidden="true"><span /><span /></div>
 
       <div className="cinema-eyeline" aria-hidden="true">
         <span>KRISHNA / CREATIVE DEVELOPER</span>
@@ -347,6 +350,7 @@ export default function HomeHero() {
           </div>
           <span className="cinema-object-index">01 / 06 <i /> CREATIVE PRACTICE</span>
         </div>}
+        <span className="cinema-welcome">WELCOME TO MY WORLD <i /> PORTFOLIO / {new Date().getFullYear()}</span>
         <span className="cinema-kicker">{copy.heroEyebrow || "CREATIVE DEVELOPER × VISUAL DESIGNER"}</span>
         <h1>NOT JUST<br/>A <em>FRAME.</em><br/>A FEELING.</h1>
         <p>{copy.heroDescription || "I craft immersive websites, intelligent software and expressive gaming artwork. Every detail has a reason."}</p>
@@ -378,7 +382,13 @@ export default function HomeHero() {
           </span>}
           <span>KRISHNA <small>CODE • ART • EXPERIMENTS</small></span>
         </div>
-        <span className="cinema-scroll-notice">SCROLL TO FOLLOW THE RED THREAD ↓</span>
+        <button type="button" className="cinema-scroll-notice" onClick={() => {
+          const scene = sceneRef.current;
+          if (!scene) return;
+          const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const destination = reduced ? document.getElementById("work")?.getBoundingClientRect().top + window.scrollY : scene.getBoundingClientRect().top + window.scrollY + (scene.offsetHeight - window.innerHeight) * .23;
+          if (Number.isFinite(destination)) window.scrollTo({top: Math.max(0, destination), behavior: reduced ? "auto" : "smooth"});
+        }}>SCROLL TO EXPLORE <span aria-hidden="true">↓</span></button>
         <span className="cinema-percent" ref={progressLabelRef}>00%</span>
       </div>
       <div className="cinema-viewport-progress"><span ref={progressRef}/></div>
