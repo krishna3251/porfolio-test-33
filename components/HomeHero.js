@@ -308,9 +308,18 @@ export default function HomeHero() {
   const portrait = media.slots?.heroPortrait || {
     src: "/hero_krishna_vertical.jpg", visible: true, positionX: 50, positionY: 42
   };
+  const showcase = media.slots?.heroShowcase;
+  const showcaseSrc = showcase?.src || items[0]?.src;
+  const showcaseSettings = showcase?.src ? showcase : items[0]?.settings;
+  const background = media.slots?.heroBackground;
+  const cutout = media.slots?.heroCutout;
 
   return <section className="cinema-story" id="home" ref={sceneRef} aria-label="Scroll through Krishna's work">
     <div className="cinema-stage">
+      {background?.src && background.visible !== false && <div className="cinema-custom-background" aria-hidden="true">
+        <img src={background.src} alt="" style={imageStyle(background)} />
+        {background.overlayOpacity > 0 && <span style={{backgroundColor: background.overlayColor || "#191e1d", opacity: background.overlayOpacity}} />}
+      </div>}
       <div className="cinema-noise" aria-hidden="true" />
       <div className="cinema-amber-light" aria-hidden="true" />
       <div className="cinema-art-layer" aria-hidden="true">
@@ -327,10 +336,12 @@ export default function HomeHero() {
       </a>
 
       <div className="cinema-intro" ref={introRef}>
-        {items[0] && <div className="cinema-intro-object" aria-hidden="true">
+        {cutout?.src && cutout.visible !== false && <div className="cinema-custom-cutout" aria-hidden="true"><img src={cutout.src} alt="" style={imageStyle(cutout)} /></div>}
+        {showcaseSrc && showcase?.visible !== false && <div className="cinema-intro-object" aria-hidden="true">
           <div className="cinema-object-halo" />
           <div className="cinema-object-frame">
-            <Image src={items[0].src} alt="" fill sizes="(max-width: 760px) 80vw, 44vw" priority style={imageStyle(items[0].settings)} />
+            <img src={showcaseSrc} alt="" style={imageStyle(showcaseSettings)} />
+            {showcaseSettings?.overlayOpacity > 0 && <span className="cinema-object-overlay" style={{backgroundColor: showcaseSettings.overlayColor || "#a8271b", opacity: showcaseSettings.overlayOpacity}} />}
             <span className="cinema-object-glass" />
             <span className="cinema-object-label"><b>SELECTED FRAME</b><span>ART DIRECTION / 01</span></span>
           </div>
