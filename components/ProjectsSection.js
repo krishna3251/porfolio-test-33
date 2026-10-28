@@ -28,7 +28,7 @@ export default function ProjectsSection(){
     <div className="project-list editorial-project-list">
       {projects.map(([no,name,type,desc,url,slot,defaultImage],index)=>{
         const settings=slots[slot]||{};
-        return <a key={no} href={url} target="_blank" rel="noreferrer" className="project-row editorial-project-row">
+        return <a key={no} id={name.toLowerCase().replace(/\s+/g,"-")} href={url} target="_blank" rel="noreferrer" className="project-row editorial-project-row">
           <span className="project-no">{no}</span>
           <div className="project-thumb"><img src={settings.src||defaultImage} alt="" loading="lazy" style={imageStyle(settings)}/></div>
           <div className="project-name"><span>{type}</span><h2>{name}<b>.</b></h2></div>

@@ -1,0 +1,59 @@
+/* A tactile, image-led layer for the existing editorial system. */
+.cinema-intro-object {
+  position:absolute; z-index:-1; left:112%; top:50%; width:min(42vw,650px);
+  aspect-ratio:16/10; transform:translateY(-50%); pointer-events:none;
+  perspective:1200px;
+}
+.cinema-object-halo {position:absolute; inset:-25%; background:radial-gradient(ellipse,rgba(250,114,82,.25),transparent 65%); filter:blur(24px)}
+.cinema-object-frame {
+  position:absolute; inset:5%; overflow:hidden; border:1px solid rgba(255,219,190,.5);
+  border-radius:4px; background:#271818;
+  transform:rotateY(-10deg) rotateX(5deg) rotateZ(2deg);
+  box-shadow: 0 40px 90px rgba(9,4,7,.55), 18px 18px 0 -10px #5e3431, 20px 20px 0 -10px rgba(255,170,140,.3), inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.cinema-object-frame img {filter:saturate(.9) contrast(1.08)}
+.cinema-object-glass {position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,247,227,.26),transparent 32%,transparent 66%,rgba(32,11,18,.3)),linear-gradient(0deg,rgba(17,8,12,.8),transparent 38%)}
+.cinema-object-label {position:absolute; bottom:0; left:0; right:0; padding:22px; display:flex; justify-content:space-between; gap:12px; color:#ffebda; font:500 10px/1.5 var(--font-dm-mono),monospace; letter-spacing:.12em}
+.cinema-object-label b {font-weight:500}.cinema-object-label span {color:#edb09a}
+.cinema-object-index {position:absolute; right:4%; bottom:-4%; color:#f0b7a1; font:500 10px/1.4 var(--font-dm-mono),monospace; letter-spacing:.12em}
+.cinema-object-index i {display:inline-block; vertical-align:middle; width:35px; height:1px; margin:0 8px; background:#ef8c7b}
+.cinema-intro-actions a,.cinema-finale-actions a {min-height:44px; display:inline-flex; align-items:center; padding:10px 0; font-size:11px}
+.cinema-intro-actions a:first-child {padding:11px 17px; color:#261716; background:#f7d6c2; border:1px solid #f7d6c2; box-shadow:0 8px 26px rgba(0,0,0,.2)}
+.cinema-intro-actions a:first-child:hover {color:#261716;background:#fff2e7}
+.cinema-feature-image {box-shadow:0 34px 70px rgba(13,6,8,.48), 12px 12px 0 -6px #6b3e39, 13px 13px 0 -6px rgba(255,190,155,.3)}
+.site-page--cinematic .editorial-work-grid .selected-work-row,
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card,
+.editorial-project-row,.archive-feature-card,.premium-thumb-card .thumb-media {box-shadow:0 16px 35px rgba(56,29,25,.1),0 2px 0 rgba(255,255,255,.28) inset}
+.site-page--cinematic .editorial-work-grid .selected-work-row:focus-visible,
+.editorial-project-row:focus-visible,.thumb-link:focus-visible {outline:3px solid #b8453d;outline-offset:5px}
+.editorial-project-row {scroll-margin-top:110px}
+.site-nav a {font-size:max(11px, .7rem)}
+.archive-filter button {min-height:44px}
+@media (hover:hover) and (pointer:fine) {
+  .cinema-object-frame {transition:transform .7s cubic-bezier(.22,1,.36,1),box-shadow .7s ease}
+  .cinema-feature-image img,.selected-work-image img {transition:filter .5s ease,scale .7s cubic-bezier(.22,1,.36,1)}
+  .selected-work-row:hover .selected-work-image img {scale:1.035}
+}
+@media(max-width:1100px) {
+  .cinema-intro-object {left:105%;width:40vw}
+  .cinema-object-index {display:none}
+}
+@media(max-width:760px) {
+  .cinema-intro-object {left:auto;right:-5vw;top:auto;bottom:-5vh;width:54vw;opacity:.5;transform:none}
+  .cinema-object-frame {transform:rotateY(-8deg) rotateX(4deg) rotateZ(4deg)}
+  .cinema-object-label {padding:9px;font-size:8px}
+  .cinema-object-label span {display:none}
+  .cinema-intro {width:min(88vw,480px)}
+  .cinema-intro > :not(.cinema-intro-object) {position:relative;z-index:1}
+  .cinema-intro p {font-size:14px;line-height:1.65;max-width:32ch}
+  .cinema-intro-actions {gap:8px 20px;margin-top:20px}
+  .cinema-intro-actions a {font-size:10px}
+  .site-page--cinematic .editorial-work-grid .selected-work-copy p {font-size:14px !important}
+  .site-audio {max-width:calc(100vw - 24px)}
+}
+@media(max-width:380px), (max-height:580px) {
+  .cinema-intro-object {display:none}
+}
+@media(prefers-reduced-motion:reduce) {
+  .cinema-object-frame,.cinema-feature-image img,.selected-work-image img {transition:none}
+}
