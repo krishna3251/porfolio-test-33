@@ -327,6 +327,15 @@ export default function HomeHero() {
       </a>
 
       <div className="cinema-intro" ref={introRef}>
+        {items[0] && <div className="cinema-intro-object" aria-hidden="true">
+          <div className="cinema-object-halo" />
+          <div className="cinema-object-frame">
+            <Image src={items[0].src} alt="" fill sizes="(max-width: 760px) 80vw, 44vw" priority style={imageStyle(items[0].settings)} />
+            <span className="cinema-object-glass" />
+            <span className="cinema-object-label"><b>SELECTED FRAME</b><span>ART DIRECTION / 01</span></span>
+          </div>
+          <span className="cinema-object-index">01 / 06 <i /> CREATIVE PRACTICE</span>
+        </div>}
         <span className="cinema-kicker">{copy.heroEyebrow || "CREATIVE DEVELOPER × VISUAL DESIGNER"}</span>
         <h1>NOT JUST<br/>A <em>FRAME.</em><br/>A FEELING.</h1>
         <p>{copy.heroDescription || "I craft immersive websites, intelligent software and expressive gaming artwork. Every detail has a reason."}</p>
