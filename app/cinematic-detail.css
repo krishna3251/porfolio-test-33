@@ -177,3 +177,74 @@
   .cinema-paper-reveal {display:none}
   .cinema-scroll-notice span {transition:none}
 }
+
+/* Hallmark-inspired editorial finish: let the artwork carry the page. */
+.site-page--cinematic .section-heading,
+.site-page--cinematic .services-head {
+  gap: clamp(24px, 5vw, 80px);
+}
+.site-page--cinematic .section-heading p,
+.site-page--cinematic .services-head > p,
+.site-page--cinematic .about-copy p {
+  font-size: clamp(16px, 1.15vw, 18px) !important;
+  line-height: 1.75 !important;
+}
+.site-page--cinematic .editorial-work-grid {
+  gap: clamp(32px, 4vw, 64px) clamp(18px, 2.5vw, 38px) !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-row {
+  padding: 0 0 18px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(77, 44, 35, .3) !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy {
+  padding: 20px 0 0 !important;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy strong {
+  line-height: 1.05;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy small {
+  letter-spacing: .04em;
+}
+.site-page--cinematic .editorial-work-grid .selected-work-copy p {
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+}
+.site-page--cinematic .selected-work-image {
+  border-color: rgba(76, 41, 36, .18);
+}
+.site-page--cinematic .services-list.service-glass-stack .editorial-service-card {
+  border-radius: 0;
+  background: #f1e3d4 !important;
+  box-shadow: none !important;
+}
+.site-page--cinematic .services-list.service-glass-stack .service-main h3 {
+  line-height: 1.05;
+}
+.site-page--cinematic .cinema-intro-actions a:focus-visible,
+.site-page--cinematic .cinema-finale-actions a:focus-visible,
+.site-page--cinematic .service-card:focus-visible,
+.site-page--cinematic .archive-link:focus-visible {
+  outline: 3px solid #b8453d;
+  outline-offset: 5px;
+}
+@media (hover:hover) and (pointer:fine) {
+  .site-page--cinematic .editorial-work-grid .selected-work-row:hover {
+    transform: none;
+    box-shadow: none !important;
+    border-color: #a33d39 !important;
+  }
+  .site-page--cinematic .services-list.service-glass-stack .editorial-service-card:hover {
+    box-shadow: 0 12px 28px rgba(74,33,22,.1) !important;
+  }
+}
+@media (max-width:760px) {
+  .site-page--cinematic .section-heading p,
+  .site-page--cinematic .services-head > p,
+  .site-page--cinematic .about-copy p { font-size: 16px !important; }
+  .site-page--cinematic .editorial-work-grid .selected-work-copy { padding-top: 16px !important; }
+  .site-page--cinematic .editorial-work-grid .selected-work-copy p { font-size: 15px !important; }
+}
