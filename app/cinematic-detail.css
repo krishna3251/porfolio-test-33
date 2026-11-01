@@ -127,9 +127,9 @@
 
 /* Split-paper edges open with the existing scroll story; no extra animation loop. */
 .cinema-paper-reveal {position:absolute;z-index:2;inset:0;overflow:hidden;pointer-events:none;--paper-open:0}
-.cinema-paper-reveal span {position:absolute;top:0;bottom:0;width:12%;opacity:.5;background:linear-gradient(100deg,#170e0e,#4a2924 70%,#b87862);filter:drop-shadow(0 12px 24px rgba(0,0,0,.3));}
-.cinema-paper-reveal span:first-child {left:-8%;clip-path:polygon(0 0,85% 0,92% 8%,86% 16%,94% 23%,88% 32%,97% 40%,89% 50%,95% 59%,86% 68%,95% 76%,88% 86%,94% 93%,86% 100%,0 100%);transform:translateX(calc(var(--paper-open) * -70%));}
-.cinema-paper-reveal span:last-child {right:-8%;clip-path:polygon(15% 0,100% 0,100% 100%,14% 100%,6% 93%,12% 85%,4% 76%,13% 67%,5% 59%,12% 50%,3% 40%,12% 31%,6% 23%,14% 15%,8% 8%);transform:translateX(calc(var(--paper-open) * 70%));}
+.cinema-paper-reveal span {position:absolute;top:0;bottom:0;width:24%;opacity:.52;background:linear-gradient(100deg,#170e0e,#4a2924 70%,#b87862);filter:drop-shadow(0 12px 24px rgba(0,0,0,.3));}
+.cinema-paper-reveal span:first-child {left:-3%;clip-path:polygon(0 0,85% 0,92% 8%,86% 16%,94% 23%,88% 32%,97% 40%,89% 50%,95% 59%,86% 68%,95% 76%,88% 86%,94% 93%,86% 100%,0 100%);transform:translateX(calc(var(--paper-open) * -110%));}
+.cinema-paper-reveal span:last-child {right:-3%;clip-path:polygon(15% 0,100% 0,100% 100%,14% 100%,6% 93%,12% 85%,4% 76%,13% 67%,5% 59%,12% 50%,3% 40%,12% 31%,6% 23%,14% 15%,8% 8%);transform:translateX(calc(var(--paper-open) * 110%));}
 .cinema-welcome {display:flex;align-items:center;gap:10px;margin-bottom:16px;color:#f4cfb9;font:500 10px/1.4 var(--font-dm-mono),monospace;letter-spacing:.12em}
 .cinema-welcome i {width:30px;height:1px;background:#e99681}
 .cinema-bottom-bar .cinema-scroll-notice {display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:8px 12px;border:0;background:transparent;color:#f6d7c7;font:500 10px/1.4 var(--font-dm-mono),monospace;letter-spacing:.12em;cursor:pointer}
@@ -159,7 +159,7 @@
 .admin-quick-actions button,.admin-discard-button {min-height:44px;font-size:10px}
 @media (max-width:760px) {
   .cinema-welcome {font-size:9px;margin-bottom:10px}
-  .cinema-paper-reveal span {width:9%;opacity:.32}
+  .cinema-paper-reveal span {width:23%;opacity:.48}
   .cinema-bottom-bar {grid-template-columns:1fr auto;gap:8px}
   .cinema-bottom-bar .cinema-scroll-notice {display:inline-flex;grid-column:2;grid-row:1;font-size:9px;padding:5px 8px}
   .cinema-percent {display:none}
@@ -247,4 +247,17 @@
   .site-page--cinematic .about-copy p { font-size: 16px !important; }
   .site-page--cinematic .editorial-work-grid .selected-work-copy { padding-top: 16px !important; }
   .site-page--cinematic .editorial-work-grid .selected-work-copy p { font-size: 15px !important; }
+}
+
+/* Landscape thumbnail artwork remains complete in the phone gallery and viewer. */
+@media (max-width:760px) {
+  .archive-page .thumb-media { aspect-ratio: 16 / 9; }
+  .archive-feature-media { min-height: 0; aspect-ratio: 16 / 9; }
+  .archive-feature-image { min-height: 0; }
+  .thumb-parallax-image { inset: 0; transform: none !important; }
+  .thumb-image, .archive-feature-image, .thumbnail-viewer-image {
+    object-fit: contain !important;
+    object-position: center !important;
+    transform: none !important;
+  }
 }
