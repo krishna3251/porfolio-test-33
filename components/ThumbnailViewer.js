@@ -1,140 +1,126 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getThumbnailSrc } from "@/lib/thumbnails";
-import WobbleImage from "@/components/WobbleImage";
+import { getThumbnailGameName } from "@/lib/thumbnails";
 import useSiteMedia from "@/hooks/useSiteMedia";
 
-export default function ThumbnailViewer({item,previous,next,first,last,index,total}){
-  const router=useRouter();
-  const {media}=useSiteMedia();
-  const override=media.overrides?.[item.filename]||{};
-  const [navigation, setNavigation] = useState({ index, direction: 1 });
-  if (navigation.index !== index) {
-    setNavigation({ index, direction: index >= navigation.index ? 1 : -1 });
+const formatFrame = (number) => String(number).padStart(2, "0");
+
+export default function ThumbnailViewer({ item, archiveHref, previous, next, first, last, index, total }) {
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+  const { media } = useSiteMedia();
+  const override = media.overrides?.[item.filename] || {};
+  const artworkSrc = override.src || item.src;
+  const [failedSrc, setFailedSrc] = useState(null);
+  const gesture = useRef(null);
+
+  useEffect(() => {
+    function handleKey(event) {
+      if (event.defaultPrevented || event.repeat || event.metaKey || event.ctrlKey || event.altKey ||
+        event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+
+      const destinations = {
+        escape: archiveHref, backspace: archiveHref, arrowleft: previous, a: previous, p: previous,
+        arrowright: next, d: next, n: next, home: first, end: last,
+      };
+      const destination = destinations[event.key.toLowerCase()];
+      if (!destination) return;
+      event.preventDefault();
+      if (destination === archiveHref) router.push(destination);
+      else router.replace(destination, { scroll: false });
+    }
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [archiveHref, first, last, next, previous, router]);
+
+  function startSwipe(event) {
+    const touch = event.touches[0];
+    gesture.current = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
   }
-  const direction = navigation.direction;
 
-  useEffect(()=>{
-    const body=document.body;
-    const html=document.documentElement;
-    const previousBodyOverflow=body.style.overflow;
-    const previousBodyTouchAction=body.style.touchAction;
-    const previousHtmlOverflow=html.style.overflow;
+  function endSwipe(event) {
+    const origin = gesture.current;
+    gesture.current = null;
+    if (!origin || !event.changedTouches.length || event.touches.length) return;
+    const touch = event.changedTouches[0];
+    const travelX = touch.clientX - origin.x;
+    const travelY = touch.clientY - origin.y;
+    if (Math.abs(travelX) < 55 || Math.abs(travelX) < Math.abs(travelY) * 1.4) return;
+    router.replace(travelX > 0 ? previous : next, { scroll: false });
+  }
 
-    body.style.overflow="hidden";
-    body.style.touchAction="none";
-    html.style.overflow="hidden";
+  const game = getThumbnailGameName(item.label);
+  const position = (index + 1) / total;
+  const visible = override.visible !== false;
 
-    return()=>{
-      body.style.overflow=previousBodyOverflow;
-      body.style.touchAction=previousBodyTouchAction;
-      html.style.overflow=previousHtmlOverflow;
-    };
-  },[]);
+  return (
+    <main className="cinema-viewer" aria-label="Thumbnail viewer" style={{
+      "--viewer-light": item.swatches[1]?.hex || "#e69b7e",
+      "--viewer-fill": item.swatches[2]?.hex || "#857ca7",
+    }}>
+      <header className="cinema-viewer-header">
+        <Link href={archiveHref} className="cinema-viewer-back">
+          <span aria-hidden="true">‹</span> Gallery
+        </Link>
+        <div className="cinema-viewer-counter" aria-label={`Artwork ${index + 1} of ${total}`}>
+          <strong>{formatFrame(index + 1)}</strong>
+          <span aria-hidden="true">/ {formatFrame(total)}</span>
+        </div>
+      </header>
 
-  useEffect(()=>{
-    const onKey=(event)=>{
-      if(event.metaKey||event.ctrlKey||event.altKey) return;
-      const key=event.key.toLowerCase();
-      if(key==="escape"||key==="backspace"){
-        event.preventDefault();
-        router.push("/thumbnails");
-        return;
-      }
-      if(event.key==="ArrowLeft"||key==="a"||key==="p"){
-        event.preventDefault();
-        router.push(previous);
-        return;
-      }
-      if(event.key==="ArrowRight"||key==="d"||key==="n"){
-        event.preventDefault();
-        router.push(next);
-        return;
-      }
-      if(key==="home"){
-        event.preventDefault();
-        router.push(first);
-        return;
-      }
-      if(key==="end"){
-        event.preventDefault();
-        router.push(last);
-      }
-    };
-
-    window.addEventListener("keydown",onKey);
-    return()=>window.removeEventListener("keydown",onKey);
-  },[first,last,next,previous,router]);
-
-  useEffect(()=>{
-    [previous,next].forEach((url)=>{
-      // Use a native HTML image for preloading. The imported Next.js <Image>
-      // component shadows the browser's global Image constructor in this file.
-      const preloadImage=document.createElement("img");
-      preloadImage.decoding="async";
-      const filename=new URL(url,window.location.origin).searchParams.get("file");
-      if (filename) preloadImage.src = (filename.startsWith("thumb-upload-") || filename.startsWith("thumbnail-")) ? "/uploads/" + filename : getThumbnailSrc(filename);
-    });
-  },[previous,next]);
-
-  return <main className="thumbnail-viewer-page" aria-label="Thumbnail viewer">
-    <header className="thumbnail-viewer-nav">
-      <Link href="/thumbnails" className="thumbnail-viewer-brand">KRISHNA<span>.</span></Link>
-      <div className="thumbnail-viewer-counter" aria-live="polite">
-        <b>{String(index+1).padStart(2,"0")}</b><i>/</i><span>{String(total).padStart(2,"0")}</span><em>{item.label}</em>
+      <div className="cinema-viewer-progress" aria-hidden="true">
+        <span style={{ transform: `scaleX(${position})` }} />
       </div>
-      <Link href="/thumbnails" className="thumbnail-viewer-back">BACK ×</Link>
-    </header>
 
-    <section className="thumbnail-viewer-stage" aria-label={item.title}>
-      <div className="viewer-side-tag">VISUAL / {item.label}</div>
-      <AnimatePresence mode="wait" initial={false} custom={direction}>
-        <WobbleImage className="thumbnail-viewer-wobble">
-          <motion.div
-            key={item.id}
-            className="thumbnail-viewer-image-frame"
-            custom={direction}
-            variants={{
-              enter:(dir)=>({opacity:0,x:dir*42,scale:.985}),
-              center:{opacity:1,x:0,scale:1},
-              exit:(dir)=>({opacity:0,x:dir*-42,scale:.985})
-            }}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{duration:.32,ease:[.16,1,.3,1]}}
-          >
-            <Image
-              src={override.src||item.src}
-              alt={item.title}
-              fill
-              sizes="100vw"
-              quality={72}
-              priority
-              draggable="false"
-              className="thumbnail-viewer-image" style={{objectFit:override.fit==="contain"?"contain":"cover",objectPosition:(override.positionX??50)+"% "+(override.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(override.scale)||1))+")",opacity:override.visible===false?0:(override.opacity??1)}}
-            />
-          </motion.div>
-        </WobbleImage>
-      </AnimatePresence>
-      <span className="thumbnail-viewer-help">← A / P &nbsp; PREVIOUS &nbsp;&nbsp; D / N → &nbsp; NEXT &nbsp;&nbsp; ESC &nbsp; BACK</span>
-    </section>
+      <section className="cinema-viewer-stage" aria-label="Artwork" onTouchStart={startSwipe}
+        onTouchEnd={endSwipe} onTouchCancel={() => { gesture.current = null; }}>
+        <div className="cinema-viewer-screen">
+          <AnimatePresence initial={false}>
+            <motion.div key={item.id} className="cinema-viewer-frame"
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.986 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0 : 0.34, ease: [0.22, 1, 0.36, 1] }}>
+              {visible && <Image
+                src={artworkSrc}
+                alt={item.title}
+                fill
+                sizes="(max-width: 720px) 95vw, (min-width: 1600px) 1344px, 85vw"
+                quality={75}
+                loading="eager"
+                fetchPriority="high"
+                unoptimized={failedSrc === artworkSrc}
+                onError={() => setFailedSrc(artworkSrc)}
+                draggable={false}
+                style={{ opacity: override.opacity ?? 1 }}
+              />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </section>
 
-    <footer className="thumbnail-viewer-footer">
-      <div>
-        <span>{item.label}</span>
-        <h1>{item.title}</h1>
-        <p>{item.subtitle}</p>
-      </div>
-      <div className="thumbnail-viewer-actions" aria-label="Thumbnail navigation">
-        <Link href={previous} aria-label="Previous thumbnail">←</Link>
-        <Link href={next} aria-label="Next thumbnail">→</Link>
-      </div>
-    </footer>
-  </main>;
+      <footer className="cinema-viewer-footer">
+        <div className="cinema-viewer-caption" aria-live="polite">
+          <span>{game}</span>
+          <h1>{item.title}</h1>
+          <p>{item.subtitle}</p>
+        </div>
+        <p className="cinema-viewer-hint"><kbd>←</kbd> <kbd>→</kbd> Browse artwork</p>
+        {total > 1 && <nav className="cinema-viewer-controls" aria-label="Thumbnail navigation">
+          <Link href={previous} replace scroll={false} aria-label="Previous thumbnail">
+            <span aria-hidden="true">‹</span> <span>Previous</span>
+          </Link>
+          <Link href={next} replace scroll={false} aria-label="Next thumbnail">
+            <span>Next</span> <span aria-hidden="true">›</span>
+          </Link>
+        </nav>}
+      </footer>
+    </main>
+  );
 }

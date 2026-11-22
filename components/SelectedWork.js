@@ -10,7 +10,7 @@ const work = [
   ["01","VISUAL DESIGN","Gaming thumbnails","Character-led compositions and art direction built to win attention in one frame.","/thumbnails/view?file=genshin%20cinematic.png&category=GENSHIN","selectedGenshin","/images/genshin%20cinematic.png"],
   ["02","VISUAL DESIGN","Skirk / Genshin","High-impact character composition with cinematic contrast and deliberate framing.","/thumbnails/view?file=genshin%20skirk.png&category=GENSHIN","selectedSkirk","/images/genshin%20skirk.png"],
   ["03","VISUAL DESIGN","Wuthering Waves","Atmosphere, hierarchy and an unmistakable focal character.","/thumbnails/view?file=wuwa%20cyberpunk%201.png&category=WUWA","selectedWuwa","/images/wuwa%20cyberpunk%201.png"],
-  ["04","AI / SOFTWARE","Rukiya","A practical automation system for communities, memory and repeatable workflows.","/projects#rukiya","selectedRukiya","/images/bots/rukiya.png"],
+  ["04","AI / SOFTWARE","Rukiya","An AI chat assistant for YouTube livestreams and Discord communities.","/projects#rukiya","selectedRukiya","/images/bots/rukiya.png"],
   ["05","AUTOMATION","Lxeus","Moderation and intelligent interaction tools for Discord communities.","/projects#lxeus","selectedLxeus","/images/bots/lexus.png"],
   ["06","VISUAL DESIGN","Valorant","Agent-focused gaming visuals with strong composition and controlled energy.","/thumbnails/view?file=valorant%20chamber%20velo.png&category=VALORANT","selectedValorant","/images/valorant%20chamber%20velo.png"]
 ];

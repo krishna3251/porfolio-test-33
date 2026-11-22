@@ -1,13 +1,19 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useReducedMotion, useScroll } from "framer-motion";
 import { useMemo,useRef,useState } from "react";
 import TerminalBar from "@/components/TerminalBar";
 import WobbleImage from "@/components/WobbleImage";
 import useSiteMedia from "@/hooks/useSiteMedia";
-
-const order=["GENSHIN","HSR","WUWA","VALORANT","PUBG","NTE","FORZA","OTHER"];
+import {
+  FEATURED_THUMBNAIL,
+  THUMBNAIL_CATEGORIES,
+  getThumbnailArchiveHref,
+  getThumbnailGameName,
+  getThumbnailViewerHref,
+} from "@/lib/thumbnails";
 
 const accentMap={
   GENSHIN:"#ff7a45",
@@ -53,7 +59,7 @@ function ThumbnailCard({item,index,active,total}){
     onMouseMove={move}
   >
     <Link
-      href={"/thumbnails/view?file="+encodeURIComponent(item.filename)+"&category="+encodeURIComponent(active)}
+      href={getThumbnailViewerHref(item.filename,active)}
       className="thumb-link"
       aria-label={"View "+item.title}
       data-cursor="VIEW"
@@ -86,16 +92,19 @@ function ThumbnailCard({item,index,active,total}){
 }
 
 export default function WorkArchive({groups=[]}){
-  const [active,setActive]=useState("ALL");
+  const searchParams = useSearchParams();
   const {media}=useSiteMedia();
   const items=useMemo(()=>groups.flatMap(g=>g.thumbnails||[]).map((item)=>{const settings=media.overrides?.[item.filename]||{};return {...item,src:settings.src||item.src,mediaSettings:settings};}),[groups,media.overrides]);
   const cats=useMemo(()=>{
     const counts={};
     items.forEach(item=>{counts[item.label]=(counts[item.label]||0)+1});
-    return order.filter(label=>counts[label]).map(label=>({label,count:counts[label]}));
+    return THUMBNAIL_CATEGORIES.filter(label=>counts[label]).map(label=>({label,count:counts[label]}));
   },[items]);
+  const requestedCategory = searchParams.get("category");
+  const active = cats.some(({label})=>label===requestedCategory) ? requestedCategory : "ALL";
   const filtered=active==="ALL"?items:items.filter(item=>item.label===active);
-  const featured=filtered[0];
+  const featured=items.find(item=>item.filename===FEATURED_THUMBNAIL&&item.mediaSettings.visible!==false) || items.find(item=>item.mediaSettings.visible!==false);
+  const setActive = (category) => window.history.replaceState(null,"",getThumbnailArchiveHref(category));
 
   return <div className="archive-shell">
     <TerminalBar command="gallery --recent --sort=visual" meta="ARCHIVE / ONLINE" />
@@ -106,21 +115,19 @@ export default function WorkArchive({groups=[]}){
     </div>
 
     {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={false} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
-      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt="" fill sizes="(max-width:900px) 100vw, 70vw" quality={72} className="archive-feature-image" style={{objectFit:featured.mediaSettings?.fit==="contain"?"contain":"cover",objectPosition:(featured.mediaSettings?.positionX??50)+"% "+(featured.mediaSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(featured.mediaSettings?.scale)||1))+")",opacity:featured.mediaSettings?.visible===false?0:(featured.mediaSettings?.opacity??1)}}/></WobbleImage><div className="archive-feature-overlay"><span>{featured.label} / FEATURED</span><b>01 / {String(items.length).padStart(2,"0")}</b></div></div>
-      <div className="archive-feature-copy"><span>SELECTED FRAME</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={"/thumbnails/view?file="+encodeURIComponent(featured.filename)+"&category=ALL"} data-cursor="FEATURED">OPEN FEATURE ↗</Link></div>
+      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt={featured.title} fill sizes="(max-width:900px) 100vw, 64vw" quality={72} className="archive-feature-image" style={{objectFit:featured.mediaSettings?.fit==="contain"?"contain":"cover",objectPosition:(featured.mediaSettings?.positionX??50)+"% "+(featured.mediaSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(featured.mediaSettings?.scale)||1))+")",opacity:featured.mediaSettings?.opacity??1}}/></WobbleImage></div>
+      <div className="archive-feature-copy"><span>FEATURED · {getThumbnailGameName(featured.label)}</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={getThumbnailViewerHref(featured.filename)} data-cursor="FEATURED">View artwork</Link></div>
     </motion.div>}
 
     <div className="archive-command"><div className="archive-command-left"><span className="archive-live"><i/> LIVE ARCHIVE</span><span>INDEX / {String(filtered.length).padStart(2,"0")}</span></div><span>FILTER / SELECT</span></div>
 
-    <div className="archive-filter">
+    <div className="archive-filter" id="gallery" tabIndex={-1}>
       <div className="archive-filter-track" role="group" aria-label="Filter thumbnails by game">
         <button onClick={()=>setActive("ALL")} aria-pressed={active==="ALL"} className={active==="ALL"?"active":""} data-cursor="ALL WORK">ALL <b>{items.length}</b></button>
         {cats.map(cat=><button key={cat.label} onClick={()=>setActive(cat.label)} aria-pressed={active===cat.label} className={active===cat.label?"active":""} data-cursor={cat.label}>{cat.label} <b>{cat.count}</b></button>)}
       </div>
       <span>{String(filtered.length).padStart(2,"0")} WORKS / 2026</span>
     </div>
-
-    <div className="archive-feature-row"><span>SCROLL / REVEAL</span><span>HOVER / PARALLAX</span><span>CLICK / OPEN</span></div>
 
     <motion.div layout className="thumb-grid">
       <AnimatePresence mode="popLayout">

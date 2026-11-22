@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import WobbleImage from "@/components/WobbleImage";
 
@@ -9,7 +10,9 @@ const AUDIO_SRC=`${AUDIO_CDN_BASE}/song.mp3`;
 const ARTWORK_SRC=`${AUDIO_CDN_BASE}/neverness_showcase.png`;
 
 export default function AudioPlayer() {
+  const pathname = usePathname();
   const audioRef = useRef(null);
+  const launcherRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.35);
@@ -18,6 +21,8 @@ export default function AudioPlayer() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isWobbleHover, setIsWobbleHover] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [controlsPath, setControlsPath] = useState(null);
+  const controlsOpen = controlsPath === pathname;
   const analyserInitialized = useRef(false);
 
   const initAnalyser = useCallback(() => {
@@ -194,8 +199,22 @@ export default function AudioPlayer() {
     };
   }, [initAnalyser, volume, isMuted]);
 
-  return (
-    <div
+  function closeControlsOnEscape(event) {
+    if (event.key !== "Escape" || !controlsOpen) return;
+    event.stopPropagation();
+    setControlsPath(null);
+    launcherRef.current?.focus();
+  }
+
+  return <>
+    <button ref={launcherRef} type="button" className="audio-launcher" aria-label="Music controls"
+      aria-expanded={controlsOpen} aria-controls="portfolio-audio-controls"
+      onKeyDown={closeControlsOnEscape}
+      onClick={() => setControlsPath(controlsOpen ? null : pathname)}>
+      <span aria-hidden="true">♫</span>
+    </button>
+    <div id="portfolio-audio-controls" data-expanded={controlsOpen}
+      onKeyDown={closeControlsOnEscape}
       className={`flex items-center gap-3 glass-audio song-box px-3 py-1.5 transition-all duration-300 ${isPlaying ? "song-box-playing" : ""}`}
       onMouseMove={handleWobbleMove}
       onMouseEnter={() => setIsWobbleHover(true)}
@@ -323,5 +342,5 @@ export default function AudioPlayer() {
         </button>
       </div>
     </div>
-  );
+  </>;
 }

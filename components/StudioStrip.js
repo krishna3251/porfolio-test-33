@@ -1,14 +1,14 @@
 "use client";
 import TerminalBar from "@/components/TerminalBar";
 
-const items=[
-  ["01","56","VISUAL PIECES","Thumbnail archive"],
-  ["02","04","SOFTWARE BUILDS","Projects & systems"],
-  ["03","03","CORE DISCIPLINES","AI / WEB / VISUAL"],
-  ["04","∞","ITERATE","Ship, learn, repeat"]
-];
+export default function StudioStrip({thumbnailCount}){
+  const items = [
+    ["01",String(thumbnailCount).padStart(2,"0"),"VISUAL PIECES","Thumbnail archive"],
+    ["02","04","SOFTWARE BUILDS","Projects & systems"],
+    ["03","03","CORE DISCIPLINES","AI / WEB / VISUAL"],
+    ["04","∞","ITERATE","Ship, learn, repeat"],
+  ];
 
-export default function StudioStrip(){
   return <section className="studio-strip" aria-label="Portfolio overview">
     <TerminalBar command="status --summary" meta="SYSTEM / ONLINE" />
     <div className="studio-strip-inner">

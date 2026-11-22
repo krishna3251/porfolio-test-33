@@ -8,6 +8,8 @@ import AboutSection from "@/components/AboutSection";
 import SkillsMarquee from "@/components/SkillsMarquee";
 import HowIBuild from "@/components/HowIBuild";
 import ContactFooter from "@/components/ContactFooter";
+import siteMedia from "@/public/site-media.json";
+import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
 
 export const metadata={
   title:"KRISHNA / Creative Developer + Visual Designer",
@@ -15,12 +17,15 @@ export const metadata={
 };
 
 export default function Home(){
+  const thumbnailCount = getChronologicalThumbnailGroups(siteMedia)
+    .reduce((total, group) => total + group.thumbnails.length, 0);
+
   return <div className="site-page site-page--cinematic">
     <main id="main-content" tabIndex={-1}>
       <HomeHero/>
       <CinematicThread/>
       <CinematicSectionFlow/>
-      <StudioStrip/>
+      <StudioStrip thumbnailCount={thumbnailCount}/>
       <ServicesSection/>
       <SelectedWork/>
       <AboutSection/>

@@ -1,47 +1,35 @@
-import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
-import siteMedia from "@/public/site-media.json";
 import { notFound } from "next/navigation";
 import ThumbnailViewer from "@/components/ThumbnailViewer";
+import { getChronologicalThumbnailGroups, getThumbnailArchiveHref, getThumbnailViewerHref } from "@/lib/thumbnails";
+import siteMedia from "@/public/site-media.json";
 
 export const dynamic = "force-dynamic";
 
 export default async function ThumbnailViewPage({ searchParams }) {
   const params = await searchParams;
-  const filename = params?.file || "";
-  const requestedCategory = params?.category || "ALL";
-
+  const filename = typeof params?.file === "string" ? params.file : "";
+  const requestedCategory = params?.category;
   const groups = getChronologicalThumbnailGroups(siteMedia);
-  const allItems = groups.flatMap((group) => group.thumbnails || []);
-  const scopedItems =
-    requestedCategory === "ALL"
-      ? allItems
-      : allItems.filter((item) => item.label === requestedCategory);
+  const allItems = groups.flatMap((group) => group.thumbnails);
+  const selectedItem = allItems.find((item) => item.filename === filename);
+  if (!allItems.length || (filename && !selectedItem)) notFound();
 
-  const sourceItems = scopedItems.length ? scopedItems : allItems;
-  const selectedIndex = Math.max(0, sourceItems.findIndex((item) => item.filename === filename));
-  const item = sourceItems[selectedIndex] || allItems[0];
+  const categoryItems = allItems.filter((item) => item.label === requestedCategory);
+  const matchesCategory = categoryItems.length && (!selectedItem || selectedItem.label === requestedCategory);
+  const category = matchesCategory ? requestedCategory : "ALL";
+  const items = matchesCategory ? categoryItems : allItems;
+  const total = items.length;
+  const index = selectedItem ? items.indexOf(selectedItem) : 0;
+  const urlAt = (position) => getThumbnailViewerHref(items[position].filename, category);
 
-  if (!item) {
-    notFound();
-  }
-
-  const previousItem = sourceItems[(selectedIndex - 1 + sourceItems.length) % sourceItems.length];
-  const nextItem = sourceItems[(selectedIndex + 1) % sourceItems.length];
-  const firstItem = sourceItems[0];
-  const lastItem = sourceItems[sourceItems.length - 1];
-
-  const makeUrl = (target) =>
-    `/thumbnails/view?file=${encodeURIComponent(target.filename)}&category=${encodeURIComponent(requestedCategory)}`;
-
-  return (
-    <ThumbnailViewer
-      item={item}
-      index={selectedIndex}
-      total={sourceItems.length}
-      previous={makeUrl(previousItem)}
-      next={makeUrl(nextItem)}
-      first={makeUrl(firstItem)}
-      last={makeUrl(lastItem)}
-    />
-  );
+  return <ThumbnailViewer
+    item={items[index]}
+    archiveHref={`${getThumbnailArchiveHref(category)}#gallery`}
+    index={index}
+    total={total}
+    previous={urlAt((index + total - 1) % total)}
+    next={urlAt((index + 1) % total)}
+    first={urlAt(0)}
+    last={urlAt(total - 1)}
+  />;
 }

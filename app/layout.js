@@ -4,6 +4,7 @@ import "./refinement.css";
 import "./kinetic-hero.css";
 import "./portfolio-polish.css";
 import "./cinematic-detail.css";
+import "./gallery-viewer.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";

@@ -6,7 +6,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useSiteMedia from "@/hooks/useSiteMedia";
-import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
+import { getChronologicalThumbnailGroups, getThumbnailViewerHref } from "@/lib/thumbnails";
 
 const clamp = value => Math.max(0, Math.min(1, value));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -28,7 +28,7 @@ const FIBERS = Array.from({ length: 48 }, (_, index) => {
   const yscale = .83;
   return {
     ink: "hsl(" + (350 + Math.round(wave * 5)) + " 71% " + (45 + Math.round(wave * 10)) + "%)",
-    size: 2.9 + (wave + 1) * 1.6,
+    size: Number((2.9 + (wave + 1) * 1.6).toFixed(3)),
     start: [
       470 + t * 440 + perturb * 34, -260 - 130 * t,
       485 + t * 475 + perturb * 20, -160,
@@ -189,6 +189,7 @@ export default function HomeHero() {
       scene.style.setProperty("--cinema-header", (header?.getBoundingClientRect().height || 0) + "px");
     };
     const render = value => {
+      if (sceneRef.current !== scene || !threadRef.current) return;
       const p = clamp(value);
       const artProgress = p < .15 ? p * .9 : p < .86 ? .16 + (p - .15) * .88 : .79 + (p - .86) * 1.5;
       fibers.forEach((fiber, index) => {
@@ -313,6 +314,7 @@ export default function HomeHero() {
   const showcase = media.slots?.heroShowcase;
   const showcaseSrc = showcase?.src || items[0]?.src;
   const showcaseSettings = showcase?.src ? showcase : items[0]?.settings;
+  const showcaseItem = showcase?.src ? null : items[0];
   const background = media.slots?.heroBackground;
   const cutout = media.slots?.heroCutout;
 
@@ -340,13 +342,18 @@ export default function HomeHero() {
 
       <div className="cinema-intro" ref={introRef}>
         {cutout?.src && cutout.visible !== false && <div className="cinema-custom-cutout" aria-hidden="true"><img src={cutout.src} alt="" style={imageStyle(cutout)} /></div>}
-        {showcaseSrc && showcase?.visible !== false && <div className="cinema-intro-object" aria-hidden="true">
+        {showcaseSrc && showcase?.visible !== false && <div className="cinema-intro-object">
           <div className="cinema-object-halo" />
           <div className="cinema-object-frame">
-            <img src={showcaseSrc} alt="" style={imageStyle(showcaseSettings)} />
+            {showcaseItem ? <Image src={showcaseSrc} alt="" fill sizes="(max-width: 760px) 50vw, 42vw"
+              fetchPriority="high" quality={72} style={imageStyle(showcaseSettings)} /> :
+              <img src={showcaseSrc} alt="" style={imageStyle(showcaseSettings)} />}
             {showcaseSettings?.overlayOpacity > 0 && <span className="cinema-object-overlay" style={{backgroundColor: showcaseSettings.overlayColor || "#a8271b", opacity: showcaseSettings.overlayOpacity}} />}
             <span className="cinema-object-glass" />
-            <span className="cinema-object-label"><b>SELECTED FRAME</b><span>ART DIRECTION / 01</span></span>
+            {showcaseItem ? <Link href={getThumbnailViewerHref(showcaseItem.filename, showcaseItem.label)}
+              className="cinema-object-link" aria-label={"View artwork: " + showcaseItem.title}>
+              <span className="cinema-object-label"><b>{showcaseItem.title}</b><span>VIEW ARTWORK</span></span>
+            </Link> : <span className="cinema-object-label"><b>SELECTED FRAME</b></span>}
           </div>
           <span className="cinema-object-index">01 / 06 <i /> CREATIVE PRACTICE</span>
         </div>}

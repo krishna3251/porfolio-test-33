@@ -4,6 +4,7 @@ import useSiteMedia from "@/hooks/useSiteMedia";
 
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "";
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE || "";
+const linkedInProfile = "https://www.linkedin.com/in/krishna-soni-a00910279";
 
 export default function ContactFooter(){
   const {media}=useSiteMedia();
@@ -22,15 +23,14 @@ export default function ContactFooter(){
         <div className="contact-copy">
           <span>01 / START HERE</span>
           <p>Open to software projects, visual work, collaborations and experiments.</p>
-          <div className="contact-methods" aria-label="Contact methods">
-            {!contactEmail && !contactPhone && <a href="https://github.com/krishna3251" className="text-link" target="_blank" rel="noopener noreferrer">Connect on GitHub <span>↗</span></a>}
-            {contactEmail && <a href={`mailto:${contactEmail}`} className="text-link" data-cursor="EMAIL">Email <span>↗</span></a>}
-            {contactPhone && <a href={`tel:${contactPhone.replace(/[^+\d]/g, "")}`} className="text-link" data-cursor="PHONE">Phone <span>↗</span></a>}
-          </div>
+          {contactPhone && <div className="contact-methods" aria-label="Contact methods">
+            <a href={`tel:${contactPhone.replace(/[^+\d]/g, "")}`} className="text-link" data-cursor="PHONE">Phone <span>↗</span></a>
+          </div>}
         </div>
         <div>
-          <a href="https://github.com/krishna3251" target="_blank" rel="noopener noreferrer" className="btn btn-light" data-cursor="GITHUB">GitHub <span>↗</span></a>
-          <a href="https://github.com/krishna3251?tab=repositories" target="_blank" rel="noopener noreferrer" className="btn btn-dark" data-cursor="REPOSITORIES">Repositories <span>↗</span></a>
+          {contactEmail && <a href={`mailto:${contactEmail}`} className="btn btn-light" data-cursor="EMAIL">Email me</a>}
+          <a href={linkedInProfile} target="_blank" rel="noopener noreferrer" className={contactEmail ? "btn btn-dark" : "btn btn-light"} data-cursor="LINKEDIN">Connect on LinkedIn</a>
+          <a href="https://github.com/krishna3251" target="_blank" rel="noopener noreferrer" className="btn btn-dark" data-cursor="GITHUB">GitHub</a>
         </div>
       </div>
       <div className="contact-bottom">

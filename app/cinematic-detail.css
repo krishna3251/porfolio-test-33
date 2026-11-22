@@ -21,6 +21,9 @@
 .cinema-object-glass {position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,247,227,.26),transparent 32%,transparent 66%,rgba(32,11,18,.3)),linear-gradient(0deg,rgba(17,8,12,.8),transparent 38%)}
 .cinema-object-label {position:absolute; bottom:0; left:0; right:0; padding:22px; display:flex; justify-content:space-between; gap:12px; color:#ffebda; font:500 10px/1.5 var(--font-dm-mono),monospace; letter-spacing:.12em}
 .cinema-object-label b {font-weight:500}.cinema-object-label span {color:#edb09a}
+.cinema-object-link {position:absolute;inset:0;pointer-events:auto;color:inherit}
+.cinema-object-link:hover .cinema-object-label span {color:#fff6ee}
+.cinema-object-link:focus-visible {outline:2px solid #ffb89a;outline-offset:-4px}
 .cinema-object-index {position:absolute; right:4%; bottom:-4%; color:#f0b7a1; font:500 10px/1.4 var(--font-dm-mono),monospace; letter-spacing:.12em}
 .cinema-object-index i {display:inline-block; vertical-align:middle; width:35px; height:1px; margin:0 8px; background:#ef8c7b}
 .cinema-intro-actions a,.cinema-finale-actions a {min-height:44px; display:inline-flex; align-items:center; padding:10px 0; font-size:11px}
@@ -50,6 +53,7 @@
   .cinema-object-frame {transform:rotateY(-8deg) rotateX(4deg) rotateZ(4deg)}
   .cinema-object-label {padding:9px;font-size:8px}
   .cinema-object-label span {display:none}
+  .cinema-object-link {pointer-events:none;visibility:hidden}
   .cinema-intro {width:min(88vw,480px)}
   .cinema-intro > :not(.cinema-intro-object) {position:relative;z-index:1}
   .cinema-intro p {font-size:14px;line-height:1.65;max-width:32ch}
