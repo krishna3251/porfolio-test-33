@@ -635,10 +635,12 @@ export default function AdminStudio() {
               <span className="admin-eyebrow">GLOBAL DESIGN</span>
               <div className="admin-control-title"><label htmlFor="admin-theme">SITE COLOR DIRECTION</label><span>THEME PRESETS</span></div>
               <select id="admin-theme" value={config.design?.theme || "editorial"} onChange={(event) => updateDesign("theme", event.target.value)}>
+                <option value="atlas">Atlas / pine + mint</option>
                 <option value="editorial">Editorial / paper + ink</option>
                 <option value="darkroom">Darkroom / cinematic</option>
                 <option value="sunset">Sunset / warm</option>
                 <option value="minimalism">Minimal / quiet</option>
+                <option value="maximalism">Maximalism / bold</option>
                 <option value="custom">Custom palette</option>
               </select>
               {config.design?.theme === "custom" && <div className="admin-theme-colors">{[["paper","Paper"],["surface","Panels"],["ink","Ink"],["muted","Muted text"],["accent","Accent"],["orange","Orange"],["border","Borders"]].map(([key,label]) => <label key={key}><span>{label}</span><input type="color" value={config.design[key] || "#eeeadf"} onChange={(event) => updateDesign(key, event.target.value)} /></label>)}</div>}

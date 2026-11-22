@@ -1,31 +1,22 @@
+import AtlasSectionHero from "@/components/AtlasSectionHero";
 import WorkArchive from "@/components/WorkArchive";
 import siteMedia from "@/public/site-media.json";
 import { getChronologicalThumbnailGroups } from "@/lib/thumbnails";
-import TerminalBar from "@/components/TerminalBar";
-import SquigglyText from "@/components/ui/squiggly-text";
 
-export const dynamic="force-dynamic";
-
-export const metadata={
-  title:"Thumbnails",
-  description:"Gaming thumbnail and visual design archive by Krishna.",
+export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Thumbnails",
+  description: "Gaming thumbnail and visual design archive by Krishna.",
 };
 
-export default function ThumbnailsPage(){
-  const groups=getChronologicalThumbnailGroups(siteMedia);
-  const total=groups.reduce((n,g)=>n+g.thumbnails.length,0);
-
-  return <main id="main-content" tabIndex={-1} className="archive-page"><TerminalBar command="cd ./visual-archive" meta="PATH / ~/krishna" />
-    <section className="archive-hero" data-page="thumbnails">
-      <div>
-        <span className="archive-eyebrow">02 / VISUAL ARCHIVE</span>
-        <h1>Pictures<br/><em><SquigglyText scale={2.5}>that punch.</SquigglyText></em></h1>
-      </div>
-      <div className="archive-hero-aside">
-        <span>{String(total).padStart(2,"0")} pieces</span>
-        <p>Gaming thumbnails, key art and visual experiments. Built to make a frame stop the scroll.</p>
-      </div>
-    </section>
-    <section className="archive-content"><WorkArchive groups={groups}/></section>
-  </main>;
+export default function ThumbnailsPage() {
+  const groups = getChronologicalThumbnailGroups(siteMedia);
+  const total = groups.reduce((count, group) => count + group.thumbnails.length, 0);
+  return (
+    <main id="main-content" tabIndex={-1} className="atlas-container atlas-destination-page">
+      <AtlasSectionHero section="Thumbnails" title="Visual" accent="archive."
+        description={`${total} gaming thumbnails, key art and visual experiments. Pick a game or open any frame in the cinematic viewer.`} />
+      <WorkArchive groups={groups} />
+    </main>
+  );
 }

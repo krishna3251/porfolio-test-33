@@ -1,9 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
+import Image from "@/components/PortfolioImage";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailGameName } from "@/lib/thumbnails";
 import useSiteMedia from "@/hooks/useSiteMedia";
@@ -16,7 +16,6 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
   const { media } = useSiteMedia();
   const override = media.overrides?.[item.filename] || {};
   const artworkSrc = override.src || item.src;
-  const [failedSrc, setFailedSrc] = useState(null);
   const gesture = useRef(null);
 
   useEffect(() => {
@@ -95,8 +94,6 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
                 quality={75}
                 loading="eager"
                 fetchPriority="high"
-                unoptimized={failedSrc === artworkSrc}
-                onError={() => setFailedSrc(artworkSrc)}
                 draggable={false}
                 style={{ opacity: override.opacity ?? 1 }}
               />}

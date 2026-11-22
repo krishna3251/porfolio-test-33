@@ -4,131 +4,110 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { loadSiteMedia } from "@/hooks/useSiteMedia";
+import { getPortfolioTheme, portfolioThemes, themeStorageKey } from "@/lib/portfolio-theme";
 
-const siteLinks=[["Home","/"],["Thumbnails","/thumbnails"],["Projects","/projects"]];
-const homeLinks=[
-  ["Home","#home"],
-  ["Work","#work"],
-  ["Thumbnails","/thumbnails"],
-  ["Projects","/projects"],
-  ["About","#about"],
-  ["Contact","#contact"]
-];
-const themes=[
-  ["editorial","Editorial"],
-  ["darkroom","Darkroom"],
-  ["sunset","Sunset"],
-  ["minimalism","Minimalism"],
-  ["maximalism","Maximalism"]
+const navItems = [
+  ["/", "Map"],
+  ["/thumbnails", "Thumbnails"],
+  ["/projects", "Projects"],
+  ["/bots", "Bot Lab"],
+  ["/#about", "About"],
 ];
 
-export default function Navbar(){
-  const pathname=usePathname();
-  const [menuPath,setMenuPath]=useState(null);
-  const open=menuPath===pathname;
-  const menuButton=useRef(null);
-  const themeButton=useRef(null);
-  const headerRef=useRef(null);
-  const setOpen=value=>setMenuPath(value?pathname:null);
-  const [progress,setProgress]=useState(0);
-  const [theme,setTheme]=useState("editorial");
-  const [themeVersion,setThemeVersion]=useState(1);
-  const [themeOpen,setThemeOpen]=useState(false);
+export default function Navbar() {
+  const pathname = usePathname();
+  const [menuPath, setMenuPath] = useState(null);
+  const [themePath, setThemePath] = useState(null);
+  const [theme, setTheme] = useState("atlas");
+  const themeVersion = useRef(1);
+  const root = useRef(null);
+  const menuButton = useRef(null);
+  const themeButton = useRef(null);
+  const open = menuPath === pathname;
+  const themeOpen = themePath === pathname;
 
-  const links=pathname==="/"?homeLinks:siteLinks;
-  const viewer=pathname.startsWith("/thumbnails/view");
-  const admin=pathname.startsWith("/admin");
+  function closeMenus() {
+    setMenuPath(null);
+    setThemePath(null);
+  }
 
-  useEffect(()=>{
-    const update=()=>{
-      const doc=document.documentElement;
-      const max=doc.scrollHeight-window.innerHeight;
-      setProgress(max>0?Math.min(1,Math.max(0,window.scrollY/max)):0);
-    };
-    update();
-    window.addEventListener("scroll",update,{passive:true});
-    window.addEventListener("resize",update);
-    return()=>{window.removeEventListener("scroll",update);window.removeEventListener("resize",update);};
-  },[pathname]);
+  useEffect(() => {
+    let alive = true;
+    loadSiteMedia().then((config) => {
+      if (!alive) return;
+      themeVersion.current = Number(config.version) || 1;
+      setTheme(getPortfolioTheme(config));
+    });
+    return () => { alive = false; };
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (!open && !themeOpen) return;
-    const keydown=event=>{
-      if(event.key==="Escape") {
-        setMenuPath(null); setThemeOpen(false);
-        (open?menuButton:themeButton).current?.focus();
-      }
+    const outside = (event) => {
+      if (!root.current?.contains(event.target)) closeMenus();
     };
-    const outside=event=>{if(!headerRef.current?.contains(event.target)){setMenuPath(null);setThemeOpen(false);}};
-    const resize=()=>{if(window.innerWidth>760)setMenuPath(null);};
-    document.addEventListener("keydown",keydown);
-    document.addEventListener("pointerdown",outside);
-    window.addEventListener("resize",resize);
-    return()=>{document.removeEventListener("keydown",keydown);document.removeEventListener("pointerdown",outside);window.removeEventListener("resize",resize);};
-  },[open,themeOpen]);
+    const keydown = (event) => {
+      if (event.key !== "Escape") return;
+      closeMenus();
+      (themeOpen ? themeButton : menuButton).current?.focus();
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", keydown);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", keydown);
+    };
+  }, [open, themeOpen]);
 
-  useEffect(()=>{
-    let alive=true;
-    loadSiteMedia()
-      .then((config)=>{
-        if(!alive||!config)return;
-        const version=Number(config.version)||1;
-        setThemeVersion(version);
-        let preferred=config.design?.theme||"editorial";
-        try {
-          const stored=JSON.parse(window.localStorage.getItem("krishna-theme-v3")||"null");
-          if(stored&&stored.version===version&&themes.some(([id])=>id===stored.theme))preferred=stored.theme;
-        } catch {}
-        if(!themes.some(([id])=>id===preferred))preferred="editorial";
-        setTheme(preferred);
-        document.documentElement.dataset.theme=preferred;
-      })
-      .catch(()=>{document.documentElement.dataset.theme="editorial";});
-    return()=>{alive=false;};
-  },[]);
-
-  const changeTheme=(next)=>{
+  function selectTheme(next) {
     setTheme(next);
-    setThemeOpen(false);
-    document.documentElement.setAttribute("data-theme",next);
-    try { window.localStorage.setItem("krishna-theme-v3",JSON.stringify({theme:next,version:themeVersion})); } catch {}
-  };
+    setThemePath(null);
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(themeStorageKey, JSON.stringify({ version: themeVersion.current, theme: next }));
+    } catch {}
+  }
 
-  if(viewer||admin)return null;
+  if (pathname.startsWith("/admin") || pathname === "/thumbnails/view") return null;
 
-  return <header ref={headerRef} className="site-header">
-    <div className="site-header-inner">
-      <Link href="/" className="site-logo" aria-label="Krishna home"><span className="site-logo-prompt">&gt;</span> KRISHNA<span>.</span></Link>
-      <nav className="site-nav" aria-label="Primary navigation">
-        {links.map(([label,href])=><Link key={href} href={href} aria-current={(pathname===href || pathname==="/"&&href==="#home")?"page":undefined} className={(pathname===href || pathname==="/"&&href==="#home")?"active":""} data-cursor={label.toUpperCase()}><span>{label}</span></Link>)}
-      </nav>
-      <div className="site-header-right">
-        <span className="nav-status"><i/> AVAILABLE / 2026</span>
-        <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
-        <div className="theme-switcher">
-          <button type="button" ref={themeButton} className="theme-toggle" onClick={()=>setThemeOpen(v=>!v)} aria-expanded={themeOpen} aria-controls="theme-menu" aria-label="Change visual theme">
-            <span className="theme-toggle-mark" aria-hidden="true">◈</span>
-            <span className="theme-toggle-label">{theme}</span>
+  return (
+    <header ref={root} className="atlas-site-header">
+      <div className="atlas-nav-inner atlas-container">
+        <Link className="atlas-brand" href="/" aria-label="Krishna home" onClick={closeMenus}>
+          <span className="atlas-brand-mark" aria-hidden="true"><i /></span>
+          <span>KRISHNA<span>.</span></span>
+        </Link>
+        <nav className="atlas-navigation" aria-label="Primary navigation">
+          {navItems.map(([href, label]) => <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined}>{label}</Link>)}
+        </nav>
+        <div className="atlas-nav-actions">
+          <div className="atlas-theme-choice">
+            <button ref={themeButton} type="button" aria-label="Change visual theme" className="atlas-icon-button"
+              aria-expanded={themeOpen} aria-controls="atlas-theme-options" onClick={() => {
+                setMenuPath(null);
+                setThemePath(themeOpen ? null : pathname);
+              }}>
+              <span className="atlas-theme-icon" aria-hidden="true" />
+            </button>
+            {themeOpen && <div className="atlas-theme-options" id="atlas-theme-options" aria-label="Visual themes">
+              {portfolioThemes.map(([id, label]) => <button key={id} type="button" aria-pressed={theme === id}
+                onClick={() => selectTheme(id)}>{label}</button>)}
+            </div>}
+          </div>
+          <Link href="/#contact" className="atlas-button atlas-button-small atlas-nav-contact">Contact</Link>
+          <button ref={menuButton} type="button" className="atlas-icon-button atlas-menu-button" aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open} aria-controls="atlas-mobile-menu" onClick={() => {
+              setThemePath(null);
+              setMenuPath(open ? null : pathname);
+            }}>
+            <span className="atlas-menu-icon" aria-hidden="true" />
           </button>
-          {themeOpen&&<div id="theme-menu" className="theme-menu">
-            <span className="theme-menu-title">VISUAL SYSTEM / THEME</span>
-            {themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>
-              <i aria-hidden="true"/><span>{label}</span>{theme===id?<b>✓</b>:<b>↗</b>}
-            </button>)}
-          </div>}
         </div>
-        <button type="button" ref={menuButton} className="mobile-menu-button" onClick={()=>setOpen(!open)} aria-expanded={open} aria-controls="mobile-navigation">{open?"Close":"Menu"}</button>
       </div>
-    </div>
-    <div className="site-progress" aria-hidden="true"><span style={{transform:`scaleX(${progress})`}} /></div>
-    {open&&<div id="mobile-navigation" className="mobile-menu">
-      <div className="mobile-menu-meta">NAVIGATION / 2026</div>
-      {links.map(([label,href])=><Link key={href} href={href} onClick={()=>setOpen(false)} data-cursor={label.toUpperCase()}>{label}<span>↗</span></Link>)}
-      <a href="https://github.com/krishna3251" target="_blank" rel="noreferrer" data-cursor="GITHUB">GitHub ↗</a>
-      <div className="mobile-menu-theme-picker">
-        <span>VISUAL THEME</span>
-        <div>{themes.map(([id,label])=><button key={id} type="button" className={theme===id?"active":""} onClick={()=>changeTheme(id)}>{label}</button>)}</div>
-      </div>
-    </div>}
-  </header>;
+      {open && <nav className="atlas-mobile-menu" id="atlas-mobile-menu" aria-label="Mobile navigation">
+        {[...navItems, ["/#contact", "Contact"]].map(([href, label]) => <Link key={href} href={href}
+          aria-current={pathname === href ? "page" : undefined} onClick={closeMenus}>{label}</Link>)}
+      </nav>}
+    </header>
+  );
 }

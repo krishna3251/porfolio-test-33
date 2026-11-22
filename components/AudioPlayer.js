@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "@/components/PortfolioImage";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import WobbleImage from "@/components/WobbleImage";

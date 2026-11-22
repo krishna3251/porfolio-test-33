@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const EMPTY_MEDIA = { version: 1, design: { theme: "editorial" }, copy: {}, slots: {}, overrides: {} };
+const EMPTY_MEDIA = { version: 1, design: { theme: "atlas" }, copy: {}, slots: {}, overrides: {} };
 
 // The home page uses media config in several sections. Share a single in-flight
 // request and cache the parsed result for this browser session instead of
