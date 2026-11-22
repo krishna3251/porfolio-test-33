@@ -1,0 +1,500 @@
+:root {
+  --peacock-teal: #83cbbc;
+  --antique-gold: #e1c18a;
+  --spatial-ease: cubic-bezier(.2,.73,.23,1);
+}
+
+:root[data-theme="atlas"] .atlas-brand-mark {
+  border-color: #d9bd8563;
+  background: radial-gradient(circle at 50% 43%, #1f5049, #132a23 72%);
+}
+
+:root[data-theme="atlas"] .atlas-brand-mark i {
+  width: .95rem;
+  height: .76rem;
+  border-radius: 62% 42% 61% 41%;
+  border: 1px solid #e1c18aa6;
+  transform: rotate(-26deg);
+  background: radial-gradient(ellipse at 52% 52%, #15234c 0 21%, #428ba8 23% 35%, #83cbbc 38% 49%,
+    #bf9f55 53% 61%, #315b49 65%);
+}
+
+:root[data-theme="atlas"] .atlas-navigation a[aria-current="page"]::after {
+  background: linear-gradient(90deg, var(--peacock-teal), var(--antique-gold));
+}
+
+.spatial-exhibit {
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius, .75rem);
+  background: var(--surface);
+  box-shadow: 0 1.35rem 4.5rem #0002;
+}
+
+.spatial-gallery-room {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  height: clamp(17rem, 36vw, 32rem);
+  overflow: hidden;
+  perspective: 1100px;
+  background:
+    radial-gradient(ellipse at 52% 40%, #294a42 0, #172e2c 36%, transparent 75%),
+    radial-gradient(ellipse at 95% 12%, #8fb18e2c, transparent 40%),
+    linear-gradient(160deg, #141e21, #101b19 58%, #112124);
+}
+
+.spatial-gallery-room::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-radial-gradient(ellipse at 95% -48%, transparent 0 1.16rem, #b9ae8622 1.21rem 1.28rem, transparent 1.32rem 2rem);
+  mask-image: linear-gradient(160deg, transparent 25%, #000 65%, transparent 89%);
+  content: "";
+}
+
+.spatial-gallery-floor {
+  position: absolute;
+  top: 66%;
+  left: -15%;
+  width: 130%;
+  height: 105%;
+  transform: perspective(460px) rotateX(61deg);
+  transform-origin: center top;
+  background:
+    repeating-linear-gradient(90deg, #97cbb434 0 1px, transparent 1px 4rem),
+    repeating-linear-gradient(0deg, #97cbb42c 0 1px, transparent 1px 3rem),
+    radial-gradient(ellipse at top, #87b9a754, #0b161500 66%);
+  mask-image: linear-gradient(#000b, transparent 80%);
+  pointer-events: none;
+}
+
+.spatial-gallery-orbit {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(var(--depth-x, 0deg)) rotateY(var(--depth-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 330ms var(--spatial-ease);
+}
+
+.spatial-gallery-frame {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: min(55%, 44rem);
+  aspect-ratio: 16 / 9;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, -235px) scale(.84);
+  pointer-events: none;
+  transition: transform 640ms var(--spatial-ease), opacity 390ms ease;
+}
+
+.spatial-gallery-frame[data-position="left"] {
+  opacity: .83;
+  transform: translate3d(-118%, -48%, -98px) rotateY(32deg) rotateX(1deg) scale(.90);
+  pointer-events: auto;
+}
+
+.spatial-gallery-frame[data-position="right"] {
+  opacity: .83;
+  transform: translate3d(18%, -48%, -98px) rotateY(-32deg) rotateX(1deg) scale(.90);
+  pointer-events: auto;
+}
+
+.spatial-gallery-frame[data-position="front"] {
+  opacity: 1;
+  transform: translate3d(-50%, -51%, 35px) rotateX(-2deg);
+  pointer-events: auto;
+}
+
+.spatial-gallery-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #b5d9cb68;
+  border-radius: .68rem;
+  background: #111a1b;
+  box-shadow: 0 .35rem 0 #142a28, 0 1.4rem 2.5rem #070e0e9e;
+}
+
+.spatial-gallery-hit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.spatial-gallery-frame[data-position="front"] .spatial-gallery-picture {
+  border-color: #e1c18aba;
+  box-shadow: 0 .35rem 0 #2b453d, 0 1.65rem 3.35rem #060e0dc9, 0 0 2.2rem #8ecab442;
+}
+
+.spatial-gallery-frame:not([data-position="front"]) .spatial-gallery-picture img {
+  filter: saturate(.76) brightness(.71);
+}
+
+.spatial-gallery-picture img {
+  transition: filter 340ms ease;
+}
+
+.spatial-gallery-picture:is(:hover, :focus-within) img {
+  filter: saturate(1) brightness(.95);
+}
+
+.spatial-gallery-hit:focus-visible {
+  outline: 2px solid var(--antique-gold);
+  outline-offset: -4px;
+}
+
+.spatial-exhibit-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 2.8vw, 1.85rem);
+  border-top: 1px solid var(--border);
+}
+
+.spatial-exhibit-caption > div:first-child {
+  min-width: 0;
+  flex: 1 1 18rem;
+}
+
+.spatial-exhibit-caption h2 {
+  margin: .28rem 0 0;
+  color: var(--fg);
+  font: 650 clamp(1.5rem, 3.7vw, 2.95rem) / 1.07 var(--font-space), sans-serif;
+  letter-spacing: -.05em;
+}
+
+.spatial-exhibit-caption > div:first-child span {
+  color: var(--accent);
+  font: 500 .74rem / 1.4 var(--font-dm-mono), monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.spatial-exhibit-caption p {
+  margin: .43rem 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.spatial-exhibit-actions,
+.spatial-gallery-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+  align-items: center;
+}
+
+.spatial-gallery-controls span {
+  min-width: 3rem;
+  color: var(--muted);
+  font: .78rem var(--font-dm-mono), monospace;
+  text-align: center;
+}
+
+.spatial-gallery-controls button {
+  cursor: pointer;
+}
+
+.atlas-gallery-grid .spatial-art-card {
+  overflow: visible;
+  perspective: 850px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.spatial-art-card .atlas-work-link {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius, .75rem);
+  background: var(--surface);
+  transform: rotateX(var(--depth-x, 0deg)) rotateY(var(--depth-y, 0deg));
+  transition: transform 310ms var(--spatial-ease), box-shadow 240ms ease, border-color 240ms ease;
+}
+
+.spatial-art-card .atlas-work-link:hover,
+.spatial-art-card .atlas-work-link:focus-visible {
+  border-color: color-mix(in srgb, var(--peacock-teal) 68%, var(--border));
+  box-shadow: 0 .4rem 0 var(--surface-2), 0 1.35rem 2.6rem #0005;
+}
+
+.spatial-viewer-stage {
+  position: relative;
+  isolation: isolate;
+  perspective: 1350px;
+}
+
+.spatial-viewer-stage::after {
+  position: absolute;
+  z-index: -1;
+  bottom: 3%;
+  width: min(78%, 68rem);
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--viewer-fill) 24%, transparent), transparent 69%);
+  filter: blur(1rem);
+  content: "";
+}
+
+.spatial-viewer-stage .cinema-viewer-screen {
+  transform: rotateX(calc(var(--depth-x, 0deg) * .37)) rotateY(calc(var(--depth-y, 0deg) * .37));
+  transition: transform 320ms var(--spatial-ease), border-color 240ms ease;
+  box-shadow: 0 .3rem 0 #4b635647, 0 1.6rem 5rem #0009,
+    0 0 3rem color-mix(in srgb, var(--viewer-light) 16%, transparent);
+}
+
+.spatial-viewer-stage[data-inspecting="true"] {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.spatial-viewer-stage[data-inspecting="true"] .cinema-viewer-screen {
+  transform: none;
+  border-color: var(--viewer-light);
+}
+
+.spatial-viewer-stage .cinema-viewer-frame img {
+  transform-origin: var(--inspect-x, 50%) var(--inspect-y, 50%);
+  transition: scale 360ms var(--spatial-ease);
+}
+
+.spatial-viewer-stage[data-inspecting="true"] img {
+  scale: 1.65;
+}
+
+.spatial-viewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}
+
+.spatial-viewer-zoom {
+  min-height: 2.75rem;
+  padding: .65rem .9rem;
+  color: var(--cinema-text);
+  border: 1px solid var(--cinema-line);
+  border-radius: .4rem;
+  font-size: .875rem;
+  background: #161118b0;
+  cursor: pointer;
+}
+
+.spatial-viewer-zoom:hover,
+.spatial-viewer-zoom[aria-pressed="true"] {
+  border-color: var(--viewer-light);
+  background: color-mix(in srgb, var(--viewer-light) 17%, #161118);
+}
+
+.spatial-bot-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .72rem;
+  margin-bottom: 1rem;
+}
+
+.spatial-bot-picker button {
+  display: flex;
+  min-width: 0;
+  min-height: 4rem;
+  align-items: center;
+  gap: .65rem;
+  padding: .53rem .7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius, .75rem);
+  color: var(--fg);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: background 220ms ease, transform 220ms var(--spatial-ease), border-color 220ms ease;
+}
+
+.spatial-bot-picker button:hover {
+  transform: translateY(-2px);
+  border-color: var(--bot-light);
+}
+
+.spatial-bot-picker button[aria-pressed="true"] {
+  border-color: var(--bot-light);
+  background: color-mix(in srgb, var(--bot-light) 12%, var(--surface));
+  box-shadow: 0 .24rem 0 color-mix(in srgb, var(--bot-light) 23%, transparent);
+}
+
+.spatial-bot-picker-image {
+  position: relative;
+  flex: 0 0 2.65rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: .45rem;
+  background: var(--surface-2);
+}
+
+.spatial-bot-picker strong,
+.spatial-bot-picker small {
+  display: block;
+}
+
+.spatial-bot-picker small {
+  color: var(--muted);
+  font-size: .76rem;
+  line-height: 1.28;
+}
+
+.spatial-bot-card {
+  grid-template-columns: minmax(0, .98fr) minmax(0, 1.02fr);
+  scroll-margin-top: 5rem;
+}
+
+.spatial-bot-world {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 31rem;
+  place-items: center;
+  overflow: hidden;
+  perspective: 1000px;
+  background:
+    radial-gradient(ellipse at 50% 42%, color-mix(in srgb, var(--bot-light) 25%, #112120), transparent 67%),
+    linear-gradient(140deg, #192a28, #0c171b);
+}
+
+.spatial-bot-world::before {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, #b8e3d018 0 1px, transparent 1px 2.1rem),
+    repeating-linear-gradient(90deg, #b8e3d018 0 1px, transparent 1px 2.1rem);
+  mask-image: radial-gradient(ellipse, #000 12%, transparent 75%);
+  content: "";
+}
+
+.spatial-bot-assembly {
+  position: absolute;
+  inset: 0;
+  transform: rotateX(var(--depth-x, 0deg)) rotateY(var(--depth-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 320ms var(--spatial-ease);
+}
+
+.spatial-bot-halo {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: min(78%, 29rem);
+  aspect-ratio: 1;
+  transform: translate3d(-50%, -50%, -44px);
+  border: 1px solid color-mix(in srgb, var(--bot-light) 50%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 2.6rem color-mix(in srgb, var(--bot-light) 21%, transparent),
+    inset 0 0 2.3rem color-mix(in srgb, var(--bot-light) 14%, transparent);
+}
+
+.spatial-bot-halo::before,
+.spatial-bot-halo::after {
+  position: absolute;
+  inset: 5%;
+  border: 1px dashed color-mix(in srgb, var(--bot-light) 45%, transparent);
+  border-radius: 50%;
+  content: "";
+}
+
+.spatial-bot-halo::after {
+  inset: 12%;
+  border-style: solid;
+  opacity: .5;
+}
+
+.spatial-bot-plinth {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  width: min(76%, 29rem);
+  aspect-ratio: 3.9 / 1;
+  transform: translate3d(-50%, 0, 22px) rotateX(21deg);
+  border: 1px solid color-mix(in srgb, var(--bot-light) 48%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--bot-light) 42%, #142526), #172b2b 66%, #1f3c39 82%);
+  box-shadow: 0 1rem 2.2rem #080d0ed4, 0 .33rem 0 #426357;
+}
+
+.spatial-bot-portrait {
+  position: absolute;
+  top: 43%;
+  left: 50%;
+  width: min(60%, 21rem);
+  aspect-ratio: 1;
+  transform: translate3d(-50%, -50%, 55px) rotateY(-12deg) rotateX(2deg);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--bot-light) 77%, #142424);
+  border-radius: .9rem;
+  background: #142424;
+  box-shadow: .45rem .3rem 0 #314f48, 0 1.1rem 3.05rem #040d0ebd,
+    0 0 1.6rem color-mix(in srgb, var(--bot-light) 20%, transparent);
+  animation: spatial-bot-enter 430ms var(--spatial-ease);
+}
+
+@keyframes spatial-bot-enter {
+  from { opacity: .4; translate: 0 .55rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+.spatial-bot-copy .spatial-bot-role {
+  margin: 0 0 .4rem;
+  color: var(--accent);
+  font: 500 .76rem / 1.4 var(--font-dm-mono), monospace;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.spatial-bot-copy .atlas-bot-output {
+  border-left: 2px solid color-mix(in srgb, var(--bot-light) 70%, transparent);
+}
+
+@media (max-width: 760px) {
+  .spatial-gallery-frame { width: 67%; }
+  .spatial-gallery-frame[data-position="left"] { transform: translate3d(-108%, -49%, -82px) rotateY(31deg) scale(.86); }
+  .spatial-gallery-frame[data-position="right"] { transform: translate3d(8%, -49%, -82px) rotateY(-31deg) scale(.86); }
+  .spatial-bot-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .spatial-bot-card { grid-template-columns: 1fr; }
+  .spatial-bot-world { min-height: clamp(16rem, 68vw, 25rem); }
+  .spatial-bot-portrait { width: min(62%, 16rem); }
+}
+
+@media (max-width: 450px) {
+  .spatial-exhibit-caption { gap: .8rem; }
+  .spatial-gallery-room { height: clamp(13.5rem, 65vw, 17rem); }
+  .spatial-gallery-controls span { min-width: 2rem; }
+  .spatial-exhibit-actions { gap: .45rem; }
+  .spatial-exhibit-actions .atlas-button { padding-inline: .53rem; font-size: .79rem; }
+  .spatial-viewer-actions { align-items: stretch; }
+  .spatial-viewer-actions .cinema-viewer-controls { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spatial-gallery-orbit,
+  .spatial-bot-assembly,
+  .spatial-art-card .atlas-work-link,
+  .spatial-viewer-stage .cinema-viewer-screen {
+    transform: none;
+    transition: none;
+  }
+  .spatial-gallery-frame,
+  .spatial-viewer-stage .cinema-viewer-frame img,
+  .spatial-bot-picker button {
+    transition: none;
+  }
+  .spatial-bot-picker button:hover { transform: none; }
+  .spatial-bot-portrait { animation: none; }
+}

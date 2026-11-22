@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 const AdminStudio = dynamic(() => import("@/components/AdminStudio"), {
   ssr: false,
   loading: () => (
-    <div className="admin-gate">
+    <div className="admin-gate studio-gate">
       <div className="admin-gate-panel">
         <div className="admin-mark">K<span>.</span></div>
         <p className="admin-eyebrow">KRISHNA / PRIVATE STUDIO</p>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import AtlasSectionHero from "@/components/AtlasSectionHero";
 import PortfolioImage from "@/components/PortfolioImage";
 import { portfolioImage } from "@/lib/portfolio-media";
+import { resetSurface, tiltSurface } from "@/lib/surface-depth";
 import r34Image from "@/lib/r34-image";
 import useSiteMedia from "@/hooks/useSiteMedia";
 
@@ -11,13 +12,11 @@ const botsData = [
   {
     id: "lxeus",
     name: "Lxeus",
-    tagline: "Elite Moderation & AI Chatbot System",
+    tagline: "Discord moderation & AI",
     version: "v.3.4.1",
-    status: "Active",
     description: "An elite moderation and AI chatbot system. Lxeus learns server patterns to preemptively manage toxicity while providing intelligent conversational utility and server analysis.",
     tags: ["Auto-Mod", "AI Chat", "Analytics"],
-    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/lexus.png",
-    color: "primary",
+    image: "/images/bots/lexus.png",
     links: [{ label: "Repository", url: "https://github.com/krishna3251/lexus_dc.git" }],
     commands: [
       {
@@ -43,24 +42,20 @@ const botsData = [
   },
   {
     id: "rukia",
-    name: "Rukia",
-    tagline: "Universal Discord Server Architect",
+    name: "Rukiya",
+    tagline: "Livestream chat assistant",
     version: "v.1.2.0",
-    status: "Active",
-    description: "The universal server builder. Rukia deploys complete, pre-configured Discord ecosystems in seconds, handling roles, permissions, and channel hierarchies instantly.",
-    tags: ["Templating", "Role Sync", "Guild Builder"],
-    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/rukiya.png",
-    color: "primary",
+    description: "Rukiya helps with livestream chat on YouTube and Discord. It can respond with the context of the stream and keep longer-term memory separate.",
+    tags: ["YouTube", "Discord", "Stream Memory"],
+    image: "/images/bots/rukiya.png",
     links: [{ label: "Repository", url: "https://github.com/rukia3287-jpg/rukiya.git" }],
     commands: [
       {
-        trigger: "rukia deploy --template 'Agency'",
+        trigger: "rukiya reply --channel youtube",
         output: [
-          "GUILD_CORE :: Compiling configuration mapping...",
-          "> Initializing layout tree structure...",
-          "> Creating channels: 28 text nodes, 14 voice nodes",
-          "> Generating and syncing 15 modular roles...",
-          "SUCCESS :: Guild deployment complete."
+          "> Viewer: What are we playing tonight?",
+          "> Context: The current YouTube stream is about Genshin Impact.",
+          "> Rukiya: Genshin Impact tonight. We’re exploring Fontaine first!"
         ]
       }
     ]
@@ -68,13 +63,11 @@ const botsData = [
   {
     id: "r34",
     name: "R34",
-    tagline: "Character-Personality Discord AI Bot",
+    tagline: "Character chat",
     version: "v.1.0.0",
-    status: "Active",
     description: "A personality-driven Discord AI bot built around character chat, playful interaction and configurable responses. The current persona uses Yae Miko-inspired wit and confidence.",
     tags: ["AI Chat", "Personality", "Discord"],
     image: r34Image,
-    color: "primary",
     links: [{ label: "Repository", url: "https://github.com/krishna3251/rule-34-bot" }],
     commands: [
       {
@@ -102,13 +95,11 @@ const botsData = [
   {
     id: "damu",
     name: "Damu",
-    tagline: "Discord Guild Template Compiler",
+    tagline: "Server setup & automation",
     version: "v.2.0.4",
-    status: "Active",
     description: "A high-performance guild template compiler. Damu reads structured JSON layouts to output fully compiled permission maps and channel configurations.",
     tags: ["Compiler Core", "JSON Templates"],
-    image: "https://cdn.jsdelivr.net/gh/krishna3251/porfolio-test-33@main/public/images/bots/deku.png",
-    color: "primary",
+    image: "/images/bots/deku.png",
     links: [{ label: "Repository", url: "https://github.com/krishnverma32/damu-server-builder" }],
     commands: [
       {
@@ -146,15 +137,50 @@ function BotLog({ bot }) {
   );
 }
 
-function BotEntry({ bot, imageSettings }) {
-  const image = portfolioImage(imageSettings?.src || bot.image, imageSettings);
+const botSlots = { lxeus: "botLxeus", rukia: "botRukiya", r34: "botR34", damu: "botDamu" };
+const botTones = { lxeus: "#b5e2a1", rukia: "#94dcd6", r34: "#c8b4eb", damu: "#e9c48c" };
+
+function subscribeToBot(change) {
+  window.addEventListener("hashchange", change);
+  window.addEventListener("popstate", change);
+  return () => {
+    window.removeEventListener("hashchange", change);
+    window.removeEventListener("popstate", change);
+  };
+}
+
+function readBot() {
+  const hash = window.location.hash.slice(1).toLowerCase();
+  if (hash === "rukiya") return "rukia";
+  return botsData.some((bot) => bot.id === hash) ? hash : botsData[0].id;
+}
+
+function serverBot() {
+  return botsData[0].id;
+}
+
+function selectBot(id) {
+  if (window.location.hash === `#${id}`) return;
+  window.history.replaceState(null, "", `#${id}`);
+  window.dispatchEvent(new Event("hashchange"));
+}
+
+function BotEntry({ bot, image }) {
   return (
-    <article className="atlas-bot-card" id={bot.id} data-atlas-reveal>
-      <div className="atlas-bot-art">
-        {image && <PortfolioImage {...image} fill alt={bot.name} sizes="(max-width:720px) 100vw, 38vw" quality={72} />}
+    <article className="atlas-bot-card spatial-bot-card" id={bot.id} style={{ "--bot-light": botTones[bot.id] }}>
+      <div className="spatial-bot-world" onPointerMove={tiltSurface} onPointerLeave={resetSurface}>
+        <div className="spatial-bot-assembly">
+          <div className="spatial-bot-halo" aria-hidden="true" />
+          <div className="spatial-bot-plinth" aria-hidden="true" />
+          <div className="spatial-bot-portrait" key={bot.id}>
+            {image && <PortfolioImage {...image} fill alt={`${bot.name} artwork`} sizes="(max-width:720px) 64vw, 360px"
+              quality={72} fetchPriority="high" />}
+          </div>
+        </div>
       </div>
-      <div className="atlas-bot-copy">
-        <div className="atlas-bot-title"><h2>{bot.name}</h2><span>{bot.version}</span></div>
+      <div className="atlas-bot-copy spatial-bot-copy">
+        <p className="spatial-bot-role">{bot.tagline}</p>
+        <div className="atlas-bot-title"><h2 aria-live="polite">{bot.name}</h2><span>{bot.version}</span></div>
         <p>{bot.description}</p>
         <ul className="atlas-bot-tags">{bot.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul>
         <div className="atlas-actions">
@@ -162,25 +188,40 @@ function BotEntry({ bot, imageSettings }) {
             <a key={label} href={url} target="_blank" rel="noreferrer" className="atlas-button atlas-button-small">{label}</a>
           ))}
         </div>
-        <BotLog bot={bot} />
+        <BotLog key={bot.id} bot={bot} />
       </div>
     </article>
   );
 }
 
-const botSlots = { lxeus: "botLxeus", rukia: "botRukiya", r34: "botR34", damu: "botDamu" };
-
 export default function Bots() {
   const { media } = useSiteMedia();
+  const selectedId = useSyncExternalStore(subscribeToBot, readBot, serverBot);
+  const selected = botsData.find((bot) => bot.id === selectedId) || botsData[0];
+  const getImage = (bot) => {
+    const settings = media.slots?.[botSlots[bot.id]];
+    return portfolioImage(settings?.src || bot.image, settings);
+  };
+
   return (
     <main id="main-content" tabIndex={-1} className="atlas-container atlas-destination-page atlas-bots-page">
       <AtlasSectionHero section="Bot Lab" title="Bot" accent="Lab."
-        description="Explore the Discord bots I’ve built and run example commands to see what each one does." />
-      <div className="atlas-bot-index">
-        {botsData.map((bot) => (
-          <BotEntry key={bot.id} bot={bot} imageSettings={media.slots?.[botSlots[bot.id]]} />
-        ))}
+        description="Choose a bot to explore its artwork, features and example commands." />
+      <div role="group" aria-label="Choose a bot" className="spatial-bot-picker">
+        {botsData.map((bot) => {
+          const image = getImage(bot);
+          return (
+            <button type="button" key={bot.id} aria-pressed={bot.id === selectedId} onClick={() => selectBot(bot.id)}
+              style={{ "--bot-light": botTones[bot.id] }}>
+              <span className="spatial-bot-picker-image">
+                {image && <PortfolioImage {...image} fill alt="" sizes="52px" quality={72} />}
+              </span>
+              <span><strong>{bot.name}</strong><small>{bot.tagline}</small></span>
+            </button>
+          );
+        })}
       </div>
+      <BotEntry bot={selected} image={getImage(selected)} />
     </main>
   );
 }

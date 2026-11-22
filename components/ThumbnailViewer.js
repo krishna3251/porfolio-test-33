@@ -3,12 +3,19 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "@/components/PortfolioImage";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getThumbnailGameName } from "@/lib/thumbnails";
+import { resetSurface, tiltSurface } from "@/lib/surface-depth";
 import useSiteMedia from "@/hooks/useSiteMedia";
 
 const formatFrame = (number) => String(number).padStart(2, "0");
+const limit = (value) => Math.max(0, Math.min(100, value));
+
+function placeZoom(screen, x, y) {
+  screen.style.setProperty("--inspect-x", `${limit(x)}%`);
+  screen.style.setProperty("--inspect-y", `${limit(y)}%`);
+}
 
 export default function ThumbnailViewer({ item, archiveHref, previous, next, first, last, index, total }) {
   const router = useRouter();
@@ -17,11 +24,32 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
   const override = media.overrides?.[item.filename] || {};
   const artworkSrc = override.src || item.src;
   const gesture = useRef(null);
+  const screen = useRef(null);
+  const zoomOrigin = useRef({ x: 50, y: 50 });
+  const [inspectedId, setInspectedId] = useState(null);
+  const zoomed = inspectedId === item.id;
+  const visible = override.visible !== false;
 
   useEffect(() => {
     function handleKey(event) {
       if (event.defaultPrevented || event.repeat || event.metaKey || event.ctrlKey || event.altKey ||
         event.target?.closest?.("input, textarea, select, [contenteditable]")) return;
+
+      if (zoomed && event.key === "Escape") {
+        event.preventDefault();
+        setInspectedId(null);
+        return;
+      }
+      const inspectionKeys = { ArrowLeft: [-12, 0], ArrowRight: [12, 0], ArrowUp: [0, -12], ArrowDown: [0, 12] };
+      if (zoomed && inspectionKeys[event.key] && screen.current) {
+        event.preventDefault();
+        const [dx, dy] = inspectionKeys[event.key];
+        const x = limit(zoomOrigin.current.x + dx);
+        const y = limit(zoomOrigin.current.y + dy);
+        zoomOrigin.current = { x, y };
+        placeZoom(screen.current, x, y);
+        return;
+      }
 
       const destinations = {
         escape: archiveHref, backspace: archiveHref, arrowleft: previous, a: previous, p: previous,
@@ -30,17 +58,37 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
       const destination = destinations[event.key.toLowerCase()];
       if (!destination) return;
       event.preventDefault();
+      setInspectedId(null);
       if (destination === archiveHref) router.push(destination);
       else router.replace(destination, { scroll: false });
     }
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [archiveHref, first, last, next, previous, router]);
+  }, [archiveHref, first, last, next, previous, router, zoomed]);
+
+  function toggleInspection() {
+    zoomOrigin.current = { x: 50, y: 50 };
+    if (screen.current) placeZoom(screen.current, 50, 50);
+    setInspectedId(zoomed ? null : item.id);
+  }
+
+  function moveArtwork(event) {
+    if (!zoomed) {
+      tiltSurface(event);
+      return;
+    }
+    const bounds = screen.current?.getBoundingClientRect();
+    if (!bounds?.width || !bounds.height) return;
+    const x = limit((event.clientX - bounds.left) * 100 / bounds.width);
+    const y = limit((event.clientY - bounds.top) * 100 / bounds.height);
+    zoomOrigin.current = { x, y };
+    placeZoom(screen.current, x, y);
+  }
 
   function startSwipe(event) {
     const touch = event.touches[0];
-    gesture.current = event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
+    gesture.current = !zoomed && event.touches.length === 1 ? { x: touch.clientX, y: touch.clientY } : null;
   }
 
   function endSwipe(event) {
@@ -56,7 +104,6 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
 
   const game = getThumbnailGameName(item.label);
   const position = (index + 1) / total;
-  const visible = override.visible !== false;
 
   return (
     <main className="cinema-viewer" aria-label="Thumbnail viewer" style={{
@@ -77,9 +124,14 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
         <span style={{ transform: `scaleX(${position})` }} />
       </div>
 
-      <section className="cinema-viewer-stage" aria-label="Artwork" onTouchStart={startSwipe}
-        onTouchEnd={endSwipe} onTouchCancel={() => { gesture.current = null; }}>
-        <div className="cinema-viewer-screen">
+      <section className="cinema-viewer-stage spatial-viewer-stage" aria-label="Artwork" data-inspecting={zoomed}
+        onPointerMove={moveArtwork} onPointerLeave={resetSurface}
+        onPointerDown={(event) => {
+          if (!zoomed || event.pointerType !== "touch" || !event.isPrimary) return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          moveArtwork(event);
+        }} onTouchStart={startSwipe} onTouchEnd={endSwipe} onTouchCancel={() => { gesture.current = null; }}>
+        <div className="cinema-viewer-screen" ref={screen} id="artwork-screen">
           <AnimatePresence initial={false}>
             <motion.div key={item.id} className="cinema-viewer-frame"
               initial={reduceMotion ? false : { opacity: 0, scale: 0.986 }}
@@ -108,15 +160,15 @@ export default function ThumbnailViewer({ item, archiveHref, previous, next, fir
           <h1>{item.title}</h1>
           <p>{item.subtitle}</p>
         </div>
-        <p className="cinema-viewer-hint"><kbd>←</kbd> <kbd>→</kbd> Browse artwork</p>
-        {total > 1 && <nav className="cinema-viewer-controls" aria-label="Thumbnail navigation">
-          <Link href={previous} replace scroll={false} aria-label="Previous thumbnail">
-            <span aria-hidden="true">‹</span> <span>Previous</span>
-          </Link>
-          <Link href={next} replace scroll={false} aria-label="Next thumbnail">
-            <span>Next</span> <span aria-hidden="true">›</span>
-          </Link>
-        </nav>}
+        <p className="cinema-viewer-hint"><kbd>←</kbd> <kbd>→</kbd> {zoomed ? "Pan artwork" : "Browse artwork"}</p>
+        <div className="spatial-viewer-actions">
+          {visible && <button className="spatial-viewer-zoom" type="button" onClick={toggleInspection}
+            aria-label="Zoom artwork" aria-pressed={zoomed} aria-controls="artwork-screen">{zoomed ? "Fit artwork" : "Inspect detail"}</button>}
+          {total > 1 && <nav className="cinema-viewer-controls" aria-label="Thumbnail navigation">
+            <Link href={previous} replace scroll={false} aria-label="Previous thumbnail" onClick={() => setInspectedId(null)}>Previous</Link>
+            <Link href={next} replace scroll={false} aria-label="Next thumbnail" onClick={() => setInspectedId(null)}>Next</Link>
+          </nav>}
+        </div>
       </footer>
     </main>
   );

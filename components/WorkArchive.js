@@ -4,8 +4,10 @@ import Image from "@/components/PortfolioImage";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
+import GalleryExhibit from "@/components/GalleryExhibit";
 import useSiteMedia from "@/hooks/useSiteMedia";
 import { portfolioImage } from "@/lib/portfolio-media";
+import { resetSurface, tiltSurface } from "@/lib/surface-depth";
 import {
   FEATURED_THUMBNAIL,
   THUMBNAIL_CATEGORIES,
@@ -13,6 +15,14 @@ import {
   getThumbnailGameName,
   getThumbnailViewerHref,
 } from "@/lib/thumbnails";
+
+const exhibitOrder = [FEATURED_THUMBNAIL, "genshin skirk.png", "wuwa cyberpunk 1.png", "valorant chamber velo.png"];
+
+function exhibitItems(items) {
+  const gallery = items.filter((item) => item.image);
+  const picks = exhibitOrder.map((filename) => gallery.find((item) => item.filename === filename)).filter(Boolean);
+  return [...picks, ...gallery.filter((item) => !picks.includes(item))].slice(0, 4);
+}
 
 export default function WorkArchive({ groups }) {
   const searchParams = useSearchParams();
@@ -30,7 +40,7 @@ export default function WorkArchive({ groups }) {
   const requestedCategory = searchParams.get("category");
   const active = THUMBNAIL_CATEGORIES.includes(requestedCategory) && counts[requestedCategory] ? requestedCategory : "ALL";
   const filtered = active === "ALL" ? items : items.filter((item) => item.label === active);
-  const featured = items.find((item) => item.filename === FEATURED_THUMBNAIL && item.image) || items.find((item) => item.image);
+  const featured = useMemo(() => exhibitItems(items), [items]);
 
   function setActive(category) {
     window.history.replaceState(null, "", getThumbnailArchiveHref(category));
@@ -38,18 +48,7 @@ export default function WorkArchive({ groups }) {
 
   return (
     <>
-      {featured && <article className="atlas-gallery-feature">
-        <Link href={getThumbnailViewerHref(featured.filename)} className="atlas-gallery-feature-image" aria-label={`View ${featured.title}`}>
-          <Image {...featured.image} fill alt="" sizes="(max-width:800px) 100vw, 65vw" quality={72}
-            loading="eager" fetchPriority="high" />
-        </Link>
-        <div className="atlas-gallery-feature-copy">
-          <span>Featured · {getThumbnailGameName(featured.label)}</span>
-          <h2>{featured.title}</h2>
-          <p>{featured.subtitle}</p>
-          <Link className="atlas-button atlas-button-primary" href={getThumbnailViewerHref(featured.filename)}>View artwork</Link>
-        </div>
-      </article>}
+      {featured.length > 0 && <GalleryExhibit items={featured} />}
 
       <div className="atlas-gallery-filter" id="gallery" tabIndex={-1}>
         <div role="group" aria-label="Filter thumbnails by game">
@@ -65,7 +64,7 @@ export default function WorkArchive({ groups }) {
 
       <div className="atlas-gallery-grid" key={active}>
         {filtered.map((item) => (
-          <article key={item.id} className="atlas-work-card">
+          <article key={item.id} className="atlas-work-card spatial-art-card" onPointerMove={tiltSurface} onPointerLeave={resetSurface}>
             <Link href={getThumbnailViewerHref(item.filename, active)} className="atlas-work-link" aria-label={`View ${item.title}`}>
               <div className="atlas-work-media">
                 {item.image && <Image {...item.image} fill alt="" sizes="(max-width:560px) 100vw, (max-width:900px) 50vw, 33vw" quality={72} />}
