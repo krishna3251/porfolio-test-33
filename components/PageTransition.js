@@ -18,7 +18,8 @@ export default function PageTransition({ children }) {
     const media = gsap.matchMedia();
     media.add("(prefers-reduced-motion: no-preference)", context => {
       const scope = gsap.utils.selector(root);
-      gsap.from(scope(".hero-copy > *, .hero-portrait-editorial, .hero-topline"), {
+      const hero = scope(".hero-copy > *, .hero-portrait-editorial, .hero-topline");
+      if (hero.length) gsap.from(hero, {
         y: 22, opacity: .35, stagger: .055, duration: .75,
         ease: "power3.out", clearProps: "transform,opacity",
       });

@@ -1,0 +1,330 @@
+/* The gallery and the artwork-only viewing route share the portfolio typography. */
+.archive-filter#gallery {
+  scroll-margin-top: 5.5rem;
+}
+
+.archive-page .archive-feature-card {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.archive-page .archive-feature-copy {
+  padding: clamp(1.5rem, 4vw, 3.75rem);
+  justify-content: center;
+}
+
+.archive-page .archive-feature-copy > span {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+}
+
+.archive-page .archive-feature-copy h2 {
+  line-height: 0.94 !important;
+  text-wrap: balance;
+}
+
+.archive-page .archive-feature-copy a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  transition: background-color 180ms ease;
+}
+
+.archive-page .archive-feature-copy a:hover {
+  background: var(--surface-2);
+}
+
+.cinema-viewer {
+  --cinema-edge: clamp(1rem, 4.5vw, 4.75rem);
+  --cinema-text: #f9eee9;
+  --cinema-muted: #c1aeb6;
+  --cinema-line: #ffffff26;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 2px minmax(12rem, 1fr) auto;
+  min-height: 100dvh;
+  padding-inline: var(--cinema-edge);
+  background:
+    radial-gradient(ellipse at 26% 41%, color-mix(in srgb, var(--viewer-light) 18%, transparent), transparent 56%),
+    radial-gradient(ellipse at 77% 63%, color-mix(in srgb, var(--viewer-fill) 16%, transparent), transparent 56%),
+    #100d13;
+  color: var(--cinema-text);
+  color-scheme: dark;
+}
+
+.cinema-viewer-header,
+.cinema-viewer-footer {
+  width: 100%;
+  max-width: 87rem;
+  margin-inline: auto;
+}
+
+.cinema-viewer-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: calc(4.25rem + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+}
+
+.cinema-viewer-back,
+.cinema-viewer-controls a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--cinema-line);
+  border-radius: 0.4rem;
+  color: var(--cinema-text);
+  background: #161118b0;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: background-color 180ms ease, border-color 180ms ease;
+}
+
+.cinema-viewer-back {
+  justify-self: start;
+}
+
+.cinema-viewer-back span,
+.cinema-viewer-controls [aria-hidden] {
+  color: var(--viewer-light);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.cinema-viewer-back:hover,
+.cinema-viewer-controls a:hover {
+  border-color: var(--viewer-light);
+  background: #302431;
+}
+
+.cinema-viewer :is(a, button):focus-visible {
+  outline: 2px solid var(--viewer-light);
+  outline-offset: 3px;
+}
+
+.cinema-viewer-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: var(--cinema-muted);
+  font: 0.875rem var(--font-dm-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.cinema-viewer-counter strong {
+  color: var(--cinema-text);
+  font: 700 1.6rem / 1 var(--font-barlow), sans-serif;
+}
+
+.cinema-viewer-progress {
+  width: 100%;
+  max-width: 87rem;
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--cinema-line);
+}
+
+.cinema-viewer-progress span {
+  display: block;
+  height: 100%;
+  background: var(--viewer-light);
+  transform-origin: left;
+  transition: transform 280ms ease, background-color 280ms ease;
+}
+
+.cinema-viewer-stage {
+  display: grid;
+  place-items: center;
+  padding-block: clamp(1.125rem, 3vh, 2.25rem);
+  touch-action: pan-y pinch-zoom;
+}
+
+.cinema-viewer-screen {
+  position: relative;
+  width: min(100%, 84rem, calc(max(12rem, 100dvh - 15rem) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid #ffffff3d;
+  border-radius: 0.6rem;
+  background: #09070b;
+  box-shadow: 0 1.5rem 5rem #0009, 0 0 3.5rem color-mix(in srgb, var(--viewer-light) 14%, transparent);
+}
+
+.cinema-viewer-frame {
+  position: absolute;
+  inset: 0;
+  background: #09070b;
+}
+
+.cinema-viewer-frame img {
+  object-fit: contain;
+  user-select: none;
+}
+
+.cinema-viewer-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  padding-block: 1rem max(1rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--cinema-line);
+}
+
+.cinema-viewer-caption span {
+  color: var(--viewer-light);
+  font: 0.75rem / 1.4 var(--font-dm-mono), monospace;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.cinema-viewer-caption h1 {
+  margin: 0.15rem 0;
+  color: var(--cinema-text);
+  font: 700 clamp(1.85rem, 4vw, 3rem) / 1.05 var(--font-barlow), sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.cinema-viewer-caption p {
+  margin: 0;
+  color: var(--cinema-muted);
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.cinema-viewer-hint {
+  color: var(--cinema-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.cinema-viewer-hint kbd {
+  display: inline-grid;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  place-items: center;
+  border: 1px solid var(--cinema-line);
+  border-radius: 0.2rem;
+  color: var(--cinema-text);
+}
+
+.cinema-viewer-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.site-audio .audio-launcher {
+  display: none;
+}
+
+@media (max-width: 850px) {
+  .cinema-viewer-footer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.85rem;
+  }
+  .cinema-viewer-hint {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .cinema-viewer {
+    --cinema-edge: 0.875rem;
+  }
+  .cinema-viewer-footer {
+    grid-template-columns: 1fr;
+  }
+  .cinema-viewer-controls a {
+    flex: 1;
+  }
+  .cinema-viewer-stage {
+    padding-block: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinema-viewer-progress span {
+    transition: none;
+  }
+}
+
+/* The compact player leaves the first screen and artwork controls clear. */
+.site-body:has(.cinema-viewer) .site-audio {
+  top: calc(0.75rem + env(safe-area-inset-top));
+  right: clamp(1rem, 4.5vw, 4.75rem) !important;
+  bottom: auto !important;
+}
+
+@media (max-width: 760px) {
+  .site-body:not(:has(.cinema-viewer)) .site-audio {
+    right: 0.5rem !important;
+    bottom: max(0.625rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  .site-audio .audio-launcher,
+  .site-body:has(.cinema-viewer) .site-audio .audio-launcher {
+    display: grid;
+  }
+
+  .site-audio .song-box {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.55rem);
+    width: max-content !important;
+    opacity: 1;
+  }
+
+  .site-audio .song-box[data-expanded="true"] {
+    display: flex;
+  }
+
+  .cinema-bottom-bar {
+    padding-right: 3.5rem;
+  }
+}
+
+.site-body:has(.cinema-viewer) .site-audio .audio-launcher {
+  display: grid;
+}
+
+.site-body:has(.cinema-viewer) .site-audio .song-box {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  bottom: auto;
+  width: max-content !important;
+  opacity: 1;
+}
+
+.site-body:has(.cinema-viewer) .site-audio .song-box[data-expanded="true"] {
+  display: flex;
+}
+
+.site-audio .audio-launcher {
+  place-items: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid #e9bdab78;
+  border-radius: 0.5rem;
+  background: #2b1c1be8;
+  color: #ffe4d5;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.site-audio .audio-launcher[aria-expanded="true"] {
+  background: #4a302d;
+}

@@ -15,13 +15,16 @@ export default function CinematicThread() {
 
   useEffect(() => {
     const root = rootRef.current;
+    const line = lineRef.current;
+    const bead = beadRef.current;
     const page = root?.closest(".site-page--cinematic");
     const story = page?.querySelector(".cinema-story");
-    if (!root || !page || !story ||
+    if (!root || !line || !bead || !page || !story ||
       window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
     const render = () => {
+      if (rootRef.current !== root) return;
       const storyBottom = story.getBoundingClientRect().bottom;
       const reveal = clamp((window.innerHeight - storyBottom) / (window.innerHeight * .9));
       const pageBottom = page.getBoundingClientRect().bottom;
@@ -31,8 +34,8 @@ export default function CinematicThread() {
       const out = clamp(pageBottom / (window.innerHeight * .9));
       const opacity = reveal * Math.min(.65, .26 + progress * .32) * out;
       root.style.opacity = String(opacity);
-      lineRef.current.style.strokeDashoffset = String(97 - progress * 90);
-      beadRef.current.setAttribute("cy", String(30 + progress * 700));
+      line.style.strokeDashoffset = String(97 - progress * 90);
+      bead.setAttribute("cy", String(30 + progress * 700));
     };
 
     const trigger = ScrollTrigger.create({
