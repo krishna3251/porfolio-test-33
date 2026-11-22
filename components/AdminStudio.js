@@ -2,16 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import StudioImagePreview from "@/components/StudioImagePreview";
 import { THUMBNAIL_FILENAMES, getThumbnailSrc } from "@/lib/thumbnails";
-
-function imageStyle(settings) {
-  return {
-    objectFit: settings?.fit === "contain" ? "contain" : "cover",
-    objectPosition: (settings?.positionX ?? 50) + "% " + (settings?.positionY ?? 50) + "%",
-    transform: "scale(" + Math.min(2.5, Math.max(0.5, Number(settings?.scale) || 1)) + ")",
-    opacity: settings?.visible === false ? 0 : (settings?.opacity ?? 1)
-  };
-}
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -54,6 +46,19 @@ function thumbnailDefault(filename) {
     overlayOpacity: 0,
     visible: true
   };
+}
+
+function thumbnailSettings(config, filename) {
+  const upload = config?.thumbnails?.find((item) => item.filename === filename);
+  return {
+    ...thumbnailDefault(filename),
+    ...(upload && { src: upload.src, label: upload.title || filename }),
+    ...config?.overrides?.[filename],
+  };
+}
+
+function thumbnailSource(config, filename, settings) {
+  return settings.src || config?.thumbnails?.find((item) => item.filename === filename)?.src || getThumbnailSrc(filename);
 }
 
 const THUMBNAIL_CATEGORIES = [
@@ -138,7 +143,7 @@ export default function AdminStudio() {
       kind: "thumbnail",
       label: filename,
       group: "Thumbnail archive",
-      value: config?.overrides?.[filename] || thumbnailDefault(filename)
+      value: thumbnailSettings(config, filename)
     }));
     const uploaded = (config?.thumbnails || [])
       .filter((thumbnail) => thumbnail?.filename && !THUMBNAIL_FILENAMES.includes(thumbnail.filename))
@@ -147,12 +152,7 @@ export default function AdminStudio() {
         kind: "thumbnail",
         label: thumbnail.title || thumbnail.filename,
         group: "Thumbnail archive",
-        value: config?.overrides?.[thumbnail.filename] || {
-          ...thumbnailDefault(thumbnail.filename),
-          label: thumbnail.title || thumbnail.filename,
-          description: "Uploaded " + (thumbnail.category || "OTHER") + " thumbnail",
-          src: thumbnail.src || ""
-        }
+        value: thumbnailSettings(config, thumbnail.filename)
       }));
     return slots.concat(thumbs, uploaded);
   }, [config]);
@@ -161,18 +161,16 @@ export default function AdminStudio() {
   const groups = ["All images", ...Array.from(new Set(slotEntries.map((entry) => entry.group)))];
   const isThumbnail = selectedKey.startsWith("thumb:");
   const thumbName = isThumbnail ? selectedKey.slice(6) : "";
-  const settings = isThumbnail
-    ? (config?.overrides?.[thumbName] || thumbnailDefault(thumbName))
-    : (config?.slots?.[selectedKey] || {});
   const selectedEntry = slotEntries.find((entry) => entry.key === selectedKey);
-  const selectedGroup = selectedEntry?.group || "Media";
-  const currentSrc = settings.src || "";
+  const settings = selectedEntry?.value || {};
+  const original = isThumbnail ? thumbnailSettings(savedConfig, thumbName) : savedConfig?.slots?.[selectedKey] || {};
+  const imageSource = (mediaConfig, options) => isThumbnail ? thumbnailSource(mediaConfig, thumbName, options) : options.src;
 
   const updateSettings = (patch) => {
     setConfig((previous) => {
       if (!previous) return previous;
       if (isThumbnail) {
-        const current = previous.overrides?.[thumbName] || thumbnailDefault(thumbName);
+        const current = thumbnailSettings(previous, thumbName);
         return { ...previous, overrides: { ...previous.overrides, [thumbName]: { ...current, ...patch } } };
       }
       return { ...previous, slots: { ...previous.slots, [selectedKey]: { ...previous.slots[selectedKey], ...patch } } };
@@ -493,56 +491,54 @@ export default function AdminStudio() {
   const resetCrop = () => updateSettings({ fit: "cover", positionX: 50, positionY: 50, scale: 1, opacity: 1, overlayOpacity: 0 });
 
   if (checking) {
-    return <div className="admin-gate"><div className="admin-gate-panel"><div className="admin-mark">K<span>.</span></div><p className="admin-eyebrow">KRISHNA / PRIVATE STUDIO</p><h1>Opening your<br /><em>workspace.</em></h1><div className="admin-loading-line"><span /></div><small>CHECKING SECURE SESSION</small></div></div>;
+    return <main className="admin-gate studio-gate"><div className="admin-gate-panel"><div className="admin-mark">K<span>.</span></div><h1>Opening the <em>studio.</em></h1><div className="admin-loading-line"><span /></div><p role="status">Checking your session.</p></div></main>;
   }
 
   if (!authenticated) {
     return (
-      <div className="admin-gate">
-        <div className="admin-gate-art" aria-hidden="true"><span>KR</span><i /><b>01 / DESIGN STUDIO</b></div>
+      <main className="admin-gate studio-gate">
+        <div className="studio-gate-art" aria-hidden="true"><div className="studio-gate-emblem"><i /><strong>K.</strong></div></div>
         <div className="admin-gate-panel">
           <div className="admin-mark">K<span>.</span></div>
-          <p className="admin-eyebrow">PRIVATE WORKSPACE / ACCESS CONTROL</p>
-          <h1>Your site.<br /><em>Your rules.</em></h1>
-          <p className="admin-gate-copy">Sign in to adjust image crops, replace artwork, upload fresh assets, and tune the look of the portfolio.</p>
+          <p className="admin-eyebrow">Krishna Soni</p>
+          <h1>Private <em>studio.</em></h1>
+          <p className="admin-gate-copy">Sign in to edit portfolio images, thumbnails and page content.</p>
           <form onSubmit={login} className="admin-login-form">
-            <label htmlFor="admin-password">ADMIN PASSWORD</label>
+            <label htmlFor="admin-password">Admin password</label>
             <input id="admin-password" name="password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" required autoFocus />
             {loginError && <p className="admin-error" role="alert">{loginError}</p>}
-            <button type="submit" disabled={busy}>{busy ? "VERIFYING…" : "ENTER STUDIO"} <span>↗</span></button>
+            <button type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
           </form>
-          <div className="admin-gate-foot"><span>ENCRYPTED SESSION</span><span>KRISHNA® / 2026</span></div>
+          <Link href="/" className="studio-return">Back to portfolio</Link>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="admin-shell">
+    <div className="admin-shell spatial-studio">
       <aside className="admin-sidebar">
-        <Link href="/" className="admin-brand" aria-label="Return to site">K<span>.</span><small>CREATIVE STUDIO</small></Link>
-        <div className="admin-side-label">WORKSPACE</div>
-        <div className="admin-side-status"><i /> SESSION SECURE <span>12H</span></div>
-        <div className="admin-side-label">MEDIA LIBRARY <b>{visibleEntries.length}/{slotEntries.length}</b></div>
-        <label className="admin-search-wrap"><span aria-hidden="true">⌕</span><input aria-label="Search media assets" value={assetSearch} onChange={(event) => setAssetSearch(event.target.value)} placeholder="Search images…" /><kbd>/</kbd></label>
+        <Link href="/" className="admin-brand" aria-label="Return to portfolio">K<span>.</span><small>Private studio</small></Link>
+        <div className="admin-side-label">Media library <b>{visibleEntries.length}/{slotEntries.length}</b></div>
+        <label className="admin-search-wrap"><span aria-hidden="true">⌕</span><input ref={searchInputRef} aria-label="Search media assets" value={assetSearch} onChange={(event) => setAssetSearch(event.target.value)} placeholder="Search images…" /><kbd>/</kbd></label>
         <div className="admin-filters">
           {groups.map((group) => <button type="button" key={group} className={sidebarFilter === group ? "active" : ""} aria-pressed={sidebarFilter === group} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter((entry) => entry.group === group).length}</span></button>)}
         </div>
-        <div className="admin-side-bottom"><span>REPOSITORY</span><a href={"https://github.com/" + repo} target="_blank" rel="noreferrer">{repo} ↗</a><button type="button" onClick={logout}>LOCK STUDIO ↗</button></div>
+        <div className="admin-side-bottom"><span>Repository</span><a href={"https://github.com/" + repo} target="_blank" rel="noreferrer">{repo}</a><button type="button" onClick={logout}>Sign out</button></div>
       </aside>
 
       <main className="admin-main">
         <header className="admin-topbar">
-          <div><span className="admin-eyebrow">CONTROL ROOM / 01</span><h1>Visual <em>designer.</em></h1></div>
-          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "TOKEN PRESENT / WRITE CHECK ON SAVE" : "READ-ONLY MODE"}</span><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{workspaceTab === "thumbnails" ? (thumbnailQueue.length ? thumbnailQueue.length + " THUMBNAILS QUEUED" : "BATCH UPLOADER") : pendingFile ? "IMAGE STAGED" : hasChanges ? "UNSAVED CHANGES" : "ALL CHANGES SAVED"}</span><Link href="/" target="_blank" rel="noreferrer">VIEW LIVE SITE ↗</Link></div>
+          <div><h1>Portfolio <em>studio.</em></h1></div>
+          <div className="admin-topbar-right"><span className={canWrite ? "admin-connection is-ready" : "admin-connection"}><i />{canWrite ? "Publishing configured" : "Preview only"}</span><span className={hasChanges || pendingFile || thumbnailQueue.length ? "admin-draft-status is-dirty" : "admin-draft-status"}><i />{hasChanges || pendingFile || thumbnailQueue.length ? "Unpublished changes" : "No pending changes"}</span><Link href="/" target="_blank" rel="noreferrer">View portfolio</Link></div>
         </header>
 
         <nav className="admin-mode-nav" aria-label="Admin editor mode">
-          <button type="button" className={workspaceTab === "images" ? "active" : ""} aria-pressed={workspaceTab === "images"} onClick={() => switchWorkspaceTab("images")}><span>01</span><strong>Images</strong><small>Replace, crop & position</small></button>
-          <button type="button" className={workspaceTab === "design" ? "active" : ""} aria-pressed={workspaceTab === "design"} onClick={() => switchWorkspaceTab("design")}><span>02</span><strong>Site design</strong><small>Theme & corner style</small></button>
-          <button type="button" className={workspaceTab === "content" ? "active" : ""} aria-pressed={workspaceTab === "content"} onClick={() => switchWorkspaceTab("content")}><span>03</span><strong>Text & content</strong><small>Homepage copy</small></button>
-          <button type="button" className={workspaceTab === "thumbnails" ? "active" : ""} aria-pressed={workspaceTab === "thumbnails"} onClick={() => switchWorkspaceTab("thumbnails")}><span>04</span><strong>Thumbnail uploads</strong><small>Add work by category</small></button>
-          <button type="button" onClick={() => { if (hasChanges || pendingFile || thumbnailQueue.length) { setError("Publish or discard your draft before opening the organizer."); return; } window.location.assign("/admin/organize"); }}><span>05</span><strong>Organize thumbnails</strong><small>Move existing work</small></button>
+          <button type="button" className={workspaceTab === "images" ? "active" : ""} aria-pressed={workspaceTab === "images"} onClick={() => switchWorkspaceTab("images")}><strong>Images</strong><small>Replace, crop and position</small></button>
+          <button type="button" className={workspaceTab === "design" ? "active" : ""} aria-pressed={workspaceTab === "design"} onClick={() => switchWorkspaceTab("design")}><strong>Site design</strong><small>Theme and card corners</small></button>
+          <button type="button" className={workspaceTab === "content" ? "active" : ""} aria-pressed={workspaceTab === "content"} onClick={() => switchWorkspaceTab("content")}><strong>Page text</strong><small>Homepage and profile</small></button>
+          <button type="button" className={workspaceTab === "thumbnails" ? "active" : ""} aria-pressed={workspaceTab === "thumbnails"} onClick={() => switchWorkspaceTab("thumbnails")}><strong>Thumbnail uploads</strong><small>Stage and publish a batch</small></button>
+          <button type="button" onClick={() => { if (hasChanges || pendingFile || thumbnailQueue.length) { setError("Publish or discard your draft before opening the organizer."); return; } window.location.assign("/admin/organize"); }}><strong>Organize thumbnails</strong><small>Move existing work</small></button>
         </nav>
 
         {!canWrite && <section className="admin-setup-alert">
@@ -552,27 +548,21 @@ export default function AdminStudio() {
 
         <div className={`admin-workspace-grid ${workspaceTab !== "images" ? "admin-workspace-grid-single" : ""}`}>
           {workspaceTab === "images" && <section className="admin-image-panel">
-            <div className="admin-panel-head"><div><span className="admin-eyebrow">ASSET SELECTOR / LIVE PREVIEW</span><h2>Media <em>library.</em></h2><p className="admin-panel-subtitle">Pick an asset, preview your changes, then publish once.</p></div><span className="admin-count">{visibleEntries.length} / {slotEntries.length} ASSETS</span></div>
-            <div className="admin-category-heading">Browse by section <span>Choose a category, then an image</span></div>
+            <div className="admin-panel-head"><div><h2>Media <em>library.</em></h2></div><span className="admin-count">{visibleEntries.length} / {slotEntries.length} assets</span></div>
+            <div className="admin-category-heading">Filter by section</div>
             <div className="admin-category-list" role="group" aria-label="Filter images by section">
               {groups.map(group => <button type="button" key={group} aria-pressed={sidebarFilter === group} onClick={() => setSidebarFilter(group)}>{group}<span>{group === "All images" ? slotEntries.length : slotEntries.filter(entry => entry.group === group).length}</span></button>)}
             </div>
-            <label className="admin-field-label" htmlFor="media-target">CHOOSE ANY IMAGE IN THE SITE</label>
+            <label className="admin-field-label" htmlFor="media-target">Image to edit</label>
             <select id="media-target" value={selectedKey} onChange={(event) => { if (pendingFile) { setError("Publish or discard the staged image before choosing another image."); return; } setSelectedKey(event.target.value); setNotice(""); setError(""); if (fileRef.current) fileRef.current.value = ""; }}>
               {selectedEntry && !visibleEntries.some(entry => entry.key === selectedKey) && <option value={selectedKey}>Current: {selectedEntry.label}</option>}
               {groups.slice(1).map((group) => <optgroup label={group} key={group}>{visibleEntries.filter((entry) => entry.group === group).map((entry) => <option key={entry.key} value={entry.key}>{entry.label}</option>)}</optgroup>)}
             </select>
             {!visibleEntries.length && <p className="admin-no-results" role="status">No images match this filter. Try another section or search.</p>}
 
-            <div className="admin-preview-stage">
-              <div className="admin-preview-grid" aria-hidden="true" />
-              {(pendingFile?.previewUrl || currentSrc) ? <img src={pendingFile?.previewUrl || currentSrc} alt="" className="admin-preview-img" style={imageStyle(settings)} /> : <div className="admin-preview-empty"><span>+</span><strong>NO IMAGE SET</strong><small>Upload a transparent cutout or background.</small></div>}
-              {settings.overlayOpacity > 0 && <span className="admin-preview-overlay" style={{ backgroundColor: settings.overlayColor || "#a8271b", opacity: settings.overlayOpacity }} />}
-              <span className="admin-preview-index">{selectedGroup.toUpperCase()} / PREVIEW</span>
-              {settings.visible === false && <span className="admin-hidden-pill">HIDDEN ON SITE</span>}
-              <span className="admin-preview-frame top-left" /><span className="admin-preview-frame top-right" /><span className="admin-preview-frame bottom-left" /><span className="admin-preview-frame bottom-right" />
-            </div>
-            <div className="admin-preview-caption"><div><strong>{selectedEntry?.label || selectedKey}</strong><span>{isThumbnail ? "THUMBNAIL OVERRIDE" : "SITE IMAGE SLOT"}</span></div><span className="admin-caption-dot" /></div>
+            <StudioImagePreview key={selectedKey} name={selectedEntry?.label || selectedKey}
+              draft={{ src: pendingFile?.previewUrl || imageSource(config, settings), settings }}
+              saved={{ src: imageSource(savedConfig, original), settings: original }} />
 
             <div className="admin-upload-zone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); const file = event.dataTransfer.files?.[0]; if (!file) return; if (fileRef.current) { const transfer = new DataTransfer(); transfer.items.add(file); fileRef.current.files = transfer.files; fileRef.current.dispatchEvent(new Event("change", { bubbles: true })); } }}>
               <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp,image/avif" onChange={handleFile} />
@@ -746,7 +736,7 @@ export default function AdminStudio() {
           </section>
         </div>
 
-        <footer className="admin-footer"><span>KRISHNA® / PRIVATE VISUAL STUDIO</span><span>NO SITE BUILDER LOCK-IN / CONFIG LIVES IN YOUR REPOSITORY</span><Link href="/">EXIT STUDIO ↗</Link></footer>
+        <footer className="admin-footer"><span>Krishna Soni</span><Link href="/">Back to portfolio</Link></footer>
       </main>
     </div>
   );

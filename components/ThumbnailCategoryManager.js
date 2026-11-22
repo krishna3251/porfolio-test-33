@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import PortfolioImage from "@/components/PortfolioImage";
+import { portfolioImage } from "@/lib/portfolio-media";
 import { THUMBNAIL_FILENAMES, getThumbnailSrc, getShortLabel } from "@/lib/thumbnails";
 
 const CATEGORIES = [
@@ -19,6 +22,7 @@ export default function ThumbnailCategoryManager() {
   const [canWrite, setCanWrite] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [search, setSearch] = useState("");
@@ -44,7 +48,7 @@ export default function ThumbnailCategoryManager() {
       id: "built-in:" + filename,
       filename,
       title: filename,
-      src: getThumbnailSrc(filename),
+      src: config.overrides?.[filename]?.src || getThumbnailSrc(filename),
       category: CATEGORIES.some((item) => item.value === config.overrides?.[filename]?.category)
         ? config.overrides[filename].category
         : (CATEGORIES.some((item) => item.value === getShortLabel(filename)) ? getShortLabel(filename) : "OTHER"),
@@ -54,7 +58,7 @@ export default function ThumbnailCategoryManager() {
       id: "uploaded:" + thumbnail.filename,
       filename: thumbnail.filename,
       title: thumbnail.title || thumbnail.filename,
-      src: thumbnail.src,
+      src: config.overrides?.[thumbnail.filename]?.src || thumbnail.src,
       category: thumbnail.category || "OTHER",
       type: "Uploaded",
     }));
@@ -82,6 +86,7 @@ export default function ThumbnailCategoryManager() {
       }
       return next;
     });
+    setHasChanges(true);
     setNotice("");
     setError("");
   };
@@ -115,6 +120,7 @@ export default function ThumbnailCategoryManager() {
       if (!response.ok) throw new Error(data.error || "Could not save category changes.");
       setConfig(data.config);
       setSelected([]);
+      setHasChanges(false);
       setNotice(data.message || "Categories saved. The public gallery updates after deployment.");
     } catch (failure) {
       setError(failure.message || "Save failed.");
@@ -123,64 +129,78 @@ export default function ThumbnailCategoryManager() {
     }
   };
 
-  const toggleAll = (checked) => setSelected(checked ? items.map((item) => item.id) : []);
-  const styles = {
-    page: { minHeight: "100vh", background: "#101010", color: "#f3f0e9", padding: "clamp(18px, 4vw, 48px)", fontFamily: "Arial, sans-serif" },
-    wrap: { maxWidth: 1440, margin: "0 auto" },
-    muted: { color: "#a8a49d" },
-    panel: { background: "#191919", border: "1px solid #343434", borderRadius: 16, padding: 18 },
-    button: { border: "1px solid #5a5146", background: "#d9b887", color: "#17130f", borderRadius: 9, padding: "12px 16px", fontWeight: 700, cursor: "pointer" },
-    input: { width: "100%", background: "#101010", color: "#f3f0e9", border: "1px solid #444", borderRadius: 9, padding: 12 },
-    select: { width: "100%", background: "#101010", color: "#f3f0e9", border: "1px solid #444", borderRadius: 9, padding: 10 },
-  };
+  function toggleVisible(checked) {
+    const visible = new Set(items.map((item) => item.id));
+    setSelected((previous) => checked ? Array.from(new Set([...previous, ...visible])) :
+      previous.filter((id) => !visible.has(id)));
+  }
 
-  if (loading) return <main style={styles.page}><p>Loading thumbnail archive…</p></main>;
-  if (!config) return <main style={styles.page}><div style={styles.wrap}><a href="/admin" style={{ color: "#d9b887" }}>← Back to admin</a><h1>Thumbnail organizer</h1><p role="alert">{error}</p><p>Sign in at the main admin page, then open this organizer again.</p></div></main>;
+  if (loading) return <main className="studio-organizer"><p role="status">Loading thumbnails…</p></main>;
+  if (!config) return <main className="studio-organizer"><div className="studio-organizer-inner">
+    <Link href="/admin" className="studio-button">Back to studio</Link>
+    <h1>Thumbnail <em>organizer.</em></h1>
+    <p role="alert">{error}</p>
+  </div></main>;
 
   return (
-    <main style={styles.page}>
-      <div style={styles.wrap}>
-        <a href="/admin" style={{ color: "#d9b887", textDecoration: "none" }}>← BACK TO STUDIO</a>
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 20, flexWrap: "wrap", margin: "24px 0" }}>
-          <div><p style={{ ...styles.muted, letterSpacing: 3, fontSize: 12 }}>KRISHNA / MEDIA MANAGEMENT</p><h1 style={{ fontSize: "clamp(32px, 6vw, 58px)", margin: "8px 0" }}>Thumbnail <span style={{ color: "#d9b887" }}>organizer.</span></h1><p style={styles.muted}>Move existing artwork between categories without re-uploading the images.</p></div>
-          <button style={styles.button} onClick={save} disabled={saving || !canWrite}>{saving ? "PUBLISHING…" : "PUBLISH CATEGORY CHANGES ↗"}</button>
-        </header>
-        <section style={{ ...styles.panel, marginBottom: 18 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-            <input style={styles.input} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search thumbnails…" aria-label="Search thumbnails" />
-            <select style={styles.select} value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="Filter by category">
-              <option value="ALL">All categories</option>{CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
-            </select>
-            <select style={styles.select} value={bulkCategory} onChange={(event) => setBulkCategory(event.target.value)} aria-label="Bulk destination category">
-              {CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
-            </select>
-            <button style={styles.button} onClick={applyBulk}>MOVE {selected.length || ""} SELECTED</button>
+    <main className="studio-organizer">
+      <div className="studio-organizer-inner">
+        <Link href="/admin" className="studio-button">Back to studio</Link>
+        <header className="studio-organizer-header">
+          <div>
+            <h1>Thumbnail <em>organizer.</em></h1>
+            <p>Move published thumbnails between categories. Changes stay in your draft until you publish.</p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 8 }}><input type="checkbox" checked={items.length > 0 && items.every((item) => selected.includes(item.id))} onChange={(event) => toggleAll(event.target.checked)} /> Select all visible ({items.length})</label>
-            <span style={styles.muted}>{selected.length} selected · {items.length} shown</span>
+          <button type="button" className="studio-button studio-button-primary" onClick={save} disabled={saving || !canWrite || !hasChanges}>
+            {saving ? "Publishing…" : "Publish categories"}
+          </button>
+        </header>
+
+        <section className="studio-organizer-tools" aria-label="Thumbnail filters and bulk actions">
+          <div className="studio-organizer-filters">
+            <label><span>Search</span><input value={search} onChange={(event) => setSearch(event.target.value)}
+              placeholder="Title, file or game" /></label>
+            <label><span>Category filter</span><select value={filter} onChange={(event) => setFilter(event.target.value)}>
+              <option value="ALL">All categories</option>
+              {CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+            </select></label>
+            <label><span>Move to category</span><select value={bulkCategory} onChange={(event) => setBulkCategory(event.target.value)}>
+              {CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+            </select></label>
+            <button type="button" className="studio-button" onClick={applyBulk} disabled={!selected.length}>Move selected</button>
+          </div>
+          <div className="studio-organizer-summary">
+            <label><input type="checkbox" checked={items.length > 0 && items.every((item) => selected.includes(item.id))}
+              onChange={(event) => toggleVisible(event.target.checked)} /> Select visible thumbnails</label>
+            <span role="status">{selected.length} selected · {items.length} shown</span>
           </div>
         </section>
-        {error && <p role="alert" style={{ color: "#ff8d85" }}>{error}</p>}
-        {notice && <p role="status" style={{ color: "#a9e5b0" }}>{notice}</p>}
-        {!canWrite && <p style={{ color: "#ffcf8b" }}>Read-only: connect GITHUB_TOKEN in Vercel to publish changes.</p>}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 230px), 1fr))", gap: 14 }}>
-          {items.map((item) => (
-            <article key={item.id} style={{ ...styles.panel, padding: 12, borderColor: selected.includes(item.id) ? "#d9b887" : "#343434" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, fontSize: 12, ...styles.muted }}><input type="checkbox" checked={selected.includes(item.id)} onChange={(event) => setSelected((previous) => event.target.checked ? [...previous, item.id] : previous.filter((id) => id !== item.id))} />{item.type}</label>
-              <div style={{ aspectRatio: "16 / 9", background: "#0b0b0b", borderRadius: 8, overflow: "hidden", marginBottom: 10 }}>
-                <img src={item.src} alt={item.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-              </div>
-              <strong style={{ display: "block", fontSize: 13, overflowWrap: "anywhere", minHeight: 34 }}>{item.title}</strong>
-              <label style={{ display: "block", fontSize: 11, letterSpacing: 1, ...styles.muted, margin: "12px 0 6px" }}>CATEGORY</label>
-              <select style={styles.select} value={item.category} onChange={(event) => changeCategory(item.id, event.target.value)}>
-                {CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
-              </select>
-            </article>
-          ))}
+        {error && <p role="alert" className="studio-organizer-error">{error}</p>}
+        {notice && <p role="status" className="studio-organizer-notice">{notice}</p>}
+        {!canWrite && <p className="studio-organizer-readonly">Preview only. Connect GitHub publishing from your deployment settings to save category changes.</p>}
+
+        <div className="studio-organizer-grid">
+          {items.map((item) => {
+            const image = portfolioImage(item.src, {}, "contain");
+            const checked = selected.includes(item.id);
+            return (
+              <article key={item.id} className="studio-organizer-card" data-selected={checked}>
+                <label className="studio-organizer-card-check"><input type="checkbox" checked={checked}
+                  aria-label={`Select ${item.title}`}
+                  onChange={(event) => setSelected((previous) => event.target.checked ? [...previous, item.id] : previous.filter((id) => id !== item.id))} />{item.type}</label>
+                <div className="studio-organizer-image">
+                  {image && <PortfolioImage {...image} fill alt="" sizes="(max-width:540px) 45vw, 240px" quality={72} />}
+                </div>
+                <h2>{item.title}</h2>
+                <label><span>Category</span><select aria-label={`Category for ${item.title}`} value={item.category}
+                  onChange={(event) => changeCategory(item.id, event.target.value)}>
+                  {CATEGORIES.map((category) => <option key={category.value} value={category.value}>{category.label}</option>)}
+                </select></label>
+              </article>
+            );
+          })}
         </div>
-        {items.length === 0 && <p style={styles.muted}>No thumbnails match that search or category.</p>}
-        <footer style={{ margin: "28px 0", display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}><span style={styles.muted}>Changes are drafts until published.</span><button style={styles.button} onClick={save} disabled={saving || !canWrite}>{saving ? "PUBLISHING…" : "PUBLISH CATEGORY CHANGES ↗"}</button></footer>
+        {items.length === 0 && <p role="status">No thumbnails match your search.</p>}
       </div>
     </main>
   );

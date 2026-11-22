@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function AdminPage() {
-  return <main className="admin-page"><AdminStudioClient /></main>;
+  return <div className="admin-page"><AdminStudioClient /></div>;
 }
