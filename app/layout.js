@@ -1,15 +1,14 @@
 import { Space_Grotesk, Instrument_Serif, DM_Mono, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
 import "./refinement.css";
-import "./kinetic-hero.css";
 import "./portfolio-polish.css";
 import "./cinematic-detail.css";
 import "./gallery-viewer.css";
+import "./portfolio-map.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import AudioPlayer from "@/components/AudioPlayer";
-import CustomCursor from "@/components/CustomCursor";
 import SiteMediaTheme from "@/components/SiteMediaTheme";
 
 const spaceGrotesk=Space_Grotesk({variable:"--font-space",subsets:["latin"],display:"swap"});
@@ -33,15 +32,14 @@ export const metadata={
   twitter:{card:"summary_large_image",title:"KRISHNA / Creative Developer + Visual Designer",description:"Software, AI systems, gaming visuals and experiments by Krishna.",images:[heroImage]},
 };
 
-export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",themeColor:"#241917",colorScheme:"light"};
+export const viewport={width:"device-width",initialScale:1,viewportFit:"cover",themeColor:"#101614",colorScheme:"dark light"};
 
 export default function RootLayout({children}){
-  return <html lang="en" className={`${spaceGrotesk.variable} ${dmMono.variable} ${instrumentSerif.variable} ${barlowCondensed.variable} h-full antialiased`}>
-    <body id="top" className="site-body">
+  return <html lang="en" data-theme="atlas" suppressHydrationWarning className={`${spaceGrotesk.variable} ${dmMono.variable} ${instrumentSerif.variable} ${barlowCondensed.variable} h-full antialiased`}>
+    <body id="top" className="site-body atlas-site">
       <a className="skip-link" href="#route-content">Skip to content</a>
       <SiteMediaTheme/>
       <Navbar/>
-      <CustomCursor/>
       <SmoothScroll><PageTransition>{children}</PageTransition></SmoothScroll>
       <div className="site-audio"><AudioPlayer/></div>
     </body>

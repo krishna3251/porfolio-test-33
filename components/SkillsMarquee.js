@@ -1,18 +1,20 @@
-"use client";
-import TerminalBar from "@/components/TerminalBar";
+const groups = [
+  ["Software", "Python", "JavaScript", "Java", "C++", "SQL"],
+  ["AI & automation", "LLM apps", "OpenRouter", "REST APIs", "Discord API"],
+  ["Web", "Next.js", "React", "Tailwind", "Framer Motion", "GitHub"],
+  ["Visual design", "Photoshop", "Thumbnail design", "Composition", "Art direction"],
+];
 
-export default function SkillsMarquee(){
-  const groups=[["SOFTWARE","Python","JavaScript","Java","C++","SQL"],["AI + SYSTEMS","LLM apps","OpenRouter","REST APIs","Discord API","Automation"],["WEB","Next.js","React","Tailwind","Framer Motion","GitHub"],["VISUAL","Photoshop","Thumbnail design","Digital art","Composition","Art direction"]];
-  return <section className="skills section" id="skills">
-    <TerminalBar command="stack --list" meta="RUNTIME / 2026" />
-    <div className="section-marker"><span>04</span><span>CAPABILITIES</span><em>STACK / 2026</em></div>
-    <div className="skills-head"><span className="eyebrow">CAPABILITIES / STACK</span><h2>What I<br/><em>work with.</em></h2></div>
-    <div className="skill-grid">
-      {groups.map(([title,...items])=><div className="skill-box" key={title}>
-        <span className="skill-title">{title}<b>↗</b></span>
-        {items.map((x,i)=><span className="skill-item" key={x}><i>{String(i+1).padStart(2,"0")}</i>{x}</span>)}
-      </div>)}
-    </div>
-    <div className="skills-ticker" aria-hidden="true"><span>BUILD / DESIGN / ITERATE / SHIP / BUILD / DESIGN / ITERATE / SHIP /</span></div>
-  </section>;
+export default function SkillsMarquee() {
+  return (
+    <section className="atlas-content-section atlas-container" id="skills" aria-labelledby="skills-title">
+      <div className="atlas-heading-row"><h2 id="skills-title">Tools I <em>work with.</em></h2></div>
+      <div className="atlas-skills-grid">
+        {groups.map(([title, ...items]) => <div className="atlas-skill-group" key={title} data-atlas-reveal>
+          <h3>{title}</h3>
+          <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul>
+        </div>)}
+      </div>
+    </section>
+  );
 }

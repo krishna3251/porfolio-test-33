@@ -1,7 +1,7 @@
 {
   "version": 9,
   "design": {
-    "theme": "sunset",
+    "theme": "atlas",
     "paper": "#eeeadf",
     "surface": "#f7f4eb",
     "ink": "#191e1d",
@@ -19,9 +19,9 @@
   },
   "slots": {
     "heroPortrait": {
-      "label": "Hero portrait / main image",
+      "label": "Map portrait",
       "group": "Hero",
-      "description": "The large portrait on the home screen.",
+      "description": "Portrait shown in the About destination on the homepage map.",
       "src": "/hero_krishna_vertical.jpg",
       "fit": "contain",
       "positionX": 50,

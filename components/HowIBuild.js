@@ -1,100 +1,29 @@
 "use client";
 
-import TerminalBar from "@/components/TerminalBar";
+import Image from "@/components/PortfolioImage";
 import useSiteMedia from "@/hooks/useSiteMedia";
+import { portfolioImage } from "@/lib/portfolio-media";
 
 const steps = [
-  {
-    no: "01",
-    label: "THE BRIEF",
-    title: <>Find the<br /><em>point.</em></>,
-    text: "Get clear on the audience, the problem and the feeling the finished work should leave behind.",
-    note: "CLARITY BEFORE COMPLEXITY",
-    motif: "brief",
-  },
-  {
-    no: "02",
-    label: "THE ASSEMBLY",
-    title: <>Shape the<br /><em>story.</em></>,
-    text: "Bring the strongest parts together. Build a rhythm. Remove anything that is clever but not useful.",
-    note: "STRUCTURE / PACE / FLOW",
-    motif: "shape",
-  },
-  {
-    no: "03",
-    label: "THE POLISH",
-    title: <>Make it<br /><em>land.</em></>,
-    text: "Refine the details: interaction, sound, color, typography and motion until everything works together.",
-    note: "DETAILS WITH A PURPOSE",
-    motif: "polish",
-  },
-  {
-    no: "04",
-    label: "THE FINISH",
-    title: <>Ship it.<br /><em>Learn. Repeat.</em></>,
-    text: "Test the real thing, make the final checks and deliver. Then use what you learned on the next cut.",
-    note: "MAKE / TEST / IMPROVE",
-    motif: "ship",
-  },
+  ["Find the point", "Start with the audience, what they need and how the finished work should feel."],
+  ["Build a first version", "Sketch the layout or build a prototype to see what works in practice."],
+  ["Refine the details", "Improve the interaction, imagery, color and motion around the strongest idea."],
+  ["Test and ship", "Check the finished work, publish it and carry what I learned into the next project."],
 ];
 
 export default function HowIBuild() {
   const { media } = useSiteMedia();
-  const processBackground = media.slots?.processBackground || {};
+  const settings = media.slots?.processBackground;
+  const background = portfolioImage(settings?.src, settings);
   return (
-    <section className="process section editorial-process" id="process">
-      <div className="process-topography" aria-hidden="true" />
-      {processBackground.src && processBackground.visible !== false && <div className="process-custom-background" aria-hidden="true"><img src={processBackground.src} alt="" style={{objectFit:processBackground.fit==="contain"?"contain":"cover",objectPosition:(processBackground.positionX??50)+"% "+(processBackground.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(processBackground.scale)||1))+")",opacity:processBackground.opacity??.12}} /><span style={{backgroundColor:processBackground.overlayColor||"#eeeadf",opacity:processBackground.overlayOpacity??.65}} /></div>}
-      <TerminalBar command="run ./process --verbose" meta="PIPELINE / ACTIVE" />
-      <div className="section-marker">
-        <span>05</span><span>PROCESS</span><em>FROM ROUGH TO RIGHT</em>
-      </div>
-
-      <div className="process-intro">
-        <div className="process-heading">
-          <span className="eyebrow">PROCESS / FOUR STEPS</span>
-          <h2 className="process-display">From rough<br /><em>to right.</em></h2>
-        </div>
-        <p className="process-intro-copy">
-          Good work rarely arrives finished. It gets clearer through deliberate decisions,
-          small refinements, and knowing what to leave out.
-        </p>
-      </div>
-
-      <div className="process-track-header">
-        <span>THE WORKFLOW / 01—04</span>
-        <span className="process-track-hint"><i aria-hidden="true">↔</i> SCROLL SIDEWAYS TO EXPLORE</span>
-      </div>
-
-      <div className="process-track-viewport" tabIndex={0} role="region" aria-label="Four steps in my creative process">
-        <div className="process-track">
-          {steps.map((step) => (
-            <article className="process-card" key={step.no}>
-              <div className="process-card-top">
-                <span className="process-card-index">{step.no} / 04</span>
-                <span className="process-card-label">{step.label}</span>
-                <span className="process-card-arrow" aria-hidden="true">↗</span>
-              </div>
-
-              <div className={`process-card-art process-art-${step.motif}`} aria-hidden="true">
-                <span className="process-art-ring process-art-ring-one" />
-                <span className="process-art-ring process-art-ring-two" />
-                <span className="process-art-core" />
-                <span className="process-art-cross">+</span>
-              </div>
-
-              <div className="process-card-bottom">
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-                <div className="process-card-note"><span />{step.note}</div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      <div className="process-footnote">
-        <span>01 / ALIGN THE IDEA</span><span>02 / BUILD THE SHAPE</span><span>03 / REFINE THE FEEL</span><span>04 / SHIP WITH CARE</span>
+    <section className="atlas-content-section atlas-container" id="process" aria-labelledby="process-title">
+      <div className="atlas-heading-row"><h2 id="process-title">How I <em>build.</em></h2></div>
+      <div className="atlas-process">
+        {background && <div className="atlas-process-backdrop" aria-hidden="true">
+          <Image {...background} fill alt="" sizes="100vw" quality={72} />
+          {settings.overlayOpacity > 0 && <span className="atlas-media-overlay" style={{ backgroundColor: settings.overlayColor, opacity: settings.overlayOpacity }} />}
+        </div>}
+        <ol>{steps.map(([title, copy]) => <li key={title} data-atlas-reveal><h3>{title}</h3><p>{copy}</p></li>)}</ol>
       </div>
     </section>
   );

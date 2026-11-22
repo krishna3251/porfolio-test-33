@@ -1,26 +1,19 @@
-
 import Link from "next/link";
+
 export const metadata = {
-  title: "Page Not Found",
-  description: "The requested page could not be found on the KRISHNA portfolio.",
+  title: "Page missing",
+  description: "Return to the map or browse the visual archive.",
 };
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen grid place-items-center px-6 py-32 bg-[#08090b] text-[#f7f4ed]">
-      <section className="w-full max-w-3xl border border-white/10 bg-white/[0.02] p-8 md:p-14">
-        <div className="mono-metadata text-[#ff6a2a] mb-5">ERROR / 404</div>
-        <h1 className="text-5xl md:text-8xl font-semibold tracking-[-0.06em]">
-          Page not found<span className="text-[#ff6a2a]">.</span>
-        </h1>
-        <p className="mt-6 max-w-xl text-white/60 leading-relaxed">
-          This route does not exist, or the link has wandered off into the void.
-        </p>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <Link href="/" className="command-button command-button-accent">[ ./home ↗ ]</Link>
-          <Link href="/thumbnails" className="command-button">[ ./work ↗ ]</Link>
-        </div>
-      </section>
+    <main className="atlas-container atlas-empty-page">
+      <h1>Page <em>missing.</em></h1>
+      <p>The link may have changed. You can return to the map or browse the gallery.</p>
+      <div className="atlas-actions">
+        <Link href="/" className="atlas-button atlas-button-primary">Back to the map</Link>
+        <Link href="/thumbnails" className="atlas-button">Open gallery</Link>
+      </div>
     </main>
   );
 }

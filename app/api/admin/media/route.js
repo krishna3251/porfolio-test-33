@@ -57,8 +57,8 @@ function sanitizeConfig(input) {
       return { id, filename, src, category, title: title || filename, subtitle, createdAt };
     }).filter((thumbnail) => thumbnail.filename && thumbnail.src) : [],
   };
-  const themes = ["editorial", "darkroom", "sunset", "minimalism", "custom"];
-  if (!themes.includes(result.design.theme)) result.design.theme = "editorial";
+  const themes = ["atlas", "editorial", "darkroom", "sunset", "minimalism", "maximalism", "custom"];
+  if (!themes.includes(result.design.theme)) result.design.theme = seed.design.theme;
   ["paper", "surface", "ink", "muted", "accent", "orange", "border"].forEach((key) => {
     if (!/^#[0-9a-f]{6}$/i.test(result.design[key] || "")) result.design[key] = seed.design[key];
   });

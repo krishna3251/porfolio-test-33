@@ -1,12 +1,11 @@
 "use client";
-import Image from "next/image";
+
+import Image from "@/components/PortfolioImage";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useReducedMotion, useScroll } from "framer-motion";
-import { useMemo,useRef,useState } from "react";
-import TerminalBar from "@/components/TerminalBar";
-import WobbleImage from "@/components/WobbleImage";
+import { useMemo } from "react";
 import useSiteMedia from "@/hooks/useSiteMedia";
+import { portfolioImage } from "@/lib/portfolio-media";
 import {
   FEATURED_THUMBNAIL,
   THUMBNAIL_CATEGORIES,
@@ -15,130 +14,69 @@ import {
   getThumbnailViewerHref,
 } from "@/lib/thumbnails";
 
-const accentMap={
-  GENSHIN:"#ff7a45",
-  HSR:"#c8b3ff",
-  WUWA:"#71e4ff",
-  VALORANT:"#ff4655",
-  PUBG:"#e4b45c",
-  NTE:"#ff73cf",
-  FORZA:"#65d8ff",
-  OTHER:"#b9b3a9"
-};
-
-function ThumbnailCard({item,index,active,total}){
-  const reduce = useReducedMotion();
-  const settings=item.mediaSettings||{};
-  const ref=useRef(null);
-  const [hovered,setHovered]=useState(false);
-  const mx=useMotionValue(0), my=useMotionValue(0);
-  const rx=useSpring(useTransform(my,[-80,80],[3,-3]),{stiffness:170,damping:22});
-  const ry=useSpring(useTransform(mx,[-80,80],[-3,3]),{stiffness:170,damping:22});
-  const {scrollYProgress}=useScroll({target:ref,offset:["start end","end start"]});
-  const imageY=useTransform(scrollYProgress,[0,1],["-4%","4%"]);
-  const accent=accentMap[item.label]||accentMap.OTHER;
-
-  const move=(e)=>{
-    if(reduce||!window.matchMedia("(pointer:fine)").matches)return;
-    const r=ref.current?.getBoundingClientRect();
-    if(!r)return;
-    mx.set(e.clientX-(r.left+r.width/2));
-    my.set(e.clientY-(r.top+r.height/2));
-  };
-
-  return <motion.article
-    ref={ref}
-    className="thumb-card premium-thumb-card"
-    style={{"--card-accent":accent}}
-    initial={false}
-    whileInView={{opacity:1,y:0,scale:1,rotateX:0}}
-    viewport={{once:true,amount:.16,margin:"0px 0px -8% 0px"}}
-    transition={{duration:.65,delay:(index%3)*.055,ease:[.16,1,.3,1]}}
-    onMouseEnter={()=>setHovered(true)}
-    onMouseLeave={()=>{setHovered(false);mx.set(0);my.set(0)}}
-    onMouseMove={move}
-  >
-    <Link
-      href={getThumbnailViewerHref(item.filename,active)}
-      className="thumb-link"
-      aria-label={"View "+item.title}
-      data-cursor="VIEW"
-    >
-      <motion.div className="thumb-media" style={{rotateX:reduce?0:rx,rotateY:reduce?0:ry,transformStyle:"preserve-3d"}}>
-        <motion.div className="thumb-parallax-image" style={{y:reduce?0:imageY}}>
-          <WobbleImage className="absolute inset-0">
-            <Image src={item.src} alt={item.title} fill loading="lazy" quality={72} sizes="(max-width:760px) 100vw,(max-width:1100px) 50vw,33vw" className="thumb-image" style={{objectFit:settings.fit==="contain"?"contain":"cover",objectPosition:(settings.positionX??50)+"% "+(settings.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(settings.scale)||1))+")",opacity:settings.visible===false?0:(settings.opacity??1)}}/>
-          </WobbleImage>
-        </motion.div>
-        <div className="thumb-vignette" aria-hidden="true"/>
-        <div className="thumb-color-wash" aria-hidden="true"/>
-        <div className="thumb-scanline" aria-hidden="true"/>
-        <span className="thumb-label">{item.label}</span>
-        <span className="thumb-index">{String(index+1).padStart(2,"0")} / {String(total).padStart(2,"0")}</span>
-        <span className="thumb-open">OPEN <b>↗</b></span>
-        <span className="thumb-corner top" aria-hidden="true"/>
-        <span className="thumb-corner bottom" aria-hidden="true"/>
-        <AnimatePresence>
-          {hovered&&<motion.span className="thumb-hover-line" initial={{scaleX:0}} animate={{scaleX:1}} exit={{scaleX:0}} transition={{duration:.3}}/>}
-        </AnimatePresence>
-      </motion.div>
-      <div className="thumb-meta">
-        <div><h3>{item.title}</h3><p>{item.subtitle}</p></div>
-        <span className="thumb-meta-arrow">↗</span>
-      </div>
-      <div className="thumb-meta-line"><span>{String(index+1).padStart(2,"0")}</span><span>{item.label}</span><i style={{background:accent}}/></div>
-    </Link>
-  </motion.article>;
-}
-
-export default function WorkArchive({groups=[]}){
+export default function WorkArchive({ groups }) {
   const searchParams = useSearchParams();
-  const {media}=useSiteMedia();
-  const items=useMemo(()=>groups.flatMap(g=>g.thumbnails||[]).map((item)=>{const settings=media.overrides?.[item.filename]||{};return {...item,src:settings.src||item.src,mediaSettings:settings};}),[groups,media.overrides]);
-  const cats=useMemo(()=>{
-    const counts={};
-    items.forEach(item=>{counts[item.label]=(counts[item.label]||0)+1});
-    return THUMBNAIL_CATEGORIES.filter(label=>counts[label]).map(label=>({label,count:counts[label]}));
-  },[items]);
+  const { media } = useSiteMedia();
+  const items = useMemo(() => groups.flatMap((group) => group.thumbnails).map((item) => {
+    const settings = media.overrides?.[item.filename];
+    return { ...item, image: portfolioImage(settings?.src || item.src, settings) };
+  }), [groups, media.overrides]);
+
+  const counts = useMemo(() => {
+    const byGame = {};
+    items.forEach(({ label }) => { byGame[label] = (byGame[label] || 0) + 1; });
+    return byGame;
+  }, [items]);
   const requestedCategory = searchParams.get("category");
-  const active = cats.some(({label})=>label===requestedCategory) ? requestedCategory : "ALL";
-  const filtered=active==="ALL"?items:items.filter(item=>item.label===active);
-  const featured=items.find(item=>item.filename===FEATURED_THUMBNAIL&&item.mediaSettings.visible!==false) || items.find(item=>item.mediaSettings.visible!==false);
-  const setActive = (category) => window.history.replaceState(null,"",getThumbnailArchiveHref(category));
+  const active = THUMBNAIL_CATEGORIES.includes(requestedCategory) && counts[requestedCategory] ? requestedCategory : "ALL";
+  const filtered = active === "ALL" ? items : items.filter((item) => item.label === active);
+  const featured = items.find((item) => item.filename === FEATURED_THUMBNAIL && item.image) || items.find((item) => item.image);
 
-  return <div className="archive-shell">
-    <TerminalBar command="gallery --recent --sort=visual" meta="ARCHIVE / ONLINE" />
-    <div className="archive-live-panel">
-      <div><span className="archive-live-dot"/><span>ARCHIVE ONLINE</span></div>
-      <strong>{String(filtered.length).padStart(2,"0")}</strong>
-      <small>VISUAL WORKS INDEXED</small>
-    </div>
+  function setActive(category) {
+    window.history.replaceState(null, "", getThumbnailArchiveHref(category));
+  }
 
-    {active==="ALL"&&featured&&<motion.div className="archive-feature-card" initial={false} animate={{opacity:1,y:0}} transition={{duration:.55,ease:[.16,1,.3,1]}}>
-      <div className="archive-feature-media"><WobbleImage className="absolute inset-0"><Image src={featured.src} alt={featured.title} fill sizes="(max-width:900px) 100vw, 64vw" quality={72} className="archive-feature-image" style={{objectFit:featured.mediaSettings?.fit==="contain"?"contain":"cover",objectPosition:(featured.mediaSettings?.positionX??50)+"% "+(featured.mediaSettings?.positionY??50)+"%",transform:"scale("+Math.min(2.5,Math.max(.5,Number(featured.mediaSettings?.scale)||1))+")",opacity:featured.mediaSettings?.opacity??1}}/></WobbleImage></div>
-      <div className="archive-feature-copy"><span>FEATURED · {getThumbnailGameName(featured.label)}</span><h2>{featured.title}</h2><p>{featured.subtitle}</p><Link href={getThumbnailViewerHref(featured.filename)} data-cursor="FEATURED">View artwork</Link></div>
-    </motion.div>}
+  return (
+    <>
+      {featured && <article className="atlas-gallery-feature">
+        <Link href={getThumbnailViewerHref(featured.filename)} className="atlas-gallery-feature-image" aria-label={`View ${featured.title}`}>
+          <Image {...featured.image} fill alt="" sizes="(max-width:800px) 100vw, 65vw" quality={72}
+            loading="eager" fetchPriority="high" />
+        </Link>
+        <div className="atlas-gallery-feature-copy">
+          <span>Featured · {getThumbnailGameName(featured.label)}</span>
+          <h2>{featured.title}</h2>
+          <p>{featured.subtitle}</p>
+          <Link className="atlas-button atlas-button-primary" href={getThumbnailViewerHref(featured.filename)}>View artwork</Link>
+        </div>
+      </article>}
 
-    <div className="archive-command"><div className="archive-command-left"><span className="archive-live"><i/> LIVE ARCHIVE</span><span>INDEX / {String(filtered.length).padStart(2,"0")}</span></div><span>FILTER / SELECT</span></div>
-
-    <div className="archive-filter" id="gallery" tabIndex={-1}>
-      <div className="archive-filter-track" role="group" aria-label="Filter thumbnails by game">
-        <button onClick={()=>setActive("ALL")} aria-pressed={active==="ALL"} className={active==="ALL"?"active":""} data-cursor="ALL WORK">ALL <b>{items.length}</b></button>
-        {cats.map(cat=><button key={cat.label} onClick={()=>setActive(cat.label)} aria-pressed={active===cat.label} className={active===cat.label?"active":""} data-cursor={cat.label}>{cat.label} <b>{cat.count}</b></button>)}
+      <div className="atlas-gallery-filter" id="gallery" tabIndex={-1}>
+        <div role="group" aria-label="Filter thumbnails by game">
+          <button type="button" aria-pressed={active === "ALL"} onClick={() => setActive("ALL")}>All <b>{items.length}</b></button>
+          {THUMBNAIL_CATEGORIES.filter((category) => counts[category]).map((category) => (
+            <button type="button" key={category} aria-pressed={active === category} onClick={() => setActive(category)}>
+              {getThumbnailGameName(category)} <b>{counts[category]}</b>
+            </button>
+          ))}
+        </div>
+        <p role="status">{filtered.length} {filtered.length === 1 ? "artwork" : "artworks"}</p>
       </div>
-      <span>{String(filtered.length).padStart(2,"0")} WORKS / 2026</span>
-    </div>
 
-    <motion.div layout className="thumb-grid">
-      <AnimatePresence mode="popLayout">
-        {filtered.map((item,index)=><ThumbnailCard key={item.id} item={item} index={index} active={active} total={filtered.length}/>)}
-      </AnimatePresence>
-    </motion.div>
-
-    <div className="archive-endcap">
-      <span>END OF CURRENT INDEX</span>
-      <strong>{String(filtered.length).padStart(2,"0")} / {String(items.length).padStart(2,"0")}</strong>
-      <p>Every frame is available in the fullscreen viewer.</p>
-    </div>
-  </div>;
+      <div className="atlas-gallery-grid" key={active}>
+        {filtered.map((item) => (
+          <article key={item.id} className="atlas-work-card">
+            <Link href={getThumbnailViewerHref(item.filename, active)} className="atlas-work-link" aria-label={`View ${item.title}`}>
+              <div className="atlas-work-media">
+                {item.image && <Image {...item.image} fill alt="" sizes="(max-width:560px) 100vw, (max-width:900px) 50vw, 33vw" quality={72} />}
+              </div>
+              <div className="atlas-work-copy">
+                <span>{getThumbnailGameName(item.label)}</span><h3>{item.title}</h3>
+              </div>
+            </Link>
+          </article>
+        ))}
+      </div>
+    </>
+  );
 }
